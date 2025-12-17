@@ -1,6 +1,11 @@
 import React from "react";
 
-export default function GlassPanel({ title, right, className = "", children }) {
+export default function PanelVidrio({
+    title,
+    right,
+    className = "",
+    children,
+}) {
     return (
         <div
             className={[

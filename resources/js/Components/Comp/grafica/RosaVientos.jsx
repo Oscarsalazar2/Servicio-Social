@@ -9,7 +9,7 @@ import {
     Legend,
     Tooltip,
 } from "recharts";
-import GlassPanel from "./GlassPanel";
+import PanelVidrio from "../ui/PanelVidrio";
 
 const RANGE_COLORS = {
     r0_10: "#FFF59D",
@@ -18,7 +18,7 @@ const RANGE_COLORS = {
     r30_40: "#E53935",
 };
 
-export default function WindRoseFixed({ data, height = 360 }) {
+export default function RosaVientos({ data, height = 360 }) {
     const maxR = useMemo(() => {
         let m = 0;
         for (const d of data) {
@@ -33,7 +33,7 @@ export default function WindRoseFixed({ data, height = 360 }) {
     }, [data]);
 
     return (
-        <GlassPanel title="Rosa de los vientos">
+        <PanelVidrio title="Rosa de los vientos">
             <div
                 className="mt-3 relative text-gray-900 dark:text-white"
                 style={{ height }}
@@ -121,6 +121,6 @@ export default function WindRoseFixed({ data, height = 360 }) {
                     </RadialBarChart>
                 </ResponsiveContainer>
             </div>
-        </GlassPanel>
+        </PanelVidrio>
     );
 }

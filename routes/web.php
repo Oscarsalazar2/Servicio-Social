@@ -16,20 +16,13 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // ✅ Dashboard (elige una como default)
-    // Si tu dashboard completo está en: resources/js/Pages/Dashboard/Dashboard.jsx
-    // entonces usa esto:
-    Route::get('/dashboard', fn () => Inertia::render('Dashboard/Dashboard'))->name('dashboard');
+    Route::get('/dashboard', fn() => Inertia::render('Dashboard/Dashboard'))->name('dashboard');
 
-    // ✅ Si prefieres que /dashboard mande directo a /dashboard/viento, usa este en vez del de arriba:
-    // Route::get('/dashboard', fn () => redirect()->route('dashboard.wind'))->name('dashboard');
+    Route::get('/dashboard/viento', fn() => Inertia::render('Dashboard/Viento'))->name('dashboard.wind');
+    Route::get('/dashboard/temperatura', fn() => Inertia::render('Dashboard/Temperatura'))->name('dashboard.temp');
 
-    // ✅ Páginas separadas
-    Route::get('/dashboard/viento', fn () => Inertia::render('Dashboard/Wind'))->name('dashboard.wind');
-    Route::get('/dashboard/temperatura', fn () => Inertia::render('Dashboard/Temperature'))->name('dashboard.temp');
 
-    // ✅ Admin (solo admin)
-    Route::get('/admin', fn () => Inertia::render('Admin'))
+    Route::get('/admin', fn() => Inertia::render('Admin'))
         ->middleware('admin')
         ->name('admin');
 });

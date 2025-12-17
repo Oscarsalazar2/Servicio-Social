@@ -1,24 +1,40 @@
 import React from "react";
 import {
     ResponsiveContainer,
-    LineChart,
+    AreaChart,
+    Area,
     Line,
     XAxis,
     YAxis,
     Tooltip,
     CartesianGrid,
 } from "recharts";
-import GlassPanel from "./GlassPanel";
+import PanelVidrio from "../ui/PanelVidrio";
 
-export default function TemperatureChart({ data, height = 320, colors }) {
+const COLORS = {
+    wind: "#FAB12F",
+    windDir: "#FA812F",
+};
+
+export default function GraficaVelocidadViento({ data, height = 320 }) {
     return (
-        <GlassPanel title="Temperatura y humedad (24h)">
+        <PanelVidrio
+            title="Viento (24h)"
+            right={
+                <span className="text-xs text-gray-600 dark:text-white/60">
+                    Velocidad / Racha
+                </span>
+            }
+        >
             <div
                 className="mt-4 text-gray-900 dark:text-white"
                 style={{ height }}
             >
                 <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={data}>
+                    <AreaChart
+                        data={data}
+                        margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
+                    >
                         <CartesianGrid
                             strokeDasharray="3 3"
                             stroke="currentColor"
@@ -40,21 +56,25 @@ export default function TemperatureChart({ data, height = 320, colors }) {
                             }}
                         />
                         <Tooltip />
-                        <Line
+                        <Area
                             type="monotone"
-                            dataKey="temp"
-                            stroke={colors.temp}
-                            dot={false}
+                            dataKey="vel"
+                            stroke={COLORS.wind}
+                            fill={COLORS.wind}
+                            fillOpacity={0.25}
+                            name="Velocidad (km/h)"
                         />
                         <Line
                             type="monotone"
-                            dataKey="hum"
-                            stroke={colors.hum}
+                            dataKey="gust"
+                            stroke={COLORS.windDir}
+                            strokeWidth={2}
                             dot={false}
+                            name="Racha (km/h)"
                         />
-                    </LineChart>
+                    </AreaChart>
                 </ResponsiveContainer>
             </div>
-        </GlassPanel>
+        </PanelVidrio>
     );
 }

@@ -2,11 +2,11 @@ import React, { useMemo } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
-import KpiCard from "@/Components/Comp/KpiCard";
-import WindSpeedChart from "@/Components/Comp/WindSpeedChart";
-import WindRoseFixed from "@/Components/Comp/WindRoseFixed";
-import WindDirectionCompass from "@/Components/Comp/WindDirectionCompass";
-import TemperatureChart from "@/Components/Comp/TemperatureChart";
+import TarjetaKpi from "@/Components/Comp/kpi/TarjetaKpi";
+import GraficaVelocidadViento from "@/Components/Comp/grafica/GraficaVelocidadViento";
+import RosaVientos from "@/Components/Comp/grafica/RosaVientos";
+import GraficaTemperatura from "@/Components/Comp/grafica/GraficaTemperatura";
+import KpiDireccionViento from "@/Components/Comp/kpi/KpiDireccionViento";
 
 const COLORS = {
     temp: "#6E8CFB",
@@ -17,11 +17,9 @@ const COLORS = {
 };
 
 export default function Dashboard() {
-    /* ======================
-     DEMO DATA
-     ====================== */
 
-    // VIENTO (24h)
+    // DEMO DATA
+
     const windSeries = useMemo(() => {
         return Array.from({ length: 24 }).map((_, i) => ({
             t: `${String(i).padStart(2, "0")}:00`,
@@ -41,7 +39,6 @@ export default function Dashboard() {
         }));
     }, []);
 
-    // TEMPERATURA / HUMEDAD (24h)
     const thSeries = useMemo(() => {
         return Array.from({ length: 24 }).map((_, i) => ({
             t: `${String(i).padStart(2, "0")}:00`,
@@ -56,7 +53,6 @@ export default function Dashboard() {
         }));
     }, []);
 
-    // ROSA DE LOS VIENTOS
     const windRoseData = useMemo(
         () => [
             { angle: 0, dir: "N", r0_10: 20, r10_20: 2, r20_30: 0, r30_40: 0 },
@@ -106,16 +102,16 @@ export default function Dashboard() {
         []
     );
 
-    /* ======================
-     KPIs
-     ====================== */
+    // KPIs
+
+
     const lastWind = windSeries[windSeries.length - 1];
     const lastTH = thSeries[thSeries.length - 1];
 
     const windKpi = {
-        speed: 2,
-        gust: 2,
-        dir: 2,
+        speed: lastWind.vel,
+        gust: lastWind.gust,
+        dir: lastWind.dir,
     };
 
     const tempKpi = {
@@ -130,6 +126,7 @@ export default function Dashboard() {
 
             <div className="min-h-screen bg-gray-100 dark:bg-[#071024]">
                 <div className="max-w-7xl mx-auto px-4 py-8 space-y-14">
+                    {/* VIENTO */}
                     <section className="space-y-6">
                         <div className="text-gray-900 dark:text-white font-extrabold text-lg">
                             Viento
@@ -138,48 +135,38 @@ export default function Dashboard() {
                         {/* KPIs + Gráfica */}
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                             <div className="lg:col-span-4 space-y-4">
-                                <KpiCard
+                                <TarjetaKpi
                                     title="Velocidad del viento"
                                     value={windKpi.speed}
                                     unit="km/h"
                                     color={COLORS.wind}
-                                    icon=""
+
                                 />
-                                <KpiCard
+                                <TarjetaKpi
                                     title="Racha de viento"
                                     value={windKpi.gust}
                                     unit="km/h"
                                     color={COLORS.wind}
-                                    icon=""
                                 />
-                                <KpiCard
-                                    title="Dirección del viento"
-                                    value={windKpi.dir}
-                                    unit="°"
-                                    color={COLORS.windDir}
-                                    icon=""
-                                />
+
+                                {/* KPI compuesto: brújula + grados */}
+                                <KpiDireccionViento deg={windKpi.dir} />
                             </div>
 
                             <div className="lg:col-span-8">
-                                <WindSpeedChart data={windSeries} />
+                                <GraficaVelocidadViento data={windSeries} />
                             </div>
                         </div>
 
-                        {/* Rosa + Brújula */}
+                        {/* Rosa (ya no hace falta brújula aquí porque está en el KPI) */}
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                            <div className="lg:col-span-8">
-                                <WindRoseFixed data={windRoseData} />
-                            </div>
-                            <div className="lg:col-span-4">
-                                <WindDirectionCompass deg={windKpi.dir} />
+                            <div className="lg:col-span-12">
+                                <RosaVientos data={windRoseData} />
                             </div>
                         </div>
                     </section>
 
-                    {/* ======================================================
-              TEMPERATURA
-             ====================================================== */}
+                    {/* TEMPERATURA */}
                     <section className="space-y-6">
                         <div className="text-gray-900 dark:text-white font-extrabold text-lg">
                             Temperatura
@@ -187,31 +174,31 @@ export default function Dashboard() {
 
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                             <div className="lg:col-span-4 space-y-4">
-                                <KpiCard
+                                <TarjetaKpi
                                     title="Temperatura"
                                     value={tempKpi.temp}
                                     unit="°C"
                                     color={COLORS.temp}
-                                    icon=""
+
                                 />
-                                <KpiCard
+                                <TarjetaKpi
                                     title="Humedad"
                                     value={tempKpi.hum}
                                     unit="%"
                                     color={COLORS.hum}
-                                    icon=""
+
                                 />
-                                <KpiCard
+                                <TarjetaKpi
                                     title="Sensación térmica"
                                     value={tempKpi.feels}
                                     unit="°C"
                                     color={COLORS.tempAlt}
-                                    icon=""
+
                                 />
                             </div>
 
                             <div className="lg:col-span-8">
-                                <TemperatureChart
+                                <GraficaTemperatura
                                     data={thSeries}
                                     colors={{
                                         temp: COLORS.temp,

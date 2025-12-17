@@ -1,6 +1,13 @@
 import React from "react";
 
-export default function KpiCard({ title, value, unit, color, subtitle, icon }) {
+export default function TarjetaKpi({
+    title,
+    value,
+    unit,
+    color,
+    subtitle,
+    icon,
+}) {
     return (
         <div className="rounded-2xl shadow-sm border p-4 bg-white/5 backdrop-blur border-white/10 dark:bg-slate-900/40 dark:border-white/10">
             <div className="flex items-start justify-between gap-3">

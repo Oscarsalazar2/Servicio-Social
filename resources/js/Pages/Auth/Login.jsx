@@ -1,100 +1,321 @@
-import Checkbox from '@/Components/Checkbox';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { useEffect, useState } from "react";
+import { Head, Link, useForm } from "@inertiajs/react";
+import GuestLayout from "@/Layouts/GuestLayout";
 
 export default function Login({ status, canResetPassword }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        email: '',
-        password: '',
-        remember: false,
+    const [active, setActive] = useState(false);
+
+    // LOGIN (Breeze)
+    const loginForm = useForm({
+        email: "",
+        password: "",
+        rembember: false,
     });
 
-    const submit = (e) => {
-        e.preventDefault();
+    // REGISTER (Breeze)
+    const registerForm = useForm({
+        name: "",
+        email: "",
+        password: "",
+        password_confirmation: "",
+        motivo: "",
+    });
 
-        post(route('login'), {
-            onFinish: () => reset('password'),
+    useEffect(() => {
+        return () => {
+            loginForm.reset("password");
+            registerForm.reset("password", "password_confirmation");
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const submitLogin = (e) => {
+        e.preventDefault();
+        loginForm.post(route("login"), {
+            onFinish: () => loginForm.reset("password"),
+        });
+    };
+
+    const submitRegister = (e) => {
+        e.preventDefault();
+        registerForm.post(route("register"), {
+            onFinish: () =>
+                registerForm.reset("password", "password_confirmation"),
+            onSuccess: () => setActive(false),
         });
     };
 
     return (
         <GuestLayout>
-            <Head title="Log in" />
+            <Head title="Iniciar sesión" />
 
             {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
+                <div
+                    style={{ marginBottom: 12, color: "#a7f3d0", fontSize: 13 }}
+                >
                     {status}
                 </div>
             )}
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
+            <div className={`auth-container ${active ? "active" : ""}`}>
+                {/* SIGN UP */}
+                <div className="form-auth-container sign-up">
+                    <form onSubmit={submitRegister}>
+                        <h1>Crea Tu Cuenta</h1>
 
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
+                        {/*   <div className="social-icons">
+                            <a
+                                href="#"
+                                className="icon"
+                                onClick={(e) => e.preventDefault()}
+                            >
+                                <i className="fa-brands fa-google"></i>
+                            </a>
+                            <a
+                                href="#"
+                                className="icon"
+                                onClick={(e) => e.preventDefault()}
+                            >
+                                <i className="fa-brands fa-apple"></i>
+                            </a>
+                            <a
+                                href="#"
+                                className="icon"
+                                onClick={(e) => e.preventDefault()}
+                            >
+                                <i className="fa-brands fa-microsoft"></i>
+                            </a>
+                        </div>
 
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4 block">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) =>
-                                setData('remember', e.target.checked)
-                            }
-                        />
-                        <span className="ms-2 text-sm text-gray-600">
-                            Remember me
+                        <span>
+                            o utiliza tu correo electronico para registrarte
                         </span>
-                    </label>
-                </div>
+                        */}
+                        <input
+                            type="text"
+                            placeholder="Nombre"
+                            value={registerForm.data.name}
+                            onChange={(e) =>
+                                registerForm.setData("name", e.target.value)
+                            }
+                            required
+                        />
+                        {registerForm.errors.name && (
+                            <p className="field-error">
+                                {registerForm.errors.name}
+                            </p>
+                        )}
 
-                <div className="mt-4 flex items-center justify-end">
-                    {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        <input
+                            type="email"
+                            placeholder="Correo"
+                            value={registerForm.data.email}
+                            onChange={(e) =>
+                                registerForm.setData("email", e.target.value)
+                            }
+                            required
+                        />
+                        {registerForm.errors.email && (
+                            <p className="field-error">
+                                {registerForm.errors.email}
+                            </p>
+                        )}
+
+                        <input
+                            type="password"
+                            placeholder="Contraseña"
+                            value={registerForm.data.password}
+                            onChange={(e) =>
+                                registerForm.setData("password", e.target.value)
+                            }
+                            required
+                        />
+                        {registerForm.errors.password && (
+                            <p className="field-error">
+                                {registerForm.errors.password}
+                            </p>
+                        )}
+
+                        <input
+                            type="password"
+                            placeholder="Confirmar contraseña"
+                            value={registerForm.data.password_confirmation}
+                            onChange={(e) =>
+                                registerForm.setData(
+                                    "password_confirmation",
+                                    e.target.value
+                                )
+                            }
+                            required
+                        />
+
+                        <textarea
+                            placeholder="Motivo (¿por qué te registras?)"
+                            value={registerForm.data.motivo}
+                            onChange={(e) =>
+                                registerForm.setData("motivo", e.target.value)
+                            }
+                            rows={2}
+                        />
+                        {registerForm.errors.motivo && (
+                            <p className="field-error">
+                                {registerForm.errors.motivo}
+                            </p>
+                        )}
+
+                        <button
+                            className="btn-rojo--blanco"
+                            type="submit"
+                            disabled={registerForm.processing}
                         >
-                            Forgot your password?
-                        </Link>
-                    )}
-
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
+                            {registerForm.processing
+                                ? "CREANDO..."
+                                : "REGISTRATE"}
+                        </button>
+                    </form>
                 </div>
-            </form>
+
+                {/* SIGN IN */}
+                <div className="form-auth-container sign-in">
+                    <form onSubmit={submitLogin}>
+                        <h1>Iniciar sesión</h1>
+
+                        <div className="social-icons">
+                            <a
+                                href="#"
+                                className="icon"
+                                onClick={(e) => e.preventDefault()}
+                            >
+                                <i className="fa-brands fa-google"></i>
+                            </a>
+                            <a
+                                href="#"
+                                className="icon"
+                                onClick={(e) => e.preventDefault()}
+                            >
+                                <i className="fa-brands fa-apple"></i>
+                            </a>
+                            <a
+                                href="#"
+                                className="icon"
+                                onClick={(e) => e.preventDefault()}
+                            >
+                                <i className="fa-brands fa-microsoft"></i>
+                            </a>
+                        </div>
+
+                        <span>o utiliza tu correo electronico</span>
+
+                        <input
+                            type="email"
+                            placeholder="Correo"
+                            value={loginForm.data.email}
+                            onChange={(e) =>
+                                loginForm.setData("email", e.target.value)
+                            }
+                            required
+                        />
+                        {loginForm.errors.email && (
+                            <p className="field-error">
+                                {loginForm.errors.email}
+                            </p>
+                        )}
+
+                        <input
+                            type="password"
+                            placeholder="Contraseña"
+                            value={loginForm.data.password}
+                            onChange={(e) =>
+                                loginForm.setData("password", e.target.value)
+                            }
+                            required
+                        />
+                        {loginForm.errors.password && (
+                            <p className="field-error">
+                                {loginForm.errors.password}
+                            </p>
+                        )}
+
+                        <div className="remember-row">
+                            <input
+                                id="remember"
+                                type="checkbox"
+                                checked={loginForm.data.remember}
+                                onChange={(e) =>
+                                    loginForm.setData(
+                                        "remember",
+                                        e.target.checked
+                                    )
+                                }
+                            />
+                            <label htmlFor="remember">
+                                Mantener sesión abierta
+                            </label>
+                        </div>
+
+                        {canResetPassword && (
+                            <Link
+                                className="forgot-link"
+                                href={route("password.request")}
+                            >
+                                Olvidaste la Contraseña?
+                            </Link>
+                        )}
+
+                        <button
+                            className="btn-rojo--blanco btn-main"
+                            type="submit"
+                            disabled={loginForm.processing}
+                        >
+                            {loginForm.processing
+                                ? "ENTRANDO..."
+                                : "INICIAR SESIÓN"}
+                        </button>
+                    </form>
+                </div>
+
+                {/* TOGGLE */}
+                <div className="toggle-auth-container">
+                    <div className="toggle">
+                        <div className="toggle-panel toggle-left">
+                            <h1>Bienvenido de nuevo!</h1>
+                            <p>
+                                Introduce tus datos personales para continuar.
+                            </p>
+                            <button
+                                className="btn-outline"
+                                type="button"
+                                onClick={() => setActive(false)}
+                                disabled={
+                                    loginForm.processing ||
+                                    registerForm.processing
+                                }
+                            >
+                                INICIAR SESIÓN
+                            </button>
+                        </div>
+
+                        <div className="toggle-panel toggle-right">
+                            <h1>Hola, Amigo!</h1>
+                            <p>
+                                Regístrate con sus datos personales para
+                                utilizar todas las funciones del sitio
+                            </p>
+                            <button
+                                className="btn-outline"
+                                type="button"
+                                onClick={() => setActive(true)}
+                                disabled={
+                                    loginForm.processing ||
+                                    registerForm.processing
+                                }
+                            >
+                                REGISTRATE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </GuestLayout>
     );
 }
