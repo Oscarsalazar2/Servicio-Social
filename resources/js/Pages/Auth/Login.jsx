@@ -1,15 +1,20 @@
 import { useEffect, useState } from "react";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import GuestLayout from "@/Layouts/GuestLayout";
 
 export default function Login({ status, canResetPassword }) {
     const [active, setActive] = useState(false);
+    const { url } = usePage();
+
+    useEffect(() => {
+        setActive(url.includes("mode=register"));
+    }, [url]);
 
     // LOGIN (Breeze)
     const loginForm = useForm({
         email: "",
         password: "",
-        rembember: false,
+        remember: false,
     });
 
     // REGISTER (Breeze)
@@ -180,7 +185,7 @@ export default function Login({ status, canResetPassword }) {
                     <form onSubmit={submitLogin}>
                         <h1>Iniciar sesión</h1>
 
-                        <div className="social-icons">
+                        {/*<div className="social-icons">
                             <a
                                 href="#"
                                 className="icon"
@@ -204,7 +209,7 @@ export default function Login({ status, canResetPassword }) {
                             </a>
                         </div>
 
-                        <span>o utiliza tu correo electronico</span>
+                        <span>o utiliza tu correo electronico</span> */}
 
                         <input
                             type="email"

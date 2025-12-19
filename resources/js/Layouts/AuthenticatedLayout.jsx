@@ -15,7 +15,6 @@ function TopLink({ href, active, children }) {
             ].join(" ")}
         >
             {children}
-            {/* Rayita abajo */}
             <span
                 className={[
                     "absolute left-3 right-3 bottom-3 h-[2px] rounded-full transition",
@@ -27,7 +26,9 @@ function TopLink({ href, active, children }) {
 }
 
 export default function AuthenticatedLayout({ children }) {
-    const user = usePage().props.auth.user;
+    const { auth } = usePage().props;
+    const user = auth?.user;
+
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
@@ -47,7 +48,8 @@ export default function AuthenticatedLayout({ children }) {
     const isInicio = current === "dashboard";
     const isWind = current === "dashboard.wind";
     const isTemp = current === "dashboard.temp";
-    const isAdmin = current === "admin";
+
+    const isAdmin = user?.role === "admin";
     const isPet = route().current("pet.*");
 
     return (
@@ -75,12 +77,14 @@ export default function AuthenticatedLayout({ children }) {
                                 >
                                     Inicio
                                 </TopLink>
+
                                 <TopLink
                                     href={route("dashboard.wind")}
                                     active={isWind}
                                 >
                                     Viento
                                 </TopLink>
+
                                 <TopLink
                                     href={route("dashboard.temp")}
                                     active={isTemp}
@@ -88,21 +92,36 @@ export default function AuthenticatedLayout({ children }) {
                                     Temperatura
                                 </TopLink>
 
-                                {user?.is_admin && (
-                                    <TopLink
-                                        href={route("admin")}
-                                        active={isAdmin}
-                                    >
-                                        Admin
-                                    </TopLink>
+                                {/* ADMIN DESKTOP */}
+                                {isAdmin && (
+                                    <>
+                                        <TopLink
+                                            href={route("admin.users")}
+                                            active={route().current(
+                                                "admin.users"
+                                            )}
+                                        >
+                                            Usuarios
+                                        </TopLink>
+
+                                        <TopLink
+                                            href={route("admin.panel")}
+                                            active={route().current(
+                                                "admin.panel"
+                                            )}
+                                        >
+                                            Admin
+                                        </TopLink>
+                                    </>
                                 )}
 
-                                {user?.is_admin && route().has("pet.index") && (
+                                {/* PET DESKTOP (si existe) */}
+                                {isAdmin && route().has("pet.index") && (
                                     <TopLink
                                         href={route("pet.index")}
                                         active={isPet}
                                     >
-                                        PET
+                                        Lanzamiento de Cohetes
                                     </TopLink>
                                 )}
                             </div>
@@ -124,6 +143,7 @@ export default function AuthenticatedLayout({ children }) {
                                 >
                                     <i className="fa-solid fa-sun"></i>
                                 </button>
+
                                 <button
                                     onClick={() => setTheme("dark")}
                                     className={[
@@ -232,12 +252,14 @@ export default function AuthenticatedLayout({ children }) {
                         >
                             Inicio
                         </ResponsiveNavLink>
+
                         <ResponsiveNavLink
                             href={route("dashboard.wind")}
                             active={isWind}
                         >
                             Viento
                         </ResponsiveNavLink>
+
                         <ResponsiveNavLink
                             href={route("dashboard.temp")}
                             active={isTemp}
@@ -245,21 +267,32 @@ export default function AuthenticatedLayout({ children }) {
                             Temperatura
                         </ResponsiveNavLink>
 
-                        {user?.is_admin && (
-                            <ResponsiveNavLink
-                                href={route("admin")}
-                                active={isAdmin}
-                            >
-                                Admin
-                            </ResponsiveNavLink>
+                        {/* ADMIN MOBILE */}
+                        {isAdmin && (
+                            <>
+                                <ResponsiveNavLink
+                                    href={route("admin.users")}
+                                    active={route().current("admin.users")}
+                                >
+                                    Usuarios
+                                </ResponsiveNavLink>
+
+                                <ResponsiveNavLink
+                                    href={route("admin.panel")}
+                                    active={route().current("admin.panel")}
+                                >
+                                    Admin
+                                </ResponsiveNavLink>
+                            </>
                         )}
 
-                        {user?.is_admin && route().has("pet.index") && (
+                        {/* PET MOBILE (si existe) */}
+                        {isAdmin && route().has("pet.index") && (
                             <ResponsiveNavLink
                                 href={route("pet.index")}
                                 active={isPet}
                             >
-                                PET
+                                Lanzamiento de Cohetes
                             </ResponsiveNavLink>
                         )}
                     </div>
