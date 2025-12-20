@@ -10,22 +10,22 @@ use Illuminate\Validation\Rule;
 class PersonController extends Controller
 {
     public function store(Request $request)
-    {
-        $data = $request->validate([
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'email', 'max:255', Rule::unique('users', 'email')],
-            'password' => ['required', 'string', 'min:8'],
-            'is_admin' => ['required', 'boolean'],
-        ]);
+{
+    $data = $request->validate([
+        'name'     => ['required', 'string', 'max:255'],
+        'email'    => ['required', 'email', 'max:255', Rule::unique('users', 'email')],
+        'password' => ['required', 'string', 'min:8'],
+        'role'     => ['required', 'string', Rule::in(['admin', 'user'])],
+    ]);
 
-        User::create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
-            // si tienes cast 'password' => 'hashed', puedes poner $data['password']
-            'password' => $data['password'],
-            'is_admin' => $data['is_admin'],
-        ]);
+    User::create([
+        'name'     => $data['name'],
+        'email'    => $data['email'],
+        // si tienes cast 'password' => 'hashed', puedes poner $data['password']
+        'password' => $data['password'],
+        'role'     => $data['role'],
+    ]);
 
-        return back()->with('success', 'Persona agregada correctamente.');
-    }
+    return back()->with('success', 'Persona agregada correctamente.');
+}
 }
