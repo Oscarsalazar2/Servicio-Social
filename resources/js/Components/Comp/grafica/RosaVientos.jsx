@@ -1,8 +1,14 @@
-import React, { useMemo, useRef, useEffect, useState } from "react";
+import React, { 
+  useMemo, 
+  useRef, 
+  useEffect, 
+  useState } from "react";
 
+  
 const datos_simulados = true;
 
 const DIRS = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+//Rangos de velocidad y colores de cada uno
 const SPEED_BINS = [
   { key: "b0_10", label: "0-10 km/h", min: 0, max: 10, color: "#F4F46A" },
   { key: "b10_20", label: "10-20 km/h", min: 10, max: 20, color: "#FFD21A" },
@@ -10,15 +16,18 @@ const SPEED_BINS = [
   { key: "b30_40", label: "30-40 km/h", min: 30, max: 40, color: "#FF1E1E" },
 ];
 
+// Convierte grados a los 8 puntos cardinales
 function degToDir8(deg) {
   const d = ((deg % 360) + 360) % 360;
   const idx = Math.round(d / 45) % 8;
   return DIRS[idx];
 }
+// Asigna la velocidad a un bin
 function speedToBinKey(speedKmh) {
   for (const b of SPEED_BINS) if (speedKmh >= b.min && speedKmh < b.max) return b.key;
   return null;
 }
+
 function aggregateWindRose(samples, { normalize = false } = {}) {
   const base = DIRS.map((dir) => {
     const row = { dir };
@@ -27,6 +36,7 @@ function aggregateWindRose(samples, { normalize = false } = {}) {
   });
   if (!Array.isArray(samples) || samples.length === 0) return base;
 
+  
   const dirIndex = new Map(DIRS.map((d, i) => [d, i]));
   let total = 0;
 
@@ -34,7 +44,7 @@ function aggregateWindRose(samples, { normalize = false } = {}) {
     const speed = Number(s?.speedKmh);
     const deg = Number(s?.directionDeg);
     if (!Number.isFinite(speed) || !Number.isFinite(deg) || speed < 0) continue;
-
+//Convierte los grados a DIR y lo asigna al bin
     const dir = degToDir8(deg);
     const binKey = speedToBinKey(speed);
     if (!binKey) continue;
@@ -62,10 +72,13 @@ function generadorDatos() {
     return row;
   });
 }
+
+// Convierte coordenadas polares a cartesianas
 function polarToCartesian(cx, cy, r, angleDeg) {
   const rad = ((angleDeg - 90) * Math.PI) / 180; 
   return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
 }
+
 function arcPath(cx, cy, rOuter, rInner, startAngle, endAngle) {
   const a0 = polarToCartesian(cx, cy, rOuter, startAngle);
   const a1 = polarToCartesian(cx, cy, rOuter, endAngle);
@@ -73,7 +86,7 @@ function arcPath(cx, cy, rOuter, rInner, startAngle, endAngle) {
   const b1 = polarToCartesian(cx, cy, rInner, startAngle);
 
   const largeArc = Math.abs(endAngle - startAngle) > 180 ? 1 : 0;
-
+// Para hacer los sectores como rebanadas
   return [
     `M ${a0.x} ${a0.y}`,
     `A ${rOuter} ${rOuter} 0 ${largeArc} 1 ${a1.x} ${a1.y}`,
@@ -82,6 +95,7 @@ function arcPath(cx, cy, rOuter, rInner, startAngle, endAngle) {
     "Z",
   ].join(" ");
 }
+
 function maxStack(data) {
   let m = 0;
   for (const row of data) {
@@ -94,14 +108,16 @@ function maxStack(data) {
 
 export default function WindRoseSVG({
   title = "Rosa de Viento",
-  width: fixedWidth,        // opcional
-  height: fixedHeight,      // opcional
+  width: fixedWidth,        
+  height: fixedHeight,      
   realSamples = [],
   normalizeReal = false,    // false conteos, true %
   maxWidth = 520,           // límite superior de ancho
 }) {
   const containerRef = useRef(null);
+//tamaño del SVG
   const [size, setSize] = useState({ w: fixedWidth ?? 640, h: fixedHeight ?? 420 });
+// Modo oscuro y eso, es que no se que hice
   const [isDark, setIsDark] = useState(() => {
     return document.documentElement.classList.contains('dark') || 
            window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -126,6 +142,7 @@ export default function WindRoseSVG({
     };
     mediaQuery.addEventListener('change', handleMediaChange);
 
+    //tenia errores con el tamaño
     const update = () => {
       const rawWidth = fixedWidth ?? el.clientWidth;
       const w = Math.min(rawWidth, maxWidth);
@@ -148,11 +165,12 @@ export default function WindRoseSVG({
     if (datos_simulados) return generadorDatos();
     return aggregateWindRose(realSamples, { normalize: normalizeReal });
   }, [realSamples, normalizeReal]);
-
+//Para definir el radio máximo
   const maxVal = useMemo(
     () => (normalizeReal && !datos_simulados ? 100 : maxStack(data)),
     [data, normalizeReal]
   );
+
 
   const width = size.w;
   const height = size.h;
@@ -161,13 +179,13 @@ export default function WindRoseSVG({
   const cy = height / 2 + height * 0.05;
   const outerR = Math.min(width, height) * 0.33;
   const innerR = outerR * 0.10;
-
+//Cantidad de anillos y las etiquetas con los valores
   const rings = 7;
   const ringValues = Array.from({ length: rings + 1 }, (_, i) => i * 10);
   const ringStep = (outerR - innerR) / rings;
   const sectorSize = 360 / 8;
-
   const valueToRadius = (v) => innerR + ((outerR - innerR) * v) / maxVal;
+
 
   const isSmall = width < 520;
   const titleFont = isSmall ? 14 : 16;
@@ -181,7 +199,9 @@ export default function WindRoseSVG({
   const legendX = Math.max(8, cx - (legendItemWidth * Math.min(SPEED_BINS.length, legendCols)) / 2);
   const legendY = 8;
 
+  
   return (
+    //Recuadro
     <div className="rounded-2xl shadow-sm border p-4 bg-white/5 backdrop-blur border-white/10 dark:bg-slate-900/40 dark:border-white/10" style={{ boxSizing: "border-box" }}>
       <div
         ref={containerRef}
@@ -192,6 +212,7 @@ export default function WindRoseSVG({
           boxSizing: "border-box",
         }}
       >
+        {/*Titulo */}
         <div
           style={{
             fontWeight: 700,
@@ -281,7 +302,7 @@ export default function WindRoseSVG({
               />
             );
           })}
-
+          
           {DIRS.map((d, i) => {
             const angle = i * sectorSize;
             const p = polarToCartesian(cx, cy, outerR, angle);
@@ -309,6 +330,7 @@ export default function WindRoseSVG({
                   fontSize={ringFont}
                   fill="#9AA0A6"
                   textAnchor="end"
+                  
                 >
                   {v}
                 </text>
