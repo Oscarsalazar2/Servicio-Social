@@ -11,6 +11,7 @@ export default function Register() {
         email: '',
         password: '',
         password_confirmation: '',
+        motivo: '',
     });
 
     const submit = (e) => {
@@ -75,6 +76,22 @@ export default function Register() {
                     />
 
                     <InputError message={errors.password} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="motivo" value="Motivo" />
+
+                    <textarea
+                        id="motivo"
+                        name="motivo"
+                        value={data.motivo}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        rows={3}
+                        onChange={(e) => setData('motivo', e.target.value)}
+                        required
+                    />
+
+                    <InputError message={errors.motivo} className="mt-2" />
                 </div>
 
                 <div className="mt-4">
