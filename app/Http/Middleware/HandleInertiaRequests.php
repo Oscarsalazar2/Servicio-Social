@@ -21,6 +21,9 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'flash' => [
+                'registrationPending' => $request->session()->get('registration_pending'),
+            ],
         ];
     }
 }
