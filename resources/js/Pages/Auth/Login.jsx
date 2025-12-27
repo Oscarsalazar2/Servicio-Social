@@ -4,11 +4,20 @@ import GuestLayout from "@/Layouts/GuestLayout";
 
 export default function Login({ status, canResetPassword }) {
     const [active, setActive] = useState(false);
-    const { url } = usePage();
+    const [showPendingModal, setShowPendingModal] = useState(false);
+    const { url, props } = usePage();
+    const registrationPending = props?.flash?.registrationPending;
 
     useEffect(() => {
         setActive(url.includes("mode=register"));
     }, [url]);
+
+    useEffect(() => {
+        if (registrationPending) {
+            setActive(false);
+            setShowPendingModal(true);
+        }
+    }, [registrationPending]);
 
     // LOGIN (Breeze)
     const loginForm = useForm({
@@ -161,6 +170,7 @@ export default function Login({ status, canResetPassword }) {
                                 registerForm.setData("motivo", e.target.value)
                             }
                             rows={2}
+                            required
                         />
                         {registerForm.errors.motivo && (
                             <p className="field-error">
@@ -321,6 +331,34 @@ export default function Login({ status, canResetPassword }) {
                     </div>
                 </div>
             </div>
+
+            {showPendingModal && (
+                <div className="login-modal" id="modalRegistroPendiente">
+                    <div className="login-modal__backdrop" />
+                    <div className="login-modal__content">
+                        <div className="login-modal__icon">
+                            <i className="fa-regular fa-id-card"></i>
+                        </div>
+                        <h3>Registro pendiente</h3>
+                        <p>
+                            Tu cuenta ha sido creada correctamente.
+                            <br />
+                            Para activarla, acude a tu{" "}
+                            <b>Centro de Salud más cercano</b> con tu
+                            identificación para completar tu registro en
+                            eCartilla.
+                        </p>
+                        <button
+                            className="btn-rojo--blanco"
+                            id="btnModalAceptar"
+                            type="button"
+                            onClick={() => setShowPendingModal(false)}
+                        >
+                            Aceptar
+                        </button>
+                    </div>
+                </div>
+            )}
         </GuestLayout>
     );
 }
