@@ -148,8 +148,10 @@ tailwind.config.js
 
 ## Autores
 
--**Oscar Salazar**
--**Mario Flores **
--**Ximena Amador**
-Proyecto de Servicio Social — Desarrollo Web y IOT
+- **Oscar Salazar**
+- **Mario Flores**
+- **Ximena Amador**
+
+Proyecto de Servicio Social — Desarrollo Web y IoT
+
 
