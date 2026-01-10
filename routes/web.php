@@ -16,17 +16,16 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    Route::get('/dashboard', fn () => Inertia::render('Dashboard/Dashboard'))->name('dashboard');
-    Route::get('/dashboard/viento', fn () => Inertia::render('Dashboard/Viento'))->name('dashboard.wind');
-    Route::get('/dashboard/temperatura', fn () => Inertia::render('Dashboard/Temperatura'))->name('dashboard.temp');
+    Route::get('/dashboard', fn() => Inertia::render('Dashboard/Dashboard'))->name('dashboard');
+    Route::get('/dashboard/viento', fn() => Inertia::render('Dashboard/Viento'))->name('dashboard.wind');
+    Route::get('/dashboard/temperatura', fn() => Inertia::render('Dashboard/Temperatura'))->name('dashboard.temp');
 
     /*Admin*/
     Route::middleware('admin')->group(function () {
-        Route::get('/admin', fn () => Inertia::render('Admin/Index'))->name('admin');
+        Route::get('/admin', fn() => Inertia::render('Admin/Index'))->name('admin');
 
-        Route::get('/admin/usuarios', fn () => Inertia::render('Admin/Users'))->name('admin.users');
-        Route::get('/admin/panel', fn () => Inertia::render('Admin/Panel'))->name('admin.panel');
-        Route::get('/pet', fn () => Inertia::render('Pet/Index'))->name('pet.index');
+        Route::get('/pet', fn() => Inertia::render('Pet/Index'))->name('pet.index');
+        Route::get('/admin/panel', fn() => Inertia::render('Admin/Panel'))->name('admin.panel');
     });
 });
 
@@ -36,4 +35,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

@@ -93,17 +93,17 @@ export default function AuthenticatedLayout({ children }) {
                                 </TopLink>
 
                                 {/* ADMIN DESKTOP */}
+                                {isAdmin && route().has("pet.index") && (
+                                    <TopLink
+                                        href={route("pet.index")}
+                                        active={isPet}
+                                    >
+                                        Lanzamiento de Cohetes
+                                    </TopLink>
+                                )}
+
                                 {isAdmin && (
                                     <>
-                                        <TopLink
-                                            href={route("admin.users")}
-                                            active={route().current(
-                                                "admin.users"
-                                            )}
-                                        >
-                                            Usuarios
-                                        </TopLink>
-
                                         <TopLink
                                             href={route("admin.panel")}
                                             active={route().current(
@@ -113,16 +113,6 @@ export default function AuthenticatedLayout({ children }) {
                                             Admin
                                         </TopLink>
                                     </>
-                                )}
-
-                                {/* PET DESKTOP (si existe) */}
-                                {isAdmin && route().has("pet.index") && (
-                                    <TopLink
-                                        href={route("pet.index")}
-                                        active={isPet}
-                                    >
-                                        Lanzamiento de Cohetes
-                                    </TopLink>
                                 )}
                             </div>
                         </div>
@@ -270,13 +260,6 @@ export default function AuthenticatedLayout({ children }) {
                         {/* ADMIN MOBILE */}
                         {isAdmin && (
                             <>
-                                <ResponsiveNavLink
-                                    href={route("admin.users")}
-                                    active={route().current("admin.users")}
-                                >
-                                    Usuarios
-                                </ResponsiveNavLink>
-
                                 <ResponsiveNavLink
                                     href={route("admin.panel")}
                                     active={route().current("admin.panel")}
