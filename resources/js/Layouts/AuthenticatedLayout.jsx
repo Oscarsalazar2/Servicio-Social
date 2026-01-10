@@ -48,6 +48,7 @@ export default function AuthenticatedLayout({ children }) {
     const isInicio = current === "dashboard";
     const isWind = current === "dashboard.wind";
     const isTemp = current === "dashboard.temp";
+    const isClimate = current === "dashboard.climate";
 
     const isAdmin = user?.role === "admin";
     const isPet = route().current("pet.*");
@@ -90,6 +91,13 @@ export default function AuthenticatedLayout({ children }) {
                                     active={isTemp}
                                 >
                                     Temperatura
+                                </TopLink>
+
+                                <TopLink
+                                    href={route("dashboard.climate")}
+                                    active={isClimate}
+                                >
+                                    Clima
                                 </TopLink>
 
                                 {/* ADMIN DESKTOP */}
@@ -255,6 +263,13 @@ export default function AuthenticatedLayout({ children }) {
                             active={isTemp}
                         >
                             Temperatura
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink
+                            href={route("dashboard.climate")}
+                            active={isClimate}
+                        >
+                            Clima
                         </ResponsiveNavLink>
 
                         {/* ADMIN MOBILE */}
