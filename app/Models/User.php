@@ -24,6 +24,8 @@ class User extends Authenticatable
         'role',
         'motivo',
         'is_active',
+        'enable_notifications',
+        'telegram_username',
     ];
 
     /**
@@ -47,6 +49,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'enable_notifications' => 'boolean',
         ];
     }
 }
