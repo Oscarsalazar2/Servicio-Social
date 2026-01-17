@@ -3,10 +3,10 @@ import React, {
   useRef, 
   useEffect, 
   useState } from "react";
+import PanelVidrio from "../ui/PanelVidrio";
+
 
   
-const datos_simulados = true;
-
 const DIRS = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
 //Rangos de velocidad y colores de cada uno
 const SPEED_BINS = [
@@ -15,63 +15,6 @@ const SPEED_BINS = [
   { key: "b20_30", label: "20-30 km/h", min: 20, max: 30, color: "#FF8A00" },
   { key: "b30_40", label: "30-40 km/h", min: 30, max: 40, color: "#FF1E1E" },
 ];
-
-// Convierte grados a los 8 puntos cardinales
-function degToDir8(deg) {
-  const d = ((deg % 360) + 360) % 360;
-  const idx = Math.round(d / 45) % 8;
-  return DIRS[idx];
-}
-// Asigna la velocidad a un bin
-function speedToBinKey(speedKmh) {
-  for (const b of SPEED_BINS) if (speedKmh >= b.min && speedKmh < b.max) return b.key;
-  return null;
-}
-
-function aggregateWindRose(samples, { normalize = false } = {}) {
-  const base = DIRS.map((dir) => {
-    const row = { dir };
-    for (const b of SPEED_BINS) row[b.key] = 0;
-    return row;
-  });
-  if (!Array.isArray(samples) || samples.length === 0) return base;
-
-  
-  const dirIndex = new Map(DIRS.map((d, i) => [d, i]));
-  let total = 0;
-
-  for (const s of samples) {
-    const speed = Number(s?.speedKmh);
-    const deg = Number(s?.directionDeg);
-    if (!Number.isFinite(speed) || !Number.isFinite(deg) || speed < 0) continue;
-//Convierte los grados a DIR y lo asigna al bin
-    const dir = degToDir8(deg);
-    const binKey = speedToBinKey(speed);
-    if (!binKey) continue;
-
-    base[dirIndex.get(dir)][binKey] += 1;
-    total += 1;
-  }
-
-  if (!normalize || total === 0) return base;
-
-  for (const row of base) {
-    for (const b of SPEED_BINS) row[b.key] = (row[b.key] / total) * 100;
-  }
-  return base;
-}
-function generadorDatos() {
-  const dirWeight = { N: 6, NE: 8, E: 18, SE: 22, S: 70, SW: 55, W: 10, NW: 7 };
-  const binShare = { b0_10: 0.55, b10_20: 0.28, b20_30: 0.13, b30_40: 0.04 };
-  const noise = (x) => x * (0.92 + Math.random() * 0.16);
-
-  return DIRS.map((dir) => {
-    const total = noise(dirWeight[dir] ?? 10);
-    const row = { dir };
-    for (const b of SPEED_BINS) row[b.key] = Math.round(total * (binShare[b.key] ?? 0));
-    return row;
-  });
-}
 
 // Convierte coordenadas polares a cartesianas
 function polarToCartesian(cx, cy, r, angleDeg) {
@@ -110,9 +53,8 @@ export default function WindRoseSVG({
   title = "Rosa de Viento",
   width: fixedWidth,        
   height: fixedHeight,      
-  realSamples = [],
-  normalizeReal = false,    // false conteos, true %
   maxWidth = 520,           // límite superior de ancho
+  data: windRoseData = [],  // datos del Dashboard
 }) {
   const containerRef = useRef(null);
 //tamaño del SVG
@@ -162,13 +104,29 @@ export default function WindRoseSVG({
   }, [fixedWidth, fixedHeight, maxWidth]);
 
   const data = useMemo(() => {
-    if (datos_simulados) return generadorDatos();
-    return aggregateWindRose(realSamples, { normalize: normalizeReal });
-  }, [realSamples, normalizeReal]);
+    // Convertir datos de windRoseData al formato 
+    if (Array.isArray(windRoseData) && windRoseData.length > 0) {
+      return windRoseData.map((item) => ({
+        dir: item.dir,
+        b0_10: item.r0_10 || 0,
+        b10_20: item.r10_20 || 0,
+        b20_30: item.r20_30 || 0,
+        b30_40: item.r30_40 || 0,
+      }));
+    }
+    // Retornar estructura vacía si no hay datos
+    return DIRS.map((dir) => ({
+      dir,
+      b0_10: 0,
+      b10_20: 0,
+      b20_30: 0,
+      b30_40: 0,
+    }));
+  }, [windRoseData]);
 //Para definir el radio máximo
   const maxVal = useMemo(
-    () => (normalizeReal && !datos_simulados ? 100 : maxStack(data)),
-    [data, normalizeReal]
+    () => maxStack(data),
+    [data]
   );
 
 
@@ -201,8 +159,7 @@ export default function WindRoseSVG({
 
   
   return (
-    //Recuadro
-    <div className="rounded-2xl shadow-sm border p-4 bg-white/5 backdrop-blur border-white/10 dark:bg-slate-900/40 dark:border-white/10" style={{ boxSizing: "border-box" }}>
+    <PanelVidrio title={title}>
       <div
         ref={containerRef}
         style={{
@@ -212,20 +169,6 @@ export default function WindRoseSVG({
           boxSizing: "border-box",
         }}
       >
-        {/*Titulo */}
-        <div
-          style={{
-            fontWeight: 700,
-            marginBottom: 8,
-            fontSize: titleFont,
-            lineHeight: 1.2,
-            textAlign: "center",
-            color: isDark ? "#f4f5f6ff" : "#1f2937",
-          }}
-        >
-          {title}
-        </div>
-
         <svg
           width="100%"
           height={height}
@@ -251,12 +194,6 @@ export default function WindRoseSVG({
             );
           })}
         </g>
-{/* Definición del clip para limitar el dibujo al círculo exterior 
-        <defs>
-          <clipPath id="roseClip">
-            <circle cx={cx} cy={cy} r={outerR} />
-          </clipPath>
-        </defs>*/}
 
           {/* Visualizacion de los datos (columnas coloreadas) */}
         <g clipPath="url(#roseClip)" pointerEvents="none">
@@ -359,8 +296,7 @@ export default function WindRoseSVG({
         {/* Centro del círculo */}
         <circle cx={cx} cy={cy} r={isSmall ? 1 : 1.2} fill="#777" />
       </svg>
-  
-    </div>
-    </div>
+      </div>
+    </PanelVidrio>
   );
 }

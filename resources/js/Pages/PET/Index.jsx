@@ -52,6 +52,7 @@ export default function PetIndex() {
     const user = usePage().props.auth.user;
 
     // Seguridad extra en UI (backend ya lo protege)
+    console.log("ROL DEL USUARIO:", user?.role);
     if (user?.role !== "admin") {
         return (
             <AuthenticatedLayout
