@@ -92,12 +92,7 @@ export default function AuthenticatedLayout({ children }) {
                                 >
                                     Temperatura
                                 </TopLink>
-                                <TopLink
-                                    href={route("dashboard.climate")}
-                                    active={isClimate}
-                                >
-                                    Clima
-                                </TopLink>
+
                                 {/* ADMIN DESKTOP */}
                                 {isAdmin && route().has("pet.index") && (
                                     <TopLink
@@ -261,12 +256,6 @@ export default function AuthenticatedLayout({ children }) {
                             active={isTemp}
                         >
                             Temperatura
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink
-                            href={route("dashboard.climate")}
-                            active={isClimate}
-                        >
-                            Clima
                         </ResponsiveNavLink>
 
                         {/* ADMIN MOBILE */}

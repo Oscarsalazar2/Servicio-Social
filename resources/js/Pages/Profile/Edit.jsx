@@ -2,7 +2,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import DeleteUserForm from "./Partials/DeleteUserForm";
 import UpdatePasswordForm from "./Partials/UpdatePasswordForm";
-import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationForm";
+import Notificacaciones from "./Partials/Notificacaciones";
 
 export default function Edit({ mustVerifyEmail, status }) {
     return (
@@ -32,12 +32,9 @@ export default function Edit({ mustVerifyEmail, status }) {
 
             <div className="py-12 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 min-h-screen">
                 <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
+
                     <div className="bg-white dark:bg-gray-800 p-6 shadow-lg rounded-xl border border-blue-200 dark:border-gray-700 hover:shadow-xl transition-shadow duration-300">
-                        <UpdateProfileInformationForm
-                            mustVerifyEmail={mustVerifyEmail}
-                            status={status}
-                            className="max-w-xl"
-                        />
+                        <Notificacaciones className="max-w-xl" />
                     </div>
 
                     <div className="bg-white dark:bg-gray-800 p-6 shadow-lg rounded-xl border border-blue-200 dark:border-gray-700 hover:shadow-xl transition-shadow duration-300">
