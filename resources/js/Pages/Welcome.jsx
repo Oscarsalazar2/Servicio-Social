@@ -57,102 +57,104 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                 <div className="relative flex min-h-screen flex-col selection:bg-[gray] selection:text-white">
                     {/* HEADER RESPONSIVO */}
                     <header className="w-full bg-[#071024]">
-    <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
-        <div className="flex h-16 items-center justify-between sm:h-20">
-            {/* LOGO + NOMBRE - SOLO TAMAÑO DE LOGO MODIFICADO */}
-            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                {/* LOGO CON TAMAÑOS AUMENTADOS */}
-                <img
-                    src={logo}
-                    alt="Logo Estación Meteorológica"
-                    className="h-14 w-auto sm:h-24 md:h-28 object-contain
+                        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
+                            <div className="flex h-16 items-center justify-between sm:h-20">
+                                {/* LOGO + NOMBRE - SOLO TAMAÑO DE LOGO MODIFICADO */}
+                                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                                    {/* LOGO CON TAMAÑOS AUMENTADOS */}
+                                    <img
+                                        src={logo}
+                                        alt="Logo Estación Meteorológica"
+                                        className="h-14 w-auto sm:h-24 md:h-28 object-contain
                      drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]
                      sm:drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]
                      sm:-mt-[1px]"
-                />
+                                    />
 
-                <h1 className="text-white leading-none min-w-0">
-                    <span className="block text-sm sm:text-lg md:text-xl font-semibold truncate">
-                        Estación
-                    </span>
-                    <span className="block text-xs sm:text-base md:text-lg font-medium text-white/90 truncate">
-                        Meteorológica
-                    </span>
-                </h1>
-            </div>
+                                    <h1 className="text-white leading-none min-w-0">
+                                        <span className="block text-sm sm:text-lg md:text-xl font-semibold truncate">
+                                            Estación
+                                        </span>
+                                        <span className="block text-xs sm:text-base md:text-lg font-medium text-white/90 truncate">
+                                            Meteorológica
+                                        </span>
+                                    </h1>
+                                </div>
 
-            {/* NAV - TODO IGUAL */}
-            <nav className="flex items-center gap-2 sm:gap-3 shrink-0">
-                {/* Theme toggle (siempre visible) */}
-                <div className="flex items-center gap-1 rounded-xl border border-white/15 bg-white/10 p-1">
-                    <button
-                        onClick={() => setTheme("light")}
-                        className={[
-                            "rounded-lg px-3 py-1.5 text-xs font-semibold transition",
-                            theme === "light"
-                                ? "bg-white text-slate-900"
-                                : "text-white/80 hover:bg-white/10",
-                        ].join(" ")}
-                        type="button"
-                    >
-                        <i className="fa-solid fa-sun"></i>
-                    </button>
+                                {/* NAV - TODO IGUAL */}
+                                <nav className="flex items-center gap-2 sm:gap-3 shrink-0">
+                                    {/* Theme toggle (siempre visible) */}
+                                    <div className="flex items-center gap-1 rounded-xl border border-white/15 bg-white/10 p-1">
+                                        <button
+                                            onClick={() => setTheme("light")}
+                                            className={[
+                                                "rounded-lg px-3 py-1.5 text-xs font-semibold transition",
+                                                theme === "light"
+                                                    ? "bg-white text-slate-900"
+                                                    : "text-white/80 hover:bg-white/10",
+                                            ].join(" ")}
+                                            type="button"
+                                        >
+                                            <i className="fa-solid fa-sun"></i>
+                                        </button>
 
-                    <button
-                        onClick={() => setTheme("dark")}
-                        className={[
-                            "rounded-lg px-3 py-1.5 text-xs font-semibold transition",
-                            theme === "dark"
-                                ? "bg-white text-slate-900"
-                                : "text-white/80 hover:bg-white/10",
-                        ].join(" ")}
-                        type="button"
-                    >
-                        <i className="fa-solid fa-moon"></i>
-                    </button>
-                </div>
+                                        <button
+                                            onClick={() => setTheme("dark")}
+                                            className={[
+                                                "rounded-lg px-3 py-1.5 text-xs font-semibold transition",
+                                                theme === "dark"
+                                                    ? "bg-white text-slate-900"
+                                                    : "text-white/80 hover:bg-white/10",
+                                            ].join(" ")}
+                                            type="button"
+                                        >
+                                            <i className="fa-solid fa-moon"></i>
+                                        </button>
+                                    </div>
 
-                {/* BOTÓN MENÚ MOBILE */}
-                <button
-                    onClick={() => setMobileMenu(!mobileMenu)}
-                    className="sm:hidden rounded-lg bg-white/10 p-2 text-white hover:bg-white/20"
-                    aria-label="Abrir menú"
-                    type="button"
-                >
-                    <i className="fa-solid fa-bars"></i>
-                </button>
+                                    {/* BOTÓN MENÚ MOBILE */}
+                                    <button
+                                        onClick={() =>
+                                            setMobileMenu(!mobileMenu)
+                                        }
+                                        className="sm:hidden rounded-lg bg-white/10 p-2 text-white hover:bg-white/20"
+                                        aria-label="Abrir menú"
+                                        type="button"
+                                    >
+                                        <i className="fa-solid fa-bars"></i>
+                                    </button>
 
-                {/* BOTONES DESKTOP */}
-                <div className="hidden sm:flex items-center gap-3">
-                    {auth.user ? (
-                        <Link
-                            href={route("dashboard")}
-                            className="rounded-md bg-[#009688] px-4 py-2 text-sm font-semibold text-white hover:bg-[#00796b]"
-                        >
-                            Acceso
-                        </Link>
-                    ) : (
-                        <>
-                            <Link
-                                href={route("login")}
-                                className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-[#00796b] hover:text-white"
-                            >
-                                Iniciar sesión
-                            </Link>
+                                    {/* BOTONES DESKTOP */}
+                                    <div className="hidden sm:flex items-center gap-3">
+                                        {auth.user ? (
+                                            <Link
+                                                href={route("dashboard")}
+                                                className="rounded-md bg-[#009688] px-4 py-2 text-sm font-semibold text-white hover:bg-[#00796b]"
+                                            >
+                                                Acceso
+                                            </Link>
+                                        ) : (
+                                            <>
+                                                <Link
+                                                    href={route("login")}
+                                                    className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-[#00796b] hover:text-white"
+                                                >
+                                                    Iniciar sesión
+                                                </Link>
 
-                            <Link
-                                href={`${route("login")}?mode=register`}
-                                className="rounded-md bg-[#009688] px-4 py-2 text-sm font-semibold text-white hover:bg-white hover:text-[#071024]"
-                            >
-                                Registrarse
-                            </Link>
-                        </>
-                    )}
-                </div>
-            </nav>
-        </div>
-    </div>
-</header>
+                                                <Link
+                                                    href={`${route("login")}?mode=register`}
+                                                    className="rounded-md bg-[#009688] px-4 py-2 text-sm font-semibold text-white hover:bg-white hover:text-[#071024]"
+                                                >
+                                                    Registrarse
+                                                </Link>
+                                            </>
+                                        )}
+                                    </div>
+                                </nav>
+                            </div>
+                        </div>
+                    </header>
 
                     {/* MENÚ TELEFONO*/}
                     <div
