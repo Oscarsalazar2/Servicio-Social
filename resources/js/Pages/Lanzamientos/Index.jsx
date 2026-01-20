@@ -124,7 +124,7 @@ export default function PetIndex() {
                 </div>
             }
         >
-            <Head title="Lanzamiento de cohetes PET" />
+            <Head title="Lanzamiento de cohetes" />
 
             <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
                 {/* KPIs */}

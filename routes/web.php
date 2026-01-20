@@ -24,7 +24,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('admin')->group(function () {
         Route::get('/admin', fn() => Inertia::render('Admin/Index'))->name('admin');
 
-        Route::get('/pet', fn() => Inertia::render('PET/Index'))->name('pet.index');
+        Route::get('/lanzamientos', fn() => Inertia::render('Lanzamientos/Index'))->name('lanzamientos.index');
         Route::get('/admin/panel', fn() => Inertia::render('Admin/Panel'))->name('admin.panel');
     });
 });

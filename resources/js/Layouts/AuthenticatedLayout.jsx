@@ -3,6 +3,7 @@ import { Link, usePage } from "@inertiajs/react";
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
+import logob from "../../images/logob.png";
 
 function TopLink({ href, active, children }) {
     return (
@@ -51,7 +52,7 @@ export default function AuthenticatedLayout({ children }) {
     const isClimate = current === "dashboard.climate";
 
     const isAdmin = user?.role === "admin";
-    const isPet = route().current("pet.*");
+    const isLanzamientos = route().current("lanzamientos.*");
 
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-slate-950">
@@ -99,10 +100,10 @@ export default function AuthenticatedLayout({ children }) {
                                     Clima
                                 </TopLink>
                                 {/* ADMIN DESKTOP */}
-                                {isAdmin && route().has("pet.index") && (
+                                {isAdmin && route().has("lanzamientos.index") && (
                                     <TopLink
-                                        href={route("pet.index")}
-                                        active={isPet}
+                                        href={route("lanzamientos.index")}
+                                        active={isLanzamientos}
                                     >
                                         Lanzamiento de Cohetes
                                     </TopLink>
@@ -281,11 +282,11 @@ export default function AuthenticatedLayout({ children }) {
                             </>
                         )}
 
-                        {/* PET MOBILE (si existe) */}
-                        {isAdmin && route().has("pet.index") && (
+                        {/* LANZAMIENTOS MOBILE (si existe) */}
+                        {isAdmin && route().has("lanzamientos.index") && (
                             <ResponsiveNavLink
-                                href={route("pet.index")}
-                                active={isPet}
+                                href={route("lanzamientos.index")}
+                                active={isLanzamientos}
                             >
                                 Lanzamiento de Cohetes
                             </ResponsiveNavLink>

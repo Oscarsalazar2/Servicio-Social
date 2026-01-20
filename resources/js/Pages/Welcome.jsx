@@ -59,29 +59,28 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                     <header className="w-full bg-[#071024]">
                         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
                             <div className="flex h-16 items-center justify-between sm:h-20">
-                                {/* LOGO + NOMBRE - SOLO TAMAÑO DE LOGO MODIFICADO */}
+                                {/* LOGO & NOMBRE*/}
                                 <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                                    {/* LOGO CON TAMAÑOS AUMENTADOS */}
                                     <img
                                         src={logo}
                                         alt="Logo Estación Meteorológica"
-                                        className="h-14 w-auto sm:h-24 md:h-28 object-contain
-                     drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]
-                     sm:drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]
-                     sm:-mt-[1px]"
+                                        className="h-16 w-auto sm:h-28 md:h-32 object-contain
+                                        drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]
+                                        sm:drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]
+                                        sm:-mt-[1px]"
                                     />
 
                                     <h1 className="text-white leading-none min-w-0">
                                         <span className="block text-sm sm:text-lg md:text-xl font-semibold truncate">
-                                            Estación
+                                            NOMBRE
                                         </span>
                                         <span className="block text-xs sm:text-base md:text-lg font-medium text-white/90 truncate">
-                                            Meteorológica
+                                            Est. Meteorológica
                                         </span>
                                     </h1>
                                 </div>
 
-                                {/* NAV - TODO IGUAL */}
+                                {/* NAVEGACION*/}
                                 <nav className="flex items-center gap-2 sm:gap-3 shrink-0">
                                     {/* Theme toggle (siempre visible) */}
                                     <div className="flex items-center gap-1 rounded-xl border border-white/15 bg-white/10 p-1">
