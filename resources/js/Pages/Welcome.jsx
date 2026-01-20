@@ -1,6 +1,5 @@
 import { Head, Link } from "@inertiajs/react";
-
-
+import { useEffect, useState } from "react";
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
     const handleImageError = () => {
@@ -25,7 +24,7 @@ const [theme, setTheme] = useState(
         if (theme === "dark") root.classList.add("dark");
         else root.classList.remove("dark");
     }, [theme]);
-    
+
     return (
         <>
             <Head title="Bienvenido" />
@@ -46,7 +45,34 @@ const [theme, setTheme] = useState(
                             <h1 className="text-md font-normal text-white">
                                 Estación Meteorológica
                             </h1>
-                            
+                            {/* Toggle Día/Noche */}
+                            <div className="flex items-center gap-1 bg-white/10 p-1 rounded-xl border border-white/15">
+                                <button
+                                    onClick={() => setTheme("light")}
+                                    className={[
+                                        "px-3 py-1.5 rounded-lg text-xs font-semibold transition",
+                                        theme === "light"
+                                            ? "bg-white text-slate-900"
+                                            : "text-white/80 hover:bg-white/10",
+                                    ].join(" ")}
+                                    type="button"
+                                >
+                                    <i className="fa-solid fa-sun"></i>
+                                </button>
+
+                                <button
+                                    onClick={() => setTheme("dark")}
+                                    className={[
+                                        "px-3 py-1.5 rounded-lg text-xs font-semibold transition",
+                                        theme === "dark"
+                                            ? "bg-white text-slate-900"
+                                            : "text-white/80 hover:bg-white/10",
+                                    ].join(" ")}
+                                    type="button"
+                                >
+                                    <i className="fa-solid fa-moon"></i>
+                                </button>
+                            </div>
                             {/* BOTONES DERECHA */}
                             <nav className="flex items-center">
                                 {auth.user ? (
