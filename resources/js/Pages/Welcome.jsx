@@ -1,6 +1,7 @@
 import { Head, Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import logo from "../../Images/logo.png";
+import logo_copia from "../../Images/logo_copia.png";
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
     const handleImageError = () => {
@@ -53,8 +54,8 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
         <>
             <Head title="Bienvenido" />
 
-            <div className="min-h-screen bg-gray-50 text-black/50 dark:bg-black dark:text-white/50">
-                <div className="relative flex min-h-screen flex-col selection:bg-[gray] selection:text-white">
+            <div className="min-h-screen bg-gray-50 text-black/50 dark:bg-[#13232F] dark:text-white/50">
+                <div className="relative flex min-h-screen flex-col">
                     {/* HEADER RESPONSIVO */}
                     <header className="w-full bg-[#071024]">
                         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
@@ -72,7 +73,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                                     <h1 className="text-white leading-none min-w-0">
                                         <span className="block text-sm sm:text-lg md:text-xl font-semibold truncate">
-                                            NOMBRE
+                                            METEOR
                                         </span>
                                         <span className="block text-xs sm:text-base md:text-lg font-medium text-white/90 truncate">
                                             Est. Meteorológica
@@ -130,7 +131,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                                 href={route("dashboard")}
                                                 className="rounded-md bg-[#009688] px-4 py-2 text-sm font-semibold text-white hover:bg-[#00796b]"
                                             >
-                                                Acceso
+                                                Acceder
                                             </Link>
                                         ) : (
                                             <>
@@ -167,7 +168,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                     href={route("dashboard")}
                                     className="rounded-md bg-[#009688] px-4 py-2 text-sm font-semibold text-white text-center"
                                 >
-                                    Acceso
+                                    Acceder
                                 </Link>
                             ) : (
                                 <>
@@ -192,12 +193,12 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                     {/* CONTENIDO */}
                     <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 mt-8 lg:mt-16">
                         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#071024] dark:text-white">
-                            Bienvenido a -------
+                            Bienvenido a METEOR
                         </h2>
-
+                        
                         <main className="mt-6">
                             <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-                                <div className="flex items-start gap-4 rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[gray] lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[gray]">
+                                <div className="flex items-start gap-4 col-span-1 rounded-lg bg-white-10 p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[gray] lg:pb-10 dark:bg-transparent/20 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[gray]">
                                     <div className="pt-3 sm:pt-5">
                                         <h2 className="text-lg sm:text-xl font-normal text-black dark:text-white">
                                             Consulta en tiempo real las
@@ -209,7 +210,19 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                         </h2>
                                     </div>
                                 </div>
-                            </div>
+
+                                <div className="pt-3 sm:pt-1 col-span-1 flex justify-center">
+                                        <img
+                                        src={logo_copia}
+                                        alt="Logo Estación Meteorológica"
+                                        className="h-40 w-200 sm:h-58 md:h-74 object-contain
+                                        drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]
+                                        sm:drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]
+                                        sm:mt-[1px]"
+                                        />
+                                </div>
+                                
+                            </div> 
                         </main>
 
                         <section id="equipo" className="py-12 sm:py-16">
@@ -226,7 +239,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 {TEAM.map((m) => (
                                     <article
                                         key={m.email}
-                                        className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800"
+                                        className="rounded-2xl border border-slate-200 bg-white/15 p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800"
                                     >
                                         <div className="flex flex-col gap-3">
                                             <div className="grid h-12 w-12 place-items-center rounded-full bg-emerald-600 font-bold text-white dark:bg-emerald-500">

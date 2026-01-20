@@ -3,7 +3,7 @@ import { Link, usePage } from "@inertiajs/react";
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
-import logob from "../../images/logob.png";
+import logo_liner_s from "../../images/Logo_liner_s.png";
 
 function TopLink({ href, active, children }) {
     return (
@@ -65,7 +65,15 @@ export default function AuthenticatedLayout({ children }) {
                                 href={route("dashboard")}
                                 className="flex items-center gap-2"
                             >
-                                <ApplicationLogo className="block h-8 w-auto fill-current text-white" />
+                                <img
+                                        src={logo_liner_s}
+                                        alt="Logo Estación Meteorológica"
+                                        className="h-16 w-auto sm:h-26 md:h-28 object-contain
+                                        drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]
+                                        sm:drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]
+                                        sm:mt-[6px]"
+                                    />
+                                {/*<ApplicationLogo className="block h-8 w-auto fill-current text-white" />*/}
                                 <span className="text-white font-extrabold tracking-wide">
                                     Estación Meteorológica
                                 </span>
