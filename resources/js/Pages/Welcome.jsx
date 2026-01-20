@@ -29,7 +29,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
         {
             initials: "XA",
             name: "Ximena Amador",
-            email: "l22260058@matamoros.tecnm.mx",
+            email: "l22260145@matamoros.tecnm.mx",
             role: "Desarrolladora Frontend",
         },
         {
@@ -145,7 +145,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                     <h2 className="text-2xl font-bold tracking-tight">
                                         Conócenos
                                     </h2>
-                                    <p className="mt-2 text-sm text-slate-500">
+                                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                                         Equipo 1 el mas very good.
                                     </p>
                                 </div>
@@ -154,24 +154,24 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                     {TEAM.map((m) => (
                                         <article
                                             key={m.email}
-                                            className="rounded-[18px] border border-slate-200 bg-white p-5 shadow-sm"
+                                            className="rounded-[18px] border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800"
                                         >
                                             <div className="flex items-start gap-3">
-                                                <div className="grid h-12 w-12 place-items-center rounded-full bg-emerald-600 font-bold text-white">
+                                                <div className="grid h-12 w-12 place-items-center rounded-full bg-emerald-600 font-bold text-white dark:bg-emerald-500">
                                                     {m.initials}
                                                 </div>
 
                                                 <div className="min-w-0">
-                                                    <div className="font-semibold text-slate-900">
+                                                    <div className="font-semibold text-slate-900 dark:text-white">
                                                         {m.name}
                                                     </div>
 
                                                     {m.role ? (
-                                                        <div className="text-sm text-slate-500">
+                                                        <div className="text-sm text-slate-500 dark:text-slate-400">
                                                             {m.role}
                                                         </div>
                                                     ) : (
-                                                        <div className="text-sm text-slate-500">
+                                                        <div className="text-sm text-slate-500 dark:text-slate-400">
                                                             &nbsp;
                                                         </div>
                                                     )}
