@@ -50,6 +50,13 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
     const [mobileMenu, setMobileMenu] = useState(false);
 
+    const scrollToId = (id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const y = el.getBoundingClientRect().top + window.pageYOffset - 80;
+        window.scrollTo({ top: y, behavior: "smooth" });
+    };
+
     return (
         <>
             <Head title="Bienvenido" />
@@ -69,6 +76,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                         drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]
                                         sm:drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]
                                         sm:-mt-[1px]"
+                                        onError={handleImageError}
                                     />
 
                                     <h1 className="text-white leading-none min-w-0">
@@ -190,12 +198,73 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                         </div>
                     </div>
 
-                    {/* CONTENIDO */}
+                    {/* HERO*/}
+                    <section
+                        className="
+                          relative overflow-hidden
+                          min-h-[calc(100vh-64px)] sm:min-h-[calc(100vh-80px)]
+                          flex items-center justify-center text-center
+                          px-4 sm:px-6
+                        "
+                    >
+                        {/* Fondo */}
+                        <div
+                            className="
+                              absolute inset-0 -z-10
+                              bg-[linear-gradient(rgba(5,10,25,0.75),rgba(5,10,25,0.9)),url('https://estaciondemeteorologia.com/wp-content/uploads/2019/02/que-es-una-estacion-meteorologica-compressed.jpg')]
+                              bg-cover bg-center
+                              bg-scroll md:bg-fixed
+                            "
+                        />
+
+                        {/* Contenido */}
+                        <div className="max-w-4xl py-16 sm:py-24">
+                            <h2
+                                className="
+                                  text-4xl sm:text-5xl lg:text-6xl
+                                  font-extrabold leading-tight tracking-tight
+                                  text-transparent bg-clip-text
+                                  bg-gradient-to-r from-sky-300 to-emerald-300
+                                  "
+                            >
+                                BIENVENIDO A METEOR
+                            </h2>
+
+                            <p className="mt-6 text-base sm:text-lg leading-relaxed text-white/90 max-w-3xl mx-auto">
+                                Plataforma avanzada para el monitoreo en tiempo
+                                real de variables climáticas como temperatura,
+                                humedad, velocidad del viento, presión
+                                atmosférica y calidad del aire. Visualiza,
+                                analiza y toma decisiones basadas en datos
+                                precisos.
+                            </p>
+                        </div>
+
+                        {/*flechitas*/}
+                        <button
+                            type="button"
+                            onClick={() => scrollToId("equipo")}
+                            aria-label="Desliza para descubrir"
+                            className="absolute bottom-7 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/90"
+                        >
+                            <span className="text-xs tracking-wide opacity-90 select-none">
+                                Desliza para descubrir
+                            </span>
+
+                            <span className="flex flex-col items-center gap-1">
+                                <span className="chevron-down opacity-30"></span>
+                                <span className="chevron-down opacity-60 delay-150"></span>
+                                <span className="chevron-down opacity-90 delay-300"></span>
+                            </span>
+                        </button>
+                    </section>
+
+                    {/* OLA TE AMO*/}
                     <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 mt-8 lg:mt-16">
                         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#071024] dark:text-white">
                             Bienvenido a METEOR
                         </h2>
-                        
+
                         <main className="mt-6">
                             <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
                                 <div className="flex items-start gap-4 col-span-1 rounded-lg bg-white-10 p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[gray] lg:pb-10 dark:bg-transparent/10 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[gray]">
@@ -210,17 +279,18 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 </div>
 
                                 <div className="pt-3 sm:pt-1 col-span-1 flex justify-center">
-                                        <img
+                                    <img
                                         src={logo_copia}
                                         alt="Logo Estación Meteorológica"
-                                        className="h-40 w-200 sm:h-58 md:h-74 object-contain
-                                        drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]
-                                        sm:drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]
-                                        sm:mt-[1px]"
-                                        />
+                                        className="
+                                          h-40 w-auto sm:h-56 md:h-72 object-contain
+                                          drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]
+                                          sm:drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]
+                                          sm:mt-[1px]
+                                        "
+                                    />
                                 </div>
-                                
-                            </div> 
+                            </div>
                         </main>
 
                         <section id="equipo" className="py-12 sm:py-16">

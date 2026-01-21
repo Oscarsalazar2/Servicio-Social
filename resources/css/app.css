@@ -470,4 +470,29 @@
     pointer-events: auto;
   }
 }
+.chevron-down {
+  width: 14px;
+  height: 14px;
+  border-right: 3px solid rgba(255,255,255,.9);
+  border-bottom: 3px solid rgba(255,255,255,.9);
+  transform: rotate(45deg);
+  animation: chevronDown 1.4s infinite;
+}
+
+.delay-150 { animation-delay: .15s; }
+.delay-300 { animation-delay: .3s; }
+
+@keyframes chevronDown {
+  0% {
+    opacity: .2;
+    transform: rotate(45deg) translate(0, 0);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: .1;
+    transform: rotate(45deg) translate(0, 10px);
+  }
+}
 
