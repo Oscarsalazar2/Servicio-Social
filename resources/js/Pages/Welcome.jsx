@@ -198,16 +198,14 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                         
                         <main className="mt-6">
                             <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-                                <div className="flex items-start gap-4 col-span-1 rounded-lg bg-white-10 p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[gray] lg:pb-10 dark:bg-transparent/20 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[gray]">
+                                <div className="flex items-start gap-4 col-span-1 rounded-lg bg-white-10 p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[gray] lg:pb-10 dark:bg-transparent/10 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[gray]">
                                     <div className="pt-3 sm:pt-5">
-                                        <h2 className="text-lg sm:text-xl font-normal text-black dark:text-white">
-                                            Consulta en tiempo real las
-                                            condiciones climatológicas dentro
-                                            del Instituto Tecnológico de
-                                            Matamoros a través de esta estación
-                                            meteorológica que recolecta datos
-                                            ambientales.
-                                        </h2>
+                                        <p className="text-xl sm:text-xl font-normal text-black dark:text-white">
+                                            Consulta en tiempo real las condiciones 
+                                            climatológicas del Instituto Tecnológico de Matamoros 
+                                            a través de datos ambientales recolectados y 
+                                            actualizados constantemente.
+                                        </p>
                                     </div>
                                 </div>
 
@@ -228,10 +226,10 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                         <section id="equipo" className="py-12 sm:py-16">
                             <div className="mb-6">
                                 <h2 className="text-2xl font-bold tracking-tight text-[#071024] dark:text-white">
-                                    Conócenos
+                                    Conocenos
                                 </h2>
                                 <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                                    Equipo 1 el mas very good.
+                                    ....
                                 </p>
                             </div>
 
@@ -239,7 +237,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 {TEAM.map((m) => (
                                     <article
                                         key={m.email}
-                                        className="rounded-2xl border border-slate-200 bg-white/15 p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800"
+                                        className="rounded-2xl border border-slate-200 bg-white/15 p-6 shadow-sm dark:border-slate-700 dark:bg-transparent/10"
                                     >
                                         <div className="flex flex-col gap-3">
                                             <div className="grid h-12 w-12 place-items-center rounded-full bg-emerald-600 font-bold text-white dark:bg-emerald-500">
@@ -265,7 +263,16 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 ))}
                             </div>
                         </section>
-
+                        <section id="equipo" className="py-12 sm:py-16">
+                            <div className="mb-6">
+                                <h2 className="text-2xl font-bold tracking-tight text-[#071024] dark:text-white">
+                                    Acerca de
+                                </h2>
+                                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                                    ...
+                                </p>
+                            </div>
+                        </section>
                         {/* FOOTER */}
                         <footer className="py-10 sm:py-16 text-center text-sm mt-10 sm:mt-16 text-black dark:text-white/70">
                             Instituto Tecnológico de Matamoros &copy;{" "}
