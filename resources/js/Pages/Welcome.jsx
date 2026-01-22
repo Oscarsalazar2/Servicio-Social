@@ -240,11 +240,13 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                             </h2>
 
                             <p className="mt-6 text-base sm:text-lg leading-relaxed text-white/90 max-w-3xl mx-auto">
-                                Plataforma avanzada para el monitoreo en tiempo
+                                <strong>Estación Meteorológica Inteligente para Análisis
+                                Ambiental y Ciencia de Datos (METEOR).</strong><br />Es una
+                                plataforma avanzada para el monitoreo en tiempo
                                 real de variables climáticas como temperatura,
                                 humedad, velocidad del viento, presión
                                 atmosférica y calidad del aire. Visualiza,
-                                analiza y toma decisiones basadas en datos
+                                analiza y recopila información basadas en datos
                                 precisos.
                             </p>
                         </div>
