@@ -2,6 +2,7 @@ import { Head, Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import logo from "../../Images/logo.png";
 import logo_copia from "../../Images/logo_copia.png";
+import fondo_principal from "../../Images/fondo_principal.jpeg";
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
     const handleImageError = () => {
@@ -211,7 +212,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                         <div
                             className="
                               absolute inset-0 -z-10
-                              bg-[linear-gradient(rgba(5,10,25,0.75),rgba(5,10,25,0.9)),url('https://estaciondemeteorologia.com/wp-content/uploads/2019/02/que-es-una-estacion-meteorologica-compressed.jpg')]
+                              bg-[linear-gradient(rgba(5,10,25,0.75),rgba(5,10,25,0.9)),url({fondo_principal})]
                               bg-cover bg-center
                               bg-scroll md:bg-fixed
                             "
@@ -270,9 +271,9 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 <div className="flex items-start gap-4 col-span-1 rounded-lg bg-white-10 p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[gray] lg:pb-10 dark:bg-transparent/10 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[gray]">
                                     <div className="pt-3 sm:pt-5">
                                         <p className="text-xl sm:text-xl font-normal text-black dark:text-white">
-                                            Consulta en tiempo real las condiciones 
-                                            climatológicas del Instituto Tecnológico de Matamoros 
-                                            a través de datos ambientales recolectados y 
+                                            Consulta en tiempo real las condiciones
+                                            climatológicas del Instituto Tecnológico de Matamoros
+                                            a través de datos ambientales recolectados y
                                             actualizados constantemente.
                                         </p>
                                     </div>
