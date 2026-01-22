@@ -2,7 +2,7 @@ import { Head, Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import logo from "../../Images/logo.png";
 import logo_copia from "../../Images/logo_copia.png";
-import fondo_principal from "../../Images/fondo_principal.jpeg";
+import fondo_principal from "../../Images/fondo_principal.jpg";
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
     const handleImageError = () => {
@@ -165,16 +165,21 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                         </div>
                     </header>
 
-                    {/* MENÚ TELEFONO*/}
+                    {/* MENÚ TELEFONO (dropdown fijo) */}
                     <div
-                        className={`sm:hidden overflow-hidden transition-all duration-300 ${
-                            mobileMenu ? "max-h-60" : "max-h-0"
-                        }`}
+                        className={[
+                            "md:hidden fixed left-0 right-0 top-16 z-40",
+                            "overflow-hidden transition-[max-height,opacity] duration-300",
+                            mobileMenu
+                                ? "max-h-60 opacity-100"
+                                : "max-h-0 opacity-0",
+                        ].join(" ")}
                     >
                         <div className="bg-[#071024] border-t border-white/10 px-4 py-3 flex flex-col gap-2">
                             {auth.user ? (
                                 <Link
                                     href={route("dashboard")}
+                                    onClick={() => setMobileMenu(false)}
                                     className="rounded-md bg-[#009688] px-4 py-2 text-sm font-semibold text-white text-center"
                                 >
                                     Acceder
@@ -183,6 +188,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 <>
                                     <Link
                                         href={route("login")}
+                                        onClick={() => setMobileMenu(false)}
                                         className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-black text-center"
                                     >
                                         Iniciar sesión
@@ -190,6 +196,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                                     <Link
                                         href={`${route("login")}?mode=register`}
+                                        onClick={() => setMobileMenu(false)}
                                         className="rounded-md bg-[#009688] px-4 py-2 text-sm font-semibold text-white text-center"
                                     >
                                         Registrarse
@@ -202,24 +209,25 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                     {/* HERO*/}
                     <section
                         className="
-                          relative overflow-hidden
-                          min-h-[calc(100vh-64px)] sm:min-h-[calc(100vh-80px)]
-                          flex items-center justify-center text-center
-                          px-4 sm:px-6
+                        relative overflow-hidden
+                        h-[100svh] sm:h-screen
+                        flex items-center justify-center text-center
+                        px-4 sm:px-6
+                        pt-16 sm:pt-20
                         "
                     >
                         {/* Fondo */}
                         <div
-                            className="
-                              absolute inset-0 -z-10
-                              bg-[linear-gradient(rgba(5,10,25,0.75),rgba(5,10,25,0.9)),url({fondo_principal})]
-                              bg-cover bg-center
-                              bg-scroll md:bg-fixed
-                            "
+                            className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+                            style={{
+                                backgroundImage: `url(${fondo_principal})`,
+                            }}
                         />
 
+                        <div className="absolute inset-0 z-0 bg-[linear-gradient(rgba(5,10,25,0.75),rgba(5,10,25,0.92))]" />
+
                         {/* Contenido */}
-                        <div className="max-w-4xl py-16 sm:py-24">
+                        <div className="relative z-10 max-w-4xl py-16 sm:py-24">
                             <h2
                                 className="
                                   text-4xl sm:text-5xl lg:text-6xl
@@ -248,7 +256,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                             aria-label="Desliza para descubrir"
                             className="absolute bottom-7 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/90"
                         >
-                            <span className="text-xs tracking-wide opacity-90 select-none">
+                            <span className="text-base tracking-wide opacity-90 select-none">
                                 Desliza para descubrir
                             </span>
 
@@ -271,10 +279,12 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 <div className="flex items-start gap-4 col-span-1 rounded-lg bg-white-10 p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[gray] lg:pb-10 dark:bg-transparent/10 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[gray]">
                                     <div className="pt-3 sm:pt-5">
                                         <p className="text-xl sm:text-xl font-normal text-black dark:text-white">
-                                            Consulta en tiempo real las condiciones
-                                            climatológicas del Instituto Tecnológico de Matamoros
-                                            a través de datos ambientales recolectados y
-                                            actualizados constantemente.
+                                            Consulta en tiempo real las
+                                            condiciones climatológicas del
+                                            Instituto Tecnológico de Matamoros a
+                                            través de datos ambientales
+                                            recolectados y actualizados
+                                            constantemente.
                                         </p>
                                     </div>
                                 </div>

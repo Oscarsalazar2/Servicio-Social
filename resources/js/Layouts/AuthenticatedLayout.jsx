@@ -75,7 +75,7 @@ export default function AuthenticatedLayout({ children }) {
                                     />
                                 {/*<ApplicationLogo className="block h-8 w-auto fill-current text-white" />*/}
                                 <span className="text-white font-extrabold tracking-wide">
-                                    Estación Meteorológica
+                                    METEOR
                                 </span>
                             </Link>
 

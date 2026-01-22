@@ -16,13 +16,22 @@ class HandleInertiaRequests extends Middleware
 
     public function share(Request $request): array
     {
+        $user = $request->user();
+
         return [
             ...parent::share($request),
+
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user ? [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'role' => $user->role ?? null,
+                    'is_admin' => ($user->role ?? null) === 'admin', // opcional
+                ] : null,
             ],
+
             'flash' => [
-                'registrationPending' => $request->session()->get('registration_pending'),
+                'registrationPending' => (bool) $request->session()->get('registration_pending'),
             ],
         ];
     }
