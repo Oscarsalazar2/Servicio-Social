@@ -64,7 +64,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
             <div className="min-h-screen bg-gray-50 text-black/50 dark:bg-[#13232F] dark:text-white/50">
                 <div className="relative flex min-h-screen flex-col">
                     {/* HEADER RESPONSIVO */}
-                    <header className="w-full bg-[#071024]">
+                    <header className="fixed top-0 left-0 w-full bg-[#071024]/80 backdrop-blur-md z-50 border-b border-white/10">
                         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
                             <div className="flex h-16 items-center justify-between sm:h-20">
                                 {/* LOGO & NOMBRE*/}
