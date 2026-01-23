@@ -238,7 +238,9 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                             >
                                 BIENVENIDO A METEOR
                             </h2>
-
+                            <p className="mt-6 text-base sm:text-lg leading-relaxed text-white/90 max-w-3xl mx-auto">
+                                Estación Meteorológica Inteligente para Análisis Ambiental y Ciencia de Datos
+                            </p>
                             <p className="mt-6 text-base sm:text-lg leading-relaxed text-white/90 max-w-3xl mx-auto">
                                 Plataforma avanzada para el monitoreo en tiempo
                                 real de variables climáticas como temperatura,
@@ -270,21 +272,16 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                     {/* OLA TE AMO*/}
                     <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 mt-8 lg:mt-16">
-                        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#071024] dark:text-white">
-                            Bienvenido a METEOR
+                        <h2 className="text-xl sm:text-4xl lg:text-5xl font-semibold text-[#071024] dark:text-white">
+                            Condiciones Climáticas actuales
                         </h2>
-
                         <main className="mt-6">
-                            <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
+                            <div className="grid gap-6 lg:grid-cols-2 lg:gap-8 items-center">
                                 <div className="flex items-start gap-4 col-span-1 rounded-lg bg-white-10 p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[gray] lg:pb-10 dark:bg-transparent/10 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[gray]">
-                                    <div className="pt-3 sm:pt-5">
-                                        <p className="text-xl sm:text-xl font-normal text-black dark:text-white">
-                                            Consulta en tiempo real las
-                                            condiciones climatológicas del
-                                            Instituto Tecnológico de Matamoros a
-                                            través de datos ambientales
-                                            recolectados y actualizados
-                                            constantemente.
+                                    <div className="pt-3 sm:pt-5">    
+                                        <p className="text-xl sm:text-xl font-normal text-black dark:text-white">   
+                                            Visualiza al instante datos climatológicos dentro del Instituto Tecnológico de Matamoros,
+                                            con información actualizada en tiempo real.
                                         </p>
                                     </div>
                                 </div>
@@ -303,11 +300,11 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 </div>
                             </div>
                         </main>
-
+                        
                         <section id="equipo" className="py-12 sm:py-16">
                             <div className="mb-6">
-                                <h2 className="text-2xl font-bold tracking-tight text-[#071024] dark:text-white">
-                                    Conocenos
+                                <h2 className="text-4xl font-bold tracking-tight text-[#071024] dark:text-white">
+                                    Conócenos
                                 </h2>
                                 <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                                     ....
@@ -344,16 +341,41 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 ))}
                             </div>
                         </section>
-                        <section id="equipo" className="py-12 sm:py-16">
-                            <div className="mb-6">
-                                <h2 className="text-2xl font-bold tracking-tight text-[#071024] dark:text-white">
-                                    Acerca de
-                                </h2>
-                                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                                    ...
-                                </p>
+                    </div>
+
+                    {/*Se que no esta bonito, pero estoy tratando*/}
+                    <section className="w-full bg-[#009688] py-12 sm:py-16 dark:bg-[#009688]/90">
+                        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
+                            <div className="grid gap-6 lg:grid-cols-2 lg:gap-8 items-center">
+                                <div className="order-2 lg:order-1 w-11/12 h-96 lg:h-96 rounded-xl overflow-hidden shadow-md">
+                                    <iframe
+                                        title="Ubicación Instituto Tecnológico de Matamoros"
+                                        src="https://www.google.com/maps?q=Instituto+Tecnológico+de+Matamoros&output=embed"
+                                        class="w-full h-full border-0"
+                                        loading="lazy"
+                                        referrerpolicy="no-referrer-when-downgrade">
+                                    </iframe>
+                                </div>
+                                {/* <div className="mb-6  bg-black/5 dark:bg-white/5 p-6 rounded-lg mt-10 sm:mt-16"> */}
+                                <div className="order-1 lg:order-2 mb-6 p-6 rounded-lg">
+                                    <div className="flex items-center gap-4">
+                                        <a className="grid h-12 w-12 place-items-center rounded-full bg-emerald-600 ">
+                                            <i className="fa-solid fa-location-dot text-2xl text-white"></i>
+                                        </a>
+                                        <h2 className="text-4xl font-bold tracking-tight text-slate-900">
+                                            Ubicación
+                                        </h2>
+                                    </div>
+                                    <p className=" mt-2 text-lg text-white">
+                                        METEOR se encuentra instalado en el Instituto Tecnológico de Matamoros,
+                                        proporcionando datos climáticos precisos y relevantes para la comunidad académica.
+                                    </p>
+                                </div>
                             </div>
-                        </section>
+                        </div>
+                    </section>
+
+                    <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
                         {/* FOOTER */}
                         <footer className="py-10 sm:py-16 text-center text-sm mt-10 sm:mt-16 text-black dark:text-white/70">
                             Instituto Tecnológico de Matamoros &copy;{" "}
