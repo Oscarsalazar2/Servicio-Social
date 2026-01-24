@@ -394,6 +394,44 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 </li>
                             </ul>
                         </section>
+                        
+                        <section id="beneficios" className="py-12 sm:py-16">
+                            <div className="mb-6">
+                                <h2 className="text-2xl font-bold tracking-tight text-[#071024] dark:text-white">
+                                    ¿Qué datos recopila METEOR?
+                                </h2>
+                                <div className="grid gap-6 lg:grid-cols-3 items-center">
+                                    <p className="lg:col-span-2 mt-2 text-s text-slate-500 dark:text-slate-400">
+                                        METEOR monitorea diferentes variables ambientales 
+                                        mediante sensores especializados, permitiendo un 
+                                        análisis preciso del comportamiento climático local.
+                                    </p>
+                                    
+                                </div>
+                                <div className="flex flex-col items-center gap-8 mt-6 lg:mt-10">
+                                    <div className="flex flex-row gap-24 lg:gap-20">
+                                        <a className="flex-col mt-2 text-centertext-s text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                                            <i className="fa-solid fa-temperature-half text-9xl text-slate-800 dark:text-white"></i>
+                                            <p>
+                                                Temperatura
+                                            </p>
+                                        </a>
+                                        <a className="flex-col mt-2 text-center text-s text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                                            <i className="fa-solid fa-cloud-sun-rain text-9xl text-slate-800 dark:text-white"></i>
+                                            <p>
+                                                Humedad
+                                            </p>
+                                        </a>
+                                        <a className="flex-col mt-2 text-center text-s text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                                            <i className="fa-solid fa-wind text-9xl text-slate-800 dark:text-white"></i>
+                                            <p>
+                                                Viento
+                                            </p>
+                                        </a>
+                                    </div>   
+                                </div>
+                            </div>
+                        </section>
 
                         <section id="equipo" className="py-12 sm:py-16">
                             <div className="mb-6">
@@ -405,7 +443,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                     siguientes personas:
                                 </p>
                             </div>
-
+                            
                             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                                 {TEAM.map((m) => (
                                     <article
@@ -436,8 +474,8 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 ))}
                             </div>
                         </section>
-                        {/*Se que no esta bonito, pero estoy tratando*/}
-                    <section className="w-full bg-[#009688] py-12 sm:py-16 dark:bg-[#009688]/90">
+                    {/*Se que no esta bonito, pero estoy tratando*/}
+                    <section className="w-full bg-[#009688]/85 py-10 sm:py-16 dark:bg-[#009688]/50 rounded-lg">
                         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
                             <div className="grid gap-6 lg:grid-cols-2 lg:gap-8 items-center">
                                 <div className="order-2 lg:order-1 w-11/12 h-96 lg:h-96 rounded-xl overflow-hidden shadow-md">
@@ -455,11 +493,11 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                         <a className="grid h-12 w-12 place-items-center rounded-full bg-emerald-600 ">
                                             <i className="fa-solid fa-location-dot text-2xl text-white"></i>
                                         </a>
-                                        <h2 className="text-4xl font-bold tracking-tight text-slate-900">
+                                        <h2 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
                                             Ubicación
                                         </h2>
                                     </div>
-                                    <p className=" mt-2 text-lg text-white">
+                                    <p className=" mt-2 text-lg text-slate-800 dark:text-white/90">
                                         METEOR se encuentra instalado en el Instituto Tecnológico de Matamoros,
                                         proporcionando datos climáticos precisos y relevantes para la comunidad académica.
                                     </p>
