@@ -3,7 +3,12 @@
 @tailwind utilities;
 
 .recharts-wrapper svg text {
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+    font-family:
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        Segoe UI,
+        Roboto,
         Arial !important;
 }
 
@@ -41,7 +46,9 @@
     letter-spacing: 1px;
     text-transform: uppercase;
     cursor: pointer;
-    transition: transform 0.08s ease, opacity 0.2s ease;
+    transition:
+        transform 0.08s ease,
+        opacity 0.2s ease;
 }
 .btn-rojo--blanco:active {
     transform: translateY(1px);
@@ -419,7 +426,9 @@
     border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.15);
 
-    transition: background 0.2s ease, transform 0.1s ease;
+    transition:
+        background 0.2s ease,
+        transform 0.1s ease;
 }
 .back-home-btn:hover {
     background: rgba(255, 255, 255, 0.08);
@@ -428,71 +437,87 @@
 
 /*RESPONSIVO*/
 
-@media (max-width: 768px){
-  .toggle-auth-container{ display:none; }
+@media (max-width: 768px) {
+    .toggle-auth-container {
+        display: none;
+    }
 
-  .form-auth-container{
-    position: relative;
-    width: 100%;
-    height: auto;
-    transform: none !important;
-    transition: none !important;
-  }
+    .form-auth-container {
+        position: relative;
+        width: 100%;
+        height: auto;
+        transform: none !important;
+        transition: none !important;
+    }
 
-  .auth-container{
-    width: 100%;
-    min-height: auto;
-    padding: 26px 0;
-  }
+    .auth-container {
+        width: 100%;
+        min-height: auto;
+        padding: 26px 0;
+    }
 
-  .auth-container form{ padding: 0 22px; }
+    .auth-container form {
+        padding: 0 22px;
+    }
 
-  .sign-in{
-    display: flex;
-    opacity: 1;
-    pointer-events: auto;
-  }
-  .sign-up{
-    display: none;
-    opacity: 0;
-    pointer-events: none;
-  }
+    .sign-in {
+        display: flex;
+        opacity: 1;
+        pointer-events: auto;
+    }
+    .sign-up {
+        display: none;
+        opacity: 0;
+        pointer-events: none;
+    }
 
-/* Esto jala pa cuando sea haga repositivo*/
-  .auth-container.active .sign-in{
-    display: none;
-    opacity: 0;
-    pointer-events: none;
-  }
-  .auth-container.active .sign-up{
-    display: flex;
-    opacity: 1;
-    pointer-events: auto;
-  }
+    /* Esto jala pa cuando sea haga repositivo*/
+    .auth-container.active .sign-in {
+        display: none;
+        opacity: 0;
+        pointer-events: none;
+    }
+    .auth-container.active .sign-up {
+        display: flex;
+        opacity: 1;
+        pointer-events: auto;
+    }
 }
 .chevron-down {
-  width: 14px;
-  height: 14px;
-  border-right: 3px solid rgba(255,255,255,.9);
-  border-bottom: 3px solid rgba(255,255,255,.9);
-  transform: rotate(45deg);
-  animation: chevronDown 1.4s infinite;
+    width: 14px;
+    height: 14px;
+    border-right: 3px solid rgba(255, 255, 255, 0.9);
+    border-bottom: 3px solid rgba(255, 255, 255, 0.9);
+    transform: rotate(45deg);
+    animation: chevronDown 1.4s infinite;
 }
 
-.delay-150 { animation-delay: .15s; }
-.delay-300 { animation-delay: .3s; }
+.delay-150 {
+    animation-delay: 0.15s;
+}
+.delay-300 {
+    animation-delay: 0.3s;
+}
 
 @keyframes chevronDown {
-  0% {
-    opacity: .2;
-    transform: rotate(45deg) translate(0, 0);
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: .1;
-    transform: rotate(45deg) translate(0, 10px);
-  }
+    0% {
+        opacity: 0.2;
+        transform: rotate(45deg) translate(0, 0);
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.1;
+        transform: rotate(45deg) translate(0, 10px);
+    }
 }
 
+.image-gallery-bullets {
+    bottom: 10px; /* más abajo */
+    z-index: 20; /* encima de la imagen */
+}
+
+.image-gallery-bullets .image-gallery-bullet {
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.35);
+}

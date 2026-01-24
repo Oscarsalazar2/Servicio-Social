@@ -3,6 +3,27 @@ import { useEffect, useState } from "react";
 import logo from "../../Images/logo.png";
 import logo_copia from "../../Images/logo_copia.png";
 import fondo_principal from "../../Images/fondo_principal.jpg";
+import ImageGallery from "react-image-gallery";
+import "react-image-gallery/styles/css/image-gallery.css";
+
+import foto1 from "../../images/slider/1.jpeg";
+import foto2 from "../../images/slider/2.jpeg";
+import foto3 from "../../images/slider/3.jpeg";
+
+const images = [
+    {
+        original: foto1,
+        description: "Sensores ambientales",
+    },
+    {
+        original: foto2,
+        description: "Comunicación inalámbrica LoRa",
+    },
+    {
+        original: foto3,
+        description: "Visualización de datos en tiempo real",
+    },
+];
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
     const handleImageError = () => {
@@ -240,21 +261,25 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                             </h2>
 
                             <p className="mt-6 text-base sm:text-lg leading-relaxed text-white/90 max-w-3xl mx-auto">
-                                <strong>Estación Meteorológica Inteligente para Análisis
-                                Ambiental y Ciencia de Datos (METEOR).</strong><br />Es una
-                                plataforma avanzada para el monitoreo en tiempo
-                                real de variables climáticas como temperatura,
-                                humedad, velocidad del viento, presión
-                                atmosférica y calidad del aire. Visualiza,
-                                analiza y recopila información basadas en datos
-                                precisos.
+                                <strong>
+                                    Estación Meteorológica Inteligente para
+                                    Análisis Ambiental y Ciencia de Datos
+                                    (METEOR).
+                                </strong>
+                                <br />
+                                Es una plataforma avanzada para el monitoreo en
+                                tiempo real de variables climáticas como
+                                temperatura, humedad, velocidad del viento,
+                                presión atmosférica y calidad del aire.
+                                Visualiza, analiza y recopila información
+                                basadas en datos precisos.
                             </p>
                         </div>
 
                         {/*flechitas*/}
                         <button
                             type="button"
-                            onClick={() => scrollToId("equipo")}
+                            onClick={() => scrollToId("que_es")}
                             aria-label="Desliza para descubrir"
                             className="absolute bottom-7 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/90"
                         >
@@ -271,48 +296,113 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                     </section>
 
                     {/* OLA TE AMO*/}
-                    <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 mt-8 lg:mt-16">
-                        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#071024] dark:text-white">
-                            Bienvenido a METEOR
-                        </h2>
 
-                        <main className="mt-6">
-                            <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-                                <div className="flex items-start gap-4 col-span-1 rounded-lg bg-white-10 p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[gray] lg:pb-10 dark:bg-transparent/10 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[gray]">
-                                    <div className="pt-3 sm:pt-5">
-                                        <p className="text-xl sm:text-xl font-normal text-black dark:text-white">
-                                            Consulta en tiempo real las
-                                            condiciones climatológicas del
-                                            Instituto Tecnológico de Matamoros a
-                                            través de datos ambientales
-                                            recolectados y actualizados
-                                            constantemente.
-                                        </p>
+                    <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 mt-8 lg:mt-16">
+                        <section id="que_es" className="pt-14 sm:pt-20">
+                            <div className="flex flex-col gap-3">
+                                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#071024] dark:text-white">
+                                    ¿Qué es METEOR?
+                                </h2>
+                            </div>
+
+                            {/* Contenido */}
+                            <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:items-center">
+                                {/* Texto / Card */}
+                                <article
+                                    className="rounded-2xl border border-slate-200/60 bg-white/70 p-6 shadow-sm backdrop-blur
+                        dark:border-white/10 dark:bg-white/5"
+                                >
+                                    <p className="text-base sm:text-lg leading-relaxed text-slate-800 dark:text-white/90">
+                                        Es una plataforma inteligente de
+                                        monitoreo ambiental del{" "}
+                                        <strong className="font-semibold text-slate-900 dark:text-white">
+                                            Instituto Tecnológico de Matamoros
+                                        </strong>
+                                        , diseñada para la adquisición,
+                                        transmisión y visualización de datos
+                                        climatológicos en tiempo real.
+                                    </p>
+
+                                    <p className="mt-4 text-base sm:text-lg leading-relaxed text-slate-700 dark:text-white/80">
+                                        Integra sensores ambientales y
+                                        tecnologías modernas de comunicación
+                                        para observar las condiciones del
+                                        campus, facilitando el análisis, la
+                                        consulta y el seguimiento continuo de la
+                                        información.
+                                    </p>
+                                </article>
+
+                                {/* Slider / Card */}
+                                <div className="flex justify-center lg:justify-end">
+                                    <div className="w-full max-w-xl overflow-hidden rounded-2xl bg-transparent border-0 shadow-none">
+                                        <div className="relative aspect-[16/10]">
+                                            <div className="absolute inset-0">
+                                                <ImageGallery
+                                                    items={images}
+                                                    autoPlay={true}
+                                                    slideInterval={5000}
+                                                    slideDuration={600}
+                                                    showThumbnails={false}
+                                                    showFullscreenButton={false}
+                                                    showPlayButton={false}
+                                                    showNav={false}
+                                                    showBullets={true}
+                                                    pauseOnHover={true}
+                                                    lazyLoad={true}
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div className="pt-3 sm:pt-1 col-span-1 flex justify-center">
-                                    <img
-                                        src={logo_copia}
-                                        alt="Logo Estación Meteorológica"
-                                        className="
-                                          h-40 w-auto sm:h-56 md:h-72 object-contain
-                                          drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]
-                                          sm:drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]
-                                          sm:mt-[1px]
-                                        "
-                                    />
-                                </div>
                             </div>
-                        </main>
+                        </section>
+
+                        <section id="beneficios" className="py-12 sm:py-16">
+                            <div className="mb-6">
+                                <h2 className="text-2xl font-bold tracking-tight text-[#071024] dark:text-white">
+                                    Beneficios
+                                </h2>
+                                <p className="mt-2 text-s text-slate-500 dark:text-slate-400">
+                                    Algunos de los beneficios que ofrece la
+                                    plataforma METEOR incluyen:
+                                </p>
+                            </div>
+
+                            <ul className="list-disc list-inside space-y-3 text-base text-slate-700 dark:text-slate-300">
+                                <li>
+                                    <strong>Monitoreo en tiempo real:</strong>{" "}
+                                    Acceso instantáneo a datos climáticos
+                                    actualizados.
+                                </li>
+                                <li>
+                                    <strong>
+                                        Análisis de tendencias climáticas:
+                                    </strong>{" "}
+                                    Identificación de patrones y cambios
+                                    ambientales.
+                                </li>
+                                <li>
+                                    <strong>Alertas tempranas:</strong>{" "}
+                                    Notificaciones sobre condiciones climáticas
+                                    extremas.
+                                </li>
+                                <li>
+                                    <strong>Visualización intuitiva:</strong>{" "}
+                                    Gráficos y mapas interactivos para una mejor
+                                    comprensión de los datos.
+                                </li>
+                            </ul>
+                        </section>
 
                         <section id="equipo" className="py-12 sm:py-16">
                             <div className="mb-6">
                                 <h2 className="text-2xl font-bold tracking-tight text-[#071024] dark:text-white">
                                     Conocenos
                                 </h2>
-                                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-                                    ....
+                                <p className="mt-2 text-s text-slate-500 dark:text-slate-400">
+                                    Este proyecto esta desarrollado por las
+                                    siguientes personas:
                                 </p>
                             </div>
 
@@ -346,7 +436,38 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 ))}
                             </div>
                         </section>
-                        <section id="equipo" className="py-12 sm:py-16">
+                        {/*Se que no esta bonito, pero estoy tratando*/}
+                    <section className="w-full bg-[#009688] py-12 sm:py-16 dark:bg-[#009688]/90">
+                        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
+                            <div className="grid gap-6 lg:grid-cols-2 lg:gap-8 items-center">
+                                <div className="order-2 lg:order-1 w-11/12 h-96 lg:h-96 rounded-xl overflow-hidden shadow-md">
+                                    <iframe
+                                        title="Ubicación Instituto Tecnológico de Matamoros"
+                                        src="https://www.google.com/maps?q=Instituto+Tecnológico+de+Matamoros&output=embed"
+                                        class="w-full h-full border-0"
+                                        loading="lazy"
+                                        referrerpolicy="no-referrer-when-downgrade">
+                                    </iframe>
+                                </div>
+                                {/* <div className="mb-6  bg-black/5 dark:bg-white/5 p-6 rounded-lg mt-10 sm:mt-16"> */}
+                                <div className="order-1 lg:order-2 mb-6 p-6 rounded-lg">
+                                    <div className="flex items-center gap-4">
+                                        <a className="grid h-12 w-12 place-items-center rounded-full bg-emerald-600 ">
+                                            <i className="fa-solid fa-location-dot text-2xl text-white"></i>
+                                        </a>
+                                        <h2 className="text-4xl font-bold tracking-tight text-slate-900">
+                                            Ubicación
+                                        </h2>
+                                    </div>
+                                    <p className=" mt-2 text-lg text-white">
+                                        METEOR se encuentra instalado en el Instituto Tecnológico de Matamoros,
+                                        proporcionando datos climáticos precisos y relevantes para la comunidad académica.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                        <section id="acerca_de" className="py-12 sm:py-16">
                             <div className="mb-6">
                                 <h2 className="text-2xl font-bold tracking-tight text-[#071024] dark:text-white">
                                     Acerca de
