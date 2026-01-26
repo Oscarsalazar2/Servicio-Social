@@ -83,7 +83,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
         <>
             <Head title="Bienvenido" />
 
-            <div className="min-h-screen bg-gray-50 text-black/50 dark:bg-[#13232F] dark:text-white/50">
+            <div className="min-h-screen bg-gray-50 text-slate-800 dark:bg-[#13232F] dark:text-white">
                 <div className="relative flex min-h-screen flex-col">
                     {/* HEADER RESPONSIVO */}
                     <header className="fixed top-0 left-0 w-full bg-[#071024]/80 backdrop-blur-md z-50 border-b border-white/10">
@@ -437,36 +437,39 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                             </div>
                         </section>
                         {/*Se que no esta bonito, pero estoy tratando*/}
-                    <section className="w-full bg-[#009688] py-12 sm:py-16 dark:bg-[#009688]/90">
-                        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
-                            <div className="grid gap-6 lg:grid-cols-2 lg:gap-8 items-center">
-                                <div className="order-2 lg:order-1 w-11/12 h-96 lg:h-96 rounded-xl overflow-hidden shadow-md">
-                                    <iframe
-                                        title="Ubicación Instituto Tecnológico de Matamoros"
-                                        src="https://www.google.com/maps?q=Instituto+Tecnológico+de+Matamoros&output=embed"
-                                        class="w-full h-full border-0"
-                                        loading="lazy"
-                                        referrerpolicy="no-referrer-when-downgrade">
-                                    </iframe>
-                                </div>
-                                {/* <div className="mb-6  bg-black/5 dark:bg-white/5 p-6 rounded-lg mt-10 sm:mt-16"> */}
-                                <div className="order-1 lg:order-2 mb-6 p-6 rounded-lg">
-                                    <div className="flex items-center gap-4">
-                                        <a className="grid h-12 w-12 place-items-center rounded-full bg-emerald-600 ">
-                                            <i className="fa-solid fa-location-dot text-2xl text-white"></i>
-                                        </a>
-                                        <h2 className="text-4xl font-bold tracking-tight text-slate-900">
-                                            Ubicación
-                                        </h2>
+                        <section className="w-full bg-[#009688] py-12 sm:py-16 dark:bg-[#009688]/90">
+                            <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
+                                <div className="grid gap-6 lg:grid-cols-2 lg:gap-8 items-center">
+                                    <div className="order-2 lg:order-1 w-11/12 h-96 lg:h-96 rounded-xl overflow-hidden shadow-md">
+                                        <iframe
+                                            title="Ubicación Instituto Tecnológico de Matamoros"
+                                            src="https://www.google.com/maps?q=Instituto+Tecnológico+de+Matamoros&output=embed"
+                                            class="w-full h-full border-0"
+                                            loading="lazy"
+                                            referrerpolicy="no-referrer-when-downgrade"
+                                        ></iframe>
                                     </div>
-                                    <p className=" mt-2 text-lg text-white">
-                                        METEOR se encuentra instalado en el Instituto Tecnológico de Matamoros,
-                                        proporcionando datos climáticos precisos y relevantes para la comunidad académica.
-                                    </p>
+                                    {/* <div className="mb-6  bg-black/5 dark:bg-white/5 p-6 rounded-lg mt-10 sm:mt-16"> */}
+                                    <div className="order-1 lg:order-2 mb-6 p-6 rounded-lg">
+                                        <div className="flex items-center gap-4">
+                                            <a className="grid h-12 w-12 place-items-center rounded-full bg-emerald-600 ">
+                                                <i className="fa-solid fa-location-dot text-2xl text-white"></i>
+                                            </a>
+                                            <h2 className="text-4xl font-bold tracking-tight text-slate-900">
+                                                Ubicación
+                                            </h2>
+                                        </div>
+                                        <p className=" mt-2 text-lg text-white">
+                                            METEOR se encuentra instalado en el
+                                            Instituto Tecnológico de Matamoros,
+                                            proporcionando datos climáticos
+                                            precisos y relevantes para la
+                                            comunidad académica.
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </section>
+                        </section>
                         <section id="acerca_de" className="py-12 sm:py-16">
                             <div className="mb-6">
                                 <h2 className="text-2xl font-bold tracking-tight text-[#071024] dark:text-white">
