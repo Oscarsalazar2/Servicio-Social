@@ -106,7 +106,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                             METEOR
                                         </span>
                                         <span className="block text-xs sm:text-base md:text-lg font-medium text-white/90 truncate">
-                                            Est. Meteorológica
+                                            Estacion Meteorológica
                                         </span>
                                     </h1>
                                 </div>
