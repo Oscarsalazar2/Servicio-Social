@@ -14,7 +14,7 @@
 
 /* Errores */
 .field-error {
-    color: #fca5a5;
+    color: #d83737;
     font-size: 12px;
     align-self: flex-start;
     margin-top: -6px;
@@ -298,7 +298,7 @@
 }
 
 .toggle {
-    background: linear-gradient(to right, #5c6bc0, #512da8);
+    background: linear-gradient(to right, #009688, #009688);
     color: #fff;
     position: relative;
     left: -100%;

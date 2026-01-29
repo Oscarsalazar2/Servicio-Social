@@ -106,7 +106,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                             METEOR
                                         </span>
                                         <span className="block text-xs sm:text-base md:text-lg font-medium text-white/90 truncate">
-                                            Estacion Meteorológica
+                                            Estación Meteorológica Inteligente para Análisis Ambiental y Ciencia de Datos
                                         </span>
                                     </h1>
                                 </div>
@@ -400,7 +400,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 <h2 className="text-2xl font-bold tracking-tight text-[#071024] dark:text-white">
                                     ¿Qué datos recopila METEOR?
                                 </h2>
-                                <div className="grid gap-6 lg:grid-cols-3 items-center">
+                                <div className="grid gap-6 lg:grid-cols-3 items-start">
                                     <p className="lg:col-span-2 mt-2 text-s text-slate-500 dark:text-slate-400">
                                         METEOR monitorea diferentes variables ambientales
                                         mediante sensores especializados, permitiendo un
@@ -409,21 +409,21 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                                 </div>
                                 <div className="flex flex-col items-center gap-8 mt-6 lg:mt-10">
-                                    <div className="flex flex-row gap-24 lg:gap-20 lg:flex-nowrap flex-wrap justify-center">
+                                    <div className="flex flex-row gap-6 sm:gap-10 lg:gap-20 lg:flex-nowrap flex-nowrap justify-center">
                                         <a className="flex-col mt-2 text-centertext-s text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                                            <i className="fa-solid fa-temperature-half text-9xl text-slate-800 dark:text-white"></i>
+                                            <i className="fa-solid fa-temperature-half text-5xl sm:text-7xl lg:text-9xl text-slate-800 dark:text-white"></i>
                                             <p>
                                                 Temperatura
                                             </p>
                                         </a>
                                         <a className="flex-col mt-2 text-center text-s text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                                            <i className="fa-solid fa-cloud-sun-rain text-9xl text-slate-800 dark:text-white"></i>
+                                            <i className="fa-solid fa-cloud-sun-rain text-5xl sm:text-7xl lg:text-9xl text-slate-800 dark:text-white"></i>
                                             <p>
                                                 Humedad
                                             </p>
                                         </a>
                                         <a className="flex-col mt-2 text-center text-s text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                                            <i className="fa-solid fa-wind text-9xl text-slate-800 dark:text-white"></i>
+                                            <i className="fa-solid fa-wind text-5xl sm:text-7xl lg:text-9xl text-slate-800 dark:text-white"></i>
                                             <p>
                                                 Viento
                                             </p>
