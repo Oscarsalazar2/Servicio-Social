@@ -1,6 +1,12 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+
+import Usuarios from "./section/Usuarios";
+import Activaciones from "./section/Activaciones";
+import Auditoria from "./section/Auditoria";
+import Reportes from "./section/Reportes";
+import Configuracion from "./section/Configuracion";
 
 export default function AdminIndex() {
   const [section, setSection] = useState("usuarios");
@@ -13,15 +19,25 @@ export default function AdminIndex() {
     { key: "configuracion", label: "Configuración", icon: "fa-cogs" },
   ];
 
+  // Mapa de secciones -> componente
+  const SectionComponent = useMemo(() => {
+    const map = {
+      usuarios: Usuarios,
+      activaciones: Activaciones,
+      auditoria: Auditoria,
+      reportes: Reportes,
+      configuracion: Configuracion,
+    };
+    return map[section] ?? Usuarios;
+  }, [section]);
+
   return (
     <AuthenticatedLayout>
       <Head title="Admin" />
 
       <div className="p-3 sm:p-4 md:p-6 text-slate-900 dark:text-white">
         <h1 className="text-lg sm:text-xl font-bold">Panel de administración</h1>
-        {/*<p className="mt-1 text-sm sm:text-base opacity-80">Panel de administración</p>*/}
 
-        {/*Layout*/} 
         <div className="mt-4 sm:mt-6 flex flex-col lg:flex-row gap-4">
           {/* Sidebar */}
           <aside className="w-full lg:w-64 rounded-xl sm:rounded-2xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-700 dark:bg-slate-900">
@@ -55,50 +71,7 @@ export default function AdminIndex() {
 
           {/* Contenido */}
           <section className="flex-1 rounded-xl sm:rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900 min-h-[300px]">
-            {section === "usuarios" && (
-              <div>
-                <h2 className="text-base sm:text-lg font-bold">Usuarios</h2>
-                <p className="mt-2 text-sm sm:text-base opacity-80">
-                  Lista de usuarios, roles, permisos, altas/bajas.
-                </p>
-              </div>
-            )}
-
-            {section === "activaciones" && (
-              <div>
-                <h2 className="text-base sm:text-lg font-bold">Activaciones</h2>
-                <p className="mt-2 text-sm sm:text-base opacity-80">
-                  Activaciones de usuarios.
-                </p>
-              </div>
-            )}
-
-            {section === "auditoria" && (
-              <div>
-                <h2 className="text-base sm:text-lg font-bold">Auditoría</h2>
-                <p className="mt-2 text-sm sm:text-base opacity-80">
-                  Registro de actividades de usuarios.
-                </p>
-              </div>
-            )}
-
-            {section === "reportes" && (
-              <div>
-                <h2 className="text-base sm:text-lg font-bold">Reportes</h2>
-                <p className="mt-2 text-sm sm:text-base opacity-80">
-                  Exportar CSV/PDF, rangos de fecha, reportes por variable.
-                </p>
-              </div>
-            )}
-
-            {section === "configuracion" && (
-              <div>
-                <h2 className="text-base sm:text-lg font-bold">Configuración</h2>
-                <p className="mt-2 text-sm sm:text-base opacity-80">
-                  Ajustes del sistema, parámetros, integraciones.
-                </p>
-              </div>
-            )}
+            <SectionComponent />
           </section>
         </div>
       </div>
