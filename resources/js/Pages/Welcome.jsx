@@ -649,7 +649,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                             <h2 className="text-4xl font-bold tracking-tight">
                                                 Ubicación
                                             </h2>
-                                            
+
                                         </div>
                                         <div className="mt-2 h-1 w-14 rounded-full bg-white/50" />
                                         <p className="text-lg leading-relaxed py-2 text-white/90">
@@ -671,53 +671,53 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 </h2>
                                 <div className="mt-2 h-1 w-14 rounded-full bg-[#009688]/80" />
                                 <p className="max-w-3xl mt-4 text-slate-500 dark:text-slate-400">
-                                    METEOR es un proyecto acádemico de monitoreo metereolgico que 
+                                    METEOR es un proyecto acádemico de monitoreo metereolgico que
                                     recopila y visualiza datos climatológicos locales en tiempo real,
                                     utilizando sensores avanzados y tecnología IoT.
                                 </p>
-                                <div class="max-w-5xl mx-auto divide-y divide-slate-200 ">
-                                    <details class="group py-5">
-                                        <summary class="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900">
+                                <div className="max-w-5xl mx-auto divide-y divide-slate-100 dark:divide-slate-800">
+                                    <details className="group py-5">
+                                        <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900 dark:text-white">
                                             ¿Cuál es el propósito del proyecto?
                                             <span className="relative inline-flex h-5 w-5 items-center justify-center transition-transform duration-200 ease-in-out group-open:rotate-180">
                                                 <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-100 group-open:opacity-0">+</span>
                                                 <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-0 group-open:opacity-100">−</span>
                                             </span>
-                                            
-                                        </summary> 
+
+                                        </summary>
                                         <p className="mt-2 text-slate-600">
-                                            El objetivo es apoyar el parendizaje, el análisis ambiental y 
+                                            El objetivo es apoyar el parendizaje, el análisis ambiental y
                                             el uso de datos reales en actividades académicas y proyectos escolares.
                                         </p>
-                                    </details> 
+                                    </details>
 
                                     <details class="group py-4">
-                                        <summary class="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900">
+                                        <summary class="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900 dark:dark:text-white">
                                             ¿En qué se enfoca METEOR?
                                             <span className="relative inline-flex h-5 w-5 items-center justify-center transition-transform duration-200 ease-in-out group-open:rotate-180">
                                                 <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-100 group-open:opacity-0">+</span>
                                                 <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-0 group-open:opacity-100">−</span>
                                             </span>
-                                        </summary> 
+                                        </summary>
                                         <p className="mt-2 text-slate-600">
                                             Se centra en la recopilación y análisis de variables climatológicas
                                             del entorno.
                                         </p>
-                                    </details> 
+                                    </details>
 
-                                    <details class="group py-4">
-                                        <summary class="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900">
+                                    <details className="group py-4">
+                                        <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900 dark:text-white">
                                             ¿En qué estado se encuentra el proyecto?
                                             <span className="relative inline-flex h-5 w-5 items-center justify-center transition-transform duration-200 ease-in-out group-open:rotate-180">
                                                 <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-100 group-open:opacity-0">+</span>
                                                 <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-0 group-open:opacity-100">−</span>
                                             </span>
-                                        </summary> 
-                                        <p className="mt-2 text-slate-600">
+                                        </summary>
+                                        <p className="mt-2 text-slate-600 dark:text-slate-600">
                                             Actualmente, METEOR se encuentra en desarrollo y en constante mejora,
                                             incorporando nuevas funciones conforme se recopilan más datos.
                                         </p>
-                                    </details> 
+                                    </details>
 
                                 </div>
                             </div>
