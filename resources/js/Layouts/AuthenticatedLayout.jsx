@@ -60,7 +60,12 @@ export default function AuthenticatedLayout({ children }) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16 items-center">
                         {/* IZQUIERDA */}
-                        <div className="flex items-center gap-4">
+
+                        <Link href="/" className="back-home-btn h-8 bg-white/20 hover:bg-white/40 rounded-lg flex items-center gap-1 px-2 sm:px-3 py-1 transition">
+                                 <p className="text-white text-lg sm:text-2xl">← </p>
+                            </Link>
+                        <div className="flex items-center gap-6">
+                            
                             <Link
                                 href={route("dashboard")}
                                 className="flex items-center gap-2"
@@ -71,7 +76,7 @@ export default function AuthenticatedLayout({ children }) {
                                         className="h-16 w-auto sm:h-26 md:h-28 object-contain
                                         drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]
                                         sm:drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]
-                                        sm:mt-[6px]"
+                                        sm:mt-[6px] md:mt-[8px]"
                                     />
                                 {/*<ApplicationLogo className="block h-8 w-auto fill-current text-white" />*/}
                                 <span className="text-white font-extrabold tracking-wide">

@@ -685,7 +685,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                             </span>
 
                                         </summary>
-                                        <p className="mt-2 text-slate-600">
+                                        <p className="mt-2 text-slate-500 dark:text-slate-400">
                                             El objetivo es apoyar el parendizaje, el análisis ambiental y
                                             el uso de datos reales en actividades académicas y proyectos escolares.
                                         </p>
@@ -699,7 +699,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                                 <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-0 group-open:opacity-100">−</span>
                                             </span>
                                         </summary>
-                                        <p className="mt-2 text-slate-600">
+                                        <p className="mt-2 text-slate-500 dark:text-slate-400">
                                             Se centra en la recopilación y análisis de variables climatológicas
                                             del entorno.
                                         </p>
@@ -713,7 +713,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                                 <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-0 group-open:opacity-100">−</span>
                                             </span>
                                         </summary>
-                                        <p className="mt-2 text-slate-600 dark:text-slate-600">
+                                        <p className="mt-2 text-slate-500 dark:text-slate-400">
                                             Actualmente, METEOR se encuentra en desarrollo y en constante mejora,
                                             incorporando nuevas funciones conforme se recopilan más datos.
                                         </p>
