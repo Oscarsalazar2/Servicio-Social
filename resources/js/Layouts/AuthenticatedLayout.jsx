@@ -186,6 +186,9 @@ export default function AuthenticatedLayout({ children }) {
                                 </Dropdown.Trigger>
 
                                 <Dropdown.Content>
+                                    <Dropdown.Link href="/">
+                                        Inicio
+                                    </Dropdown.Link>
                                     <Dropdown.Link href={route("profile.edit")}>
                                         Perfil
                                     </Dropdown.Link>
