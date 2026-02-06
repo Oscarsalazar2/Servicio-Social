@@ -60,6 +60,7 @@ export default function AuthenticatedLayout({ children }) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16 items-center">
                         {/* IZQUIERDA */}
+                        <div className="flex items-center gap-6">
                             <Link
                                 href={route("dashboard")}
                                 className="flex items-center gap-2"
