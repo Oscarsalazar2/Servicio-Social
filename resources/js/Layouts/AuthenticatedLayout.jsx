@@ -60,12 +60,6 @@ export default function AuthenticatedLayout({ children }) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16 items-center">
                         {/* IZQUIERDA */}
-
-                        <Link href="/" className="back-home-btn h-8 bg-white/20 hover:bg-white/40 rounded-lg flex items-center gap-1 px-2 sm:px-3 py-1 transition">
-                                 <p className="text-white text-lg sm:text-2xl">← </p>
-                            </Link>
-                        <div className="flex items-center gap-6">
-                            
                             <Link
                                 href={route("dashboard")}
                                 className="flex items-center gap-2"
