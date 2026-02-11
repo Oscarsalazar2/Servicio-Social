@@ -125,7 +125,7 @@ export default function AuthenticatedLayout({ children }) {
                                                 "admin.panel"
                                             )}
                                         >
-                                            Admin
+                                            Panel de Administración
                                         </TopLink>
                                     </>
                                 )}
@@ -288,7 +288,7 @@ export default function AuthenticatedLayout({ children }) {
                                     href={route("admin.panel")}
                                     active={route().current("admin.panel")}
                                 >
-                                    Admin
+                                    Panel de Administración
                                 </ResponsiveNavLink>
                             </>
                         )}

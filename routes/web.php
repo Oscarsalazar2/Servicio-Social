@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Models\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -25,7 +26,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/admin', fn() => Inertia::render('Admin/Index'))->name('admin');
 
         Route::get('/lanzamientos', fn() => Inertia::render('Lanzamientos/Index'))->name('lanzamientos.index');
-        Route::get('/admin/panel', fn() => Inertia::render('Admin/Panel'))->name('admin.panel');
+        Route::get('/admin/panel', function () {
+            $pendingActivations = User::where('is_active', false)->count();
+            return Inertia::render('Admin/Panel', [
+                'pendingActivations' => $pendingActivations
+            ]);
+        })->name('admin.panel');
     });
 });
 
