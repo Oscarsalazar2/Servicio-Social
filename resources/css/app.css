@@ -514,25 +514,42 @@
 }
 
 /* Que llene la caja y no deje franjas */
-.image-gallery, .image-gallery-content, .image-gallery-slide-wrapper {
-  height: 100%;
+.image-gallery,
+.image-gallery-content,
+.image-gallery-slide-wrapper {
+    height: 100%;
 }
 .image-gallery-slide img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
 }
 
 /* Bullets visibles (dark y light) */
 .image-gallery-bullets {
-  bottom: 10px;
-  z-index: 30;
+    bottom: 10px;
+    z-index: 30;
 }
 .image-gallery-bullets .image-gallery-bullet {
-  background: rgba(255,255,255,.85);
-  box-shadow: 0 0 0 2px rgba(0,0,0,.35);
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.35);
 }
 .image-gallery-bullets .image-gallery-bullet.active {
-  background: rgba(16,185,129,1); /* emerald */
+    background: rgba(16, 185, 129, 1); /* emerald */
 }
 
+/* Animación para notificaciones flash */
+@keyframes slide-in {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.animate-slide-in {
+    animation: slide-in 0.3s ease-out;
+}

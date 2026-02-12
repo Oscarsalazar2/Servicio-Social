@@ -34,7 +34,7 @@ export default function AuthenticatedLayout({ children }) {
         useState(false);
 
     const [theme, setTheme] = useState(
-        () => localStorage.getItem("theme") || "dark"
+        () => localStorage.getItem("theme") || "dark",
     );
 
     useEffect(() => {
@@ -52,6 +52,8 @@ export default function AuthenticatedLayout({ children }) {
     const isClimate = current === "dashboard.climate";
 
     const isAdmin = user?.role === "admin";
+    const canAccessLauncher =
+        user?.role === "admin" || user?.role === "launcher";
     const isLanzamientos = route().current("lanzamientos.*");
 
     return (
@@ -66,13 +68,13 @@ export default function AuthenticatedLayout({ children }) {
                                 className="flex items-center gap-2"
                             >
                                 <img
-                                        src={logo_liner_s}
-                                        alt="Logo Estación Meteorológica"
-                                        className="h-16 w-auto sm:h-26 md:h-28 object-contain
+                                    src={logo_liner_s}
+                                    alt="Logo Estación Meteorológica"
+                                    className="h-16 w-auto sm:h-26 md:h-28 object-contain
                                         drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]
                                         sm:drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]
                                         sm:mt-[6px] md:mt-[8px]"
-                                    />
+                                />
                                 {/*<ApplicationLogo className="block h-8 w-auto fill-current text-white" />*/}
                                 <span className="text-white font-extrabold tracking-wide">
                                     METEOR
@@ -107,22 +109,24 @@ export default function AuthenticatedLayout({ children }) {
                                 >
                                     Clima
                                 </TopLink>
-                                {/* ADMIN DESKTOP */}
-                                {isAdmin && route().has("lanzamientos.index") && (
-                                    <TopLink
-                                        href={route("lanzamientos.index")}
-                                        active={isLanzamientos}
-                                    >
-                                        Lanzamiento de Cohetes
-                                    </TopLink>
-                                )}
+                                {/* LANZAMIENTOS - Admin y Launcher */}
+                                {canAccessLauncher &&
+                                    route().has("lanzamientos.index") && (
+                                        <TopLink
+                                            href={route("lanzamientos.index")}
+                                            active={isLanzamientos}
+                                        >
+                                            Lanzamiento de Cohetes
+                                        </TopLink>
+                                    )}
 
+                                {/* PANEL ADMIN - Solo Admin */}
                                 {isAdmin && (
                                     <>
                                         <TopLink
                                             href={route("admin.panel")}
                                             active={route().current(
-                                                "admin.panel"
+                                                "admin.panel",
                                             )}
                                         >
                                             Panel de Administración
@@ -293,15 +297,16 @@ export default function AuthenticatedLayout({ children }) {
                             </>
                         )}
 
-                        {/* LANZAMIENTOS MOBILE (si existe) */}
-                        {isAdmin && route().has("lanzamientos.index") && (
-                            <ResponsiveNavLink
-                                href={route("lanzamientos.index")}
-                                active={isLanzamientos}
-                            >
-                                Lanzamiento de Cohetes
-                            </ResponsiveNavLink>
-                        )}
+                        {/* LANZAMIENTOS MOBILE - Admin y Launcher */}
+                        {canAccessLauncher &&
+                            route().has("lanzamientos.index") && (
+                                <ResponsiveNavLink
+                                    href={route("lanzamientos.index")}
+                                    active={isLanzamientos}
+                                >
+                                    Lanzamiento de Cohetes
+                                </ResponsiveNavLink>
+                            )}
                     </div>
 
                     <div className="pt-4 pb-1 border-t border-white/15">

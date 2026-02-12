@@ -1,6 +1,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { useMemo, useState } from "react";
+import FlashMessages from "@/Components/FlashMessages";
 
 import Usuarios from "./section/Usuarios";
 import Activaciones from "./section/Activaciones";
@@ -8,7 +9,11 @@ import Auditoria from "./section/Auditoria";
 import Reportes from "./section/Reportes";
 import Configuracion from "./section/Configuracion";
 
-export default function AdminIndex({ pendingActivations = 0 }) {
+export default function AdminIndex({
+    pendingActivations = 0,
+    pendingUsers = [],
+    allUsers = [],
+}) {
     const [section, setSection] = useState("usuarios");
     const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -64,6 +69,7 @@ export default function AdminIndex({ pendingActivations = 0 }) {
     return (
         <AuthenticatedLayout>
             <Head title="Admin" />
+            <FlashMessages />
 
             <div className="p-3 sm:p-4 md:p-6 text-slate-900 dark:text-white">
                 <div className="mt-4 sm:mt-6 flex flex-col lg:flex-row gap-4 lg:gap-6 justify-center max-w-7xl mx-auto">
@@ -76,38 +82,48 @@ export default function AdminIndex({ pendingActivations = 0 }) {
                                 : "w-0 lg:w-16 p-0 lg:p-2 opacity-0 lg:opacity-100 overflow-hidden",
                         ].join(" ")}
                     >
-                        {/* Botón toggle dentro del sidebar */}
-                        <button
-                            onClick={() => setSidebarOpen(!sidebarOpen)}
-                            className={[
-                                "absolute flex items-center justify-center rounded-lg transition-all z-10",
-                                sidebarOpen
-                                    ? "top-4 right-3 w-8 h-8 bg-slate-100 hover:bg-slate-200 text-slate-600 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300"
-                                    : "top-2 right-2 w-10 h-10 bg-[#009688] text-white hover:bg-[#00796B] shadow-md",
-                            ].join(" ")}
-                            type="button"
-                            title={
-                                sidebarOpen ? "Ocultar menú" : "Mostrar menú"
-                            }
-                        >
-                            <i
-                                className={`fa-solid ${sidebarOpen ? "fa-chevron-left" : "fa-chevron-right"} text-sm`}
-                            ></i>
-                        </button>
-
                         <nav
-                            className={
-                                sidebarOpen
-                                    ? "space-y-6 mt-12"
-                                    : "space-y-3 mt-14"
-                            }
+                            className={sidebarOpen ? "space-y-6" : "space-y-3"}
                         >
-                            {menuGroups.map((group) => (
+                            {menuGroups.map((group, index) => (
                                 <div key={group.title}>
-                                    {/* Título del grupo */}
+                                    {/* Título del grupo con botón toggle en el primero */}
                                     {sidebarOpen && (
-                                        <div className="mb-3 px-3 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                                            {group.title}
+                                        <div className="mb-3 px-3 flex items-center justify-between">
+                                            <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                                {group.title}
+                                            </span>
+                                            {/* Botón solo en el primer grupo */}
+                                            {index === 0 && (
+                                                <button
+                                                    onClick={() =>
+                                                        setSidebarOpen(
+                                                            !sidebarOpen,
+                                                        )
+                                                    }
+                                                    className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 transition-all"
+                                                    type="button"
+                                                    title="Ocultar menú"
+                                                >
+                                                    <i className="fa-solid fa-chevron-left text-xs"></i>
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Cuando está minimizado, mostrar botón arriba */}
+                                    {!sidebarOpen && index === 0 && (
+                                        <div className="mb-2 flex justify-center">
+                                            <button
+                                                onClick={() =>
+                                                    setSidebarOpen(!sidebarOpen)
+                                                }
+                                                className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#009688] text-white hover:bg-[#00796B] shadow-md transition-all"
+                                                type="button"
+                                                title="Mostrar menú"
+                                            >
+                                                <i className="fa-solid fa-chevron-right text-sm"></i>
+                                            </button>
                                         </div>
                                     )}
 
@@ -194,7 +210,10 @@ export default function AdminIndex({ pendingActivations = 0 }) {
 
                     {/* Contenido */}
                     <section className="flex-1 rounded-xl sm:rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900 min-h-[500px]">
-                        <SectionComponent />
+                        <SectionComponent
+                            pendingUsers={pendingUsers}
+                            allUsers={allUsers}
+                        />
                     </section>
                 </div>
             </div>
