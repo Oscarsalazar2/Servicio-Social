@@ -80,7 +80,7 @@ export default function AdminIndex({
                             sidebarOpen
                                 ? "w-full lg:w-72 p-4 opacity-100"
                                 : "w-0 lg:w-16 p-0 lg:p-2 opacity-0 lg:opacity-100 overflow-hidden",
-                        ].join(" ")}
+                      ].join(" ")}
                     >
                         <nav
                             className={sidebarOpen ? "space-y-6" : "space-y-3"}
