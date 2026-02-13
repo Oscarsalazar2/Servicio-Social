@@ -16,6 +16,7 @@ export default function AdminIndex({
 }) {
     const [section, setSection] = useState("usuarios");
     const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
 
     // Organización de menú por grupos
     const menuGroups = [
@@ -54,6 +55,10 @@ export default function AdminIndex({
         },
     ];
 
+    const toggleMobileMenu = () => {
+        setMobileMenuOpen(!mobileMenuOpen);
+    };
+
     // Mapa de secciones -> componente
     const SectionComponent = useMemo(() => {
         const map = {
@@ -71,16 +76,108 @@ export default function AdminIndex({
             <Head title="Admin" />
             <FlashMessages />
 
+            {/* MENÚ HORIZONTAL MÓVIL - Mismo diseño que sidebar */}
+            <div className="lg:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 shadow-sm">
+                {/* Botón toggle */}
+                <button
+                    onClick={toggleMobileMenu}
+                    className="w-full px-4 py-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/50 transition font-semibold text-slate-700 dark:text-white"
+                    type="button"
+                >
+                    <span>Menú de Administración</span>
+                    <i
+                        className={`fa-solid ${
+                            mobileMenuOpen ? "fa-chevron-up" : "fa-chevron-down"
+                        } transition-transform duration-300 ${
+                            mobileMenuOpen ? "rotate-0" : "rotate-180"
+                        }`}
+                    ></i>
+                </button>
+
+                {/* Contenido expandible */}
+                <div
+                    className={`overflow-hidden transition-all duration-300 ease-in-out origin-top ${
+                        mobileMenuOpen
+                            ? "scale-y-100 opacity-100 visible max-h-96"
+                            : "scale-y-0 opacity-0 invisible max-h-0"
+                    }`}
+                >
+                    <div className="overflow-x-auto border-t border-slate-200 dark:border-slate-700">
+                        <div className="flex gap-6 p-4 min-w-min">
+                            {menuGroups.map((group) => (
+                                <div
+                                    key={group.title}
+                                    className="flex flex-col gap-2"
+                                >
+                                    {/* Título del grupo */}
+                                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-2">
+                                        {group.title}
+                                    </span>
+
+                                    {/* Items */}
+                                    <div className="flex gap-2 flex-col">
+                                        {group.items.map((item) => {
+                                            const active = section === item.key;
+                                            return (
+                                                <button
+                                                    key={item.key}
+                                                    onClick={() => {
+                                                        setSection(item.key);
+                                                        setMobileMenuOpen(
+                                                            false,
+                                                        );
+                                                    }}
+                                                    className={[
+                                                        "flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm transition relative whitespace-nowrap",
+                                                        active
+                                                            ? "bg-[#009688] text-white shadow-md"
+                                                            : "bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-white/80 dark:hover:bg-slate-700",
+                                                    ].join(" ")}
+                                                    type="button"
+                                                    title={item.label}
+                                                >
+                                                    <i
+                                                        className={`fa-solid ${item.icon} text-base w-5`}
+                                                    />
+                                                    <span className="flex-1 text-left">
+                                                        {item.label}
+                                                    </span>
+
+                                                    {/* Badge */}
+                                                    {item.badge !== undefined &&
+                                                        item.badge > 0 && (
+                                                            <span
+                                                                className={[
+                                                                    "flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full text-xs font-bold",
+                                                                    active
+                                                                        ? "bg-white text-[#009688]"
+                                                                        : "bg-[#009688] text-white",
+                                                                ].join(" ")}
+                                                            >
+                                                                {item.badge}
+                                                            </span>
+                                                        )}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div className="p-3 sm:p-4 md:p-6 text-slate-900 dark:text-white">
                 <div className="mt-4 sm:mt-6 flex flex-col lg:flex-row gap-4 lg:gap-6 justify-center max-w-7xl mx-auto">
-                    {/* Sidebar */}
+                    {/* Sidebar - Solo visible en lg y superior */}
                     <aside
                         className={[
-                            "relative transition-all duration-300 ease-in-out rounded-xl sm:rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900",
+                            "hidden lg:block relative transition-all duration-300 ease-in-out rounded-xl sm:rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900",
                             sidebarOpen
-                                ? "w-full lg:w-72 p-4 opacity-100"
-                                : "w-0 lg:w-16 p-0 lg:p-2 opacity-0 lg:opacity-100 overflow-hidden",
-                      ].join(" ")}
+                                ? "w-72 p-4 opacity-100"
+                                : "w-16 p-2 opacity-100 overflow-hidden",
+                        ].join(" ")}
                     >
                         <nav
                             className={sidebarOpen ? "space-y-6" : "space-y-3"}
@@ -209,7 +306,7 @@ export default function AdminIndex({
                     </aside>
 
                     {/* Contenido */}
-                    <section className="flex-1 rounded-xl sm:rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900 min-h-[500px]">
+                    <section className="w-full lg:flex-1 rounded-xl sm:rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900 min-h-[500px]">
                         <SectionComponent
                             pendingUsers={pendingUsers}
                             allUsers={allUsers}

@@ -10,7 +10,7 @@ function TopLink({ href, active, children }) {
         <Link
             href={href}
             className={[
-                "relative px-3 py-5 text-sm font-semibold transition",
+                "relative px-2 sm:px-3 py-4 sm:py-5 text-xs sm:text-sm font-semibold transition",
                 active ? "text-white" : "text-white/85 hover:text-white",
                 "outline-none focus:outline-none",
             ].join(" ")}
@@ -18,7 +18,7 @@ function TopLink({ href, active, children }) {
             {children}
             <span
                 className={[
-                    "absolute left-3 right-3 bottom-3 h-[2px] rounded-full transition",
+                    "absolute left-2 right-2 bottom-3 h-[2px] rounded-full transition",
                     active ? "bg-white" : "bg-transparent",
                 ].join(" ")}
             />
@@ -59,24 +59,23 @@ export default function AuthenticatedLayout({ children }) {
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-slate-950">
             <nav className="bg-[#009688] border-b border-white/10">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16 items-center">
+                <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+                    <div className="flex justify-between h-14 sm:h-16 lg:h-20 items-center">
                         {/* IZQUIERDA */}
-                        <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-2 sm:gap-4 lg:gap-6">
                             <Link
                                 href={route("dashboard")}
-                                className="flex items-center gap-2"
+                                className="flex items-center gap-2 flex-shrink-0"
                             >
                                 <img
                                     src={logo_liner_s}
                                     alt="Logo Estación Meteorológica"
-                                    className="h-16 w-auto sm:h-26 md:h-28 object-contain
+                                    className="h-24 sm:h-32 md:h-40 lg:h-48 w-auto object-contain
                                         drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]
-                                        sm:drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]
-                                        sm:mt-[6px] md:mt-[8px]"
+                                        sm:drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]"
                                 />
                                 {/*<ApplicationLogo className="block h-8 w-auto fill-current text-white" />*/}
-                                <span className="text-white font-extrabold tracking-wide">
+                                <span className="hidden sm:block text-white font-extrabold tracking-wide text-sm sm:text-base lg:text-lg">
                                     METEOR
                                 </span>
                             </Link>
@@ -137,18 +136,19 @@ export default function AuthenticatedLayout({ children }) {
                         </div>
 
                         {/* DERECHA DESKTOP */}
-                        <div className="hidden sm:flex sm:items-center gap-4">
-                            {/* Toggle Día/Noche */}
-                            <div className="flex items-center gap-1 bg-white/10 p-1 rounded-xl border border-white/15">
+                        <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
+                            {/* Toggle Día/Noche - Solo en desktop */}
+                            <div className="hidden sm:flex items-center gap-0.5 bg-white/10 p-0.5 rounded-lg border border-white/15">
                                 <button
                                     onClick={() => setTheme("light")}
                                     className={[
-                                        "px-3 py-1.5 rounded-lg text-xs font-semibold transition",
+                                        "px-2 py-1.5 rounded text-xs font-semibold transition",
                                         theme === "light"
                                             ? "bg-white text-slate-900"
                                             : "text-white/80 hover:bg-white/10",
                                     ].join(" ")}
                                     type="button"
+                                    title="Modo claro"
                                 >
                                     <i className="fa-solid fa-sun"></i>
                                 </button>
@@ -156,64 +156,102 @@ export default function AuthenticatedLayout({ children }) {
                                 <button
                                     onClick={() => setTheme("dark")}
                                     className={[
-                                        "px-3 py-1.5 rounded-lg text-xs font-semibold transition",
+                                        "px-2 py-1.5 rounded text-xs font-semibold transition",
                                         theme === "dark"
                                             ? "bg-white text-slate-900"
                                             : "text-white/80 hover:bg-white/10",
                                     ].join(" ")}
                                     type="button"
+                                    title="Modo oscuro"
                                 >
                                     <i className="fa-solid fa-moon"></i>
                                 </button>
                             </div>
 
-                            {/* USER */}
-                            <Dropdown>
-                                <Dropdown.Trigger>
-                                    <button
-                                        type="button"
-                                        className="inline-flex items-center px-3 py-2 border border-white/15 text-sm font-medium rounded-xl text-white bg-white/10 hover:bg-white/15 transition"
-                                    >
-                                        {user?.name}
-                                        <svg
-                                            className="ml-2 h-4 w-4"
-                                            fill="currentColor"
-                                            viewBox="0 0 20 20"
+                            {/* USER - Solo desktop */}
+                            <div className="hidden sm:block">
+                                <Dropdown>
+                                    <Dropdown.Trigger>
+                                        <button
+                                            type="button"
+                                            className="inline-flex items-center px-2 sm:px-3 lg:px-4 py-2 border border-white/15 text-xs sm:text-sm font-medium rounded-lg sm:rounded-xl text-white bg-white/10 hover:bg-white/15 transition"
                                         >
-                                            <path
-                                                fillRule="evenodd"
-                                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                clipRule="evenodd"
-                                            />
-                                        </svg>
-                                    </button>
-                                </Dropdown.Trigger>
+                                            <span className="truncate max-w-[80px] sm:max-w-none">
+                                                {user?.name?.split(" ")[0]}
+                                            </span>
+                                            <svg
+                                                className="ml-1 sm:ml-2 h-3 sm:h-4 w-3 sm:w-4"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path
+                                                    fillRule="evenodd"
+                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                    clipRule="evenodd"
+                                                />
+                                            </svg>
+                                        </button>
+                                    </Dropdown.Trigger>
 
-                                <Dropdown.Content>
-                                    <Dropdown.Link href="/">
-                                        Inicio
-                                    </Dropdown.Link>
-                                    <Dropdown.Link href={route("profile.edit")}>
-                                        Perfil
-                                    </Dropdown.Link>
-                                    <Dropdown.Link
-                                        href={route("logout")}
-                                        method="post"
-                                        as="button"
-                                    >
-                                        Cerrar sesión
-                                    </Dropdown.Link>
-                                </Dropdown.Content>
-                            </Dropdown>
+                                    <Dropdown.Content>
+                                        <Dropdown.Link href="/">
+                                            Inicio
+                                        </Dropdown.Link>
+                                        <Dropdown.Link
+                                            href={route("profile.edit")}
+                                        >
+                                            Perfil
+                                        </Dropdown.Link>
+                                        <Dropdown.Link
+                                            href={route("logout")}
+                                            method="post"
+                                            as="button"
+                                        >
+                                            Cerrar sesión
+                                        </Dropdown.Link>
+                                    </Dropdown.Content>
+                                </Dropdown>
+                            </div>
                         </div>
 
-                        {/* BOTON MOBILE */}
-                        <div className="-mr-2 flex items-center sm:hidden">
+                        {/* MOBILE - Toggle + Hamburguesa */}
+                        <div className="sm:hidden flex items-center gap-1">
+                            {/* Toggle Día/Noche - Solo móvil */}
+                            <div className="flex items-center gap-0.5 bg-white/10 p-0.5 rounded-lg border border-white/15">
+                                <button
+                                    onClick={() => setTheme("light")}
+                                    className={[
+                                        "px-1.5 py-1 rounded text-xs font-semibold transition",
+                                        theme === "light"
+                                            ? "bg-white text-slate-900"
+                                            : "text-white/80 hover:bg-white/10",
+                                    ].join(" ")}
+                                    type="button"
+                                    title="Modo claro"
+                                >
+                                    <i className="fa-solid fa-sun"></i>
+                                </button>
+
+                                <button
+                                    onClick={() => setTheme("dark")}
+                                    className={[
+                                        "px-1.5 py-1 rounded text-xs font-semibold transition",
+                                        theme === "dark"
+                                            ? "bg-white text-slate-900"
+                                            : "text-white/80 hover:bg-white/10",
+                                    ].join(" ")}
+                                    type="button"
+                                    title="Modo oscuro"
+                                >
+                                    <i className="fa-solid fa-moon"></i>
+                                </button>
+                            </div>
+
                             <button
                                 onClick={() =>
                                     setShowingNavigationDropdown((p) => !p)
                                 }
-                                className="inline-flex items-center justify-center p-2 rounded-md text-white/90 hover:text-white hover:bg-white/10"
+                                className="inline-flex items-center justify-center p-1.5 rounded-md text-white/90 hover:text-white hover:bg-white/10 transition"
                                 type="button"
                             >
                                 <svg
@@ -254,10 +292,10 @@ export default function AuthenticatedLayout({ children }) {
                 <div
                     className={
                         (showingNavigationDropdown ? "block" : "hidden") +
-                        " sm:hidden"
+                        " sm:hidden bg-[#00897B]"
                     }
                 >
-                    <div className="pt-2 pb-3 space-y-1 px-4">
+                    <div className="pt-2 pb-2 space-y-1 px-2">
                         <ResponsiveNavLink
                             href={route("dashboard")}
                             active={isInicio}
@@ -285,7 +323,18 @@ export default function AuthenticatedLayout({ children }) {
                             Clima
                         </ResponsiveNavLink>
 
-                        {/* ADMIN MOBILE */}
+                        {/* LANZAMIENTOS MOBILE - Admin y Launcher */}
+                        {canAccessLauncher &&
+                            route().has("lanzamientos.index") && (
+                                <ResponsiveNavLink
+                                    href={route("lanzamientos.index")}
+                                    active={isLanzamientos}
+                                >
+                                    Lanzamientos de Cohetes
+                                </ResponsiveNavLink>
+                            )}
+
+                         {/* ADMIN MOBILE */}
                         {isAdmin && (
                             <>
                                 <ResponsiveNavLink
@@ -296,60 +345,22 @@ export default function AuthenticatedLayout({ children }) {
                                 </ResponsiveNavLink>
                             </>
                         )}
-
-                        {/* LANZAMIENTOS MOBILE - Admin y Launcher */}
-                        {canAccessLauncher &&
-                            route().has("lanzamientos.index") && (
-                                <ResponsiveNavLink
-                                    href={route("lanzamientos.index")}
-                                    active={isLanzamientos}
-                                >
-                                    Lanzamiento de Cohetes
-                                </ResponsiveNavLink>
-                            )}
                     </div>
 
-                    <div className="pt-4 pb-1 border-t border-white/15">
-                        <div className="px-4">
-                            <div className="font-medium text-base text-white">
+                    <div className="pt-2 pb-2 border-t border-white/15">
+                        <div className="px-2 py-1">
+                            <div className="font-medium text-xs text-white truncate">
                                 {user?.name}
                             </div>
-                            <div className="font-medium text-sm text-white/80">
+                            <div className="font-medium text-xs text-white/70 truncate">
                                 {user?.email}
                             </div>
                         </div>
 
-                        {/* Toggle mobile */}
-                        <div className="mt-3 px-4 pb-2">
-                            <div className="flex items-center gap-1 bg-white/10 p-1 rounded-xl border border-white/15 w-fit">
-                                <button
-                                    onClick={() => setTheme("light")}
-                                    className={[
-                                        "px-3 py-1.5 rounded-lg text-xs font-semibold transition",
-                                        theme === "light"
-                                            ? "bg-white text-slate-900"
-                                            : "text-white/80 hover:bg-white/10",
-                                    ].join(" ")}
-                                    type="button"
-                                >
-                                    Día
-                                </button>
-                                <button
-                                    onClick={() => setTheme("dark")}
-                                    className={[
-                                        "px-3 py-1.5 rounded-lg text-xs font-semibold transition",
-                                        theme === "dark"
-                                            ? "bg-white text-slate-900"
-                                            : "text-white/80 hover:bg-white/10",
-                                    ].join(" ")}
-                                    type="button"
-                                >
-                                    Noche
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="mt-2 space-y-1 px-4 pb-4">
+                        <div className="mt-2 space-y-1 px-2">
+                            <ResponsiveNavLink href="/">
+                                Inicio
+                            </ResponsiveNavLink>
                             <ResponsiveNavLink href={route("profile.edit")}>
                                 Perfil
                             </ResponsiveNavLink>

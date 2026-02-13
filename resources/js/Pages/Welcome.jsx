@@ -691,8 +691,8 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                         </p>
                                     </details>
 
-                                    <details class="group py-4">
-                                        <summary class="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900 dark:dark:text-white">
+                                    <details className="group py-4">
+                                        <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900 dark:dark:text-white">
                                             ¿En qué se enfoca METEOR?
                                             <span className="relative inline-flex h-5 w-5 items-center justify-center transition-transform duration-200 ease-in-out group-open:rotate-180">
                                                 <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-100 group-open:opacity-0">+</span>

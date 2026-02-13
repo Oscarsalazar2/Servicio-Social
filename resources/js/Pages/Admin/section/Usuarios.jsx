@@ -18,7 +18,12 @@ export default function Usuarios({ allUsers = [] }) {
                 year: "numeric",
             },
         ),
-        role: user.role === 'admin' ? 'Admin' : user.role === 'launcher' ? 'Lanzador' : 'Usuario',
+        role:
+            user.role === "admin"
+                ? "Admin"
+                : user.role === "launcher"
+                  ? "Lanzador"
+                  : "Usuario",
         status: user.is_active ? "Activo" : "Inactivo",
     }));
 
@@ -94,10 +99,10 @@ export default function Usuarios({ allUsers = [] }) {
                                 paddingRight: "2.5rem",
                             }}
                         >
-                            <option value="all">Rol ▼</option>
-                            <option value="admin">Admin</option>
-                            <option value="launcher">Lanzador</option>
-                            <option value="user">Usuario</option>
+                            <option value="all">Rol</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Lanzador">Lanzador</option>
+                            <option value="Usuario">Usuario</option>
                         </select>
                     </div>
 
@@ -115,7 +120,7 @@ export default function Usuarios({ allUsers = [] }) {
                                 paddingRight: "2.5rem",
                             }}
                         >
-                            <option value="all">Estado ▼</option>
+                            <option value="all">Estado</option>
                             <option value="Activo">Activo</option>
                             <option value="Inactivo">Inactivo</option>
                         </select>
