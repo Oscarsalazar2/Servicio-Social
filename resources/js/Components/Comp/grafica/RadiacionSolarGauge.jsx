@@ -69,7 +69,7 @@ export default function SolarRadiationGauge({
   return (
     <svg width={width} height={height} style={{ display: "block" }}>
 
-      {/* Arcos */}
+      
       {segments.map((s, i) => (
         <path
           key={i}
@@ -81,10 +81,10 @@ export default function SolarRadiationGauge({
         />
       ))}
 
-      {/* Hueco interior: ponlo en transparent para que se vea el fondo del div */}
+      
       <circle cx={cx} cy={cy} r={r - strokeWidth / 2} fill={innerColor} />
 
-      {/* Etiquetas */}
+      
       {ticks.map((v, i) => {
         const a = angleForValue(v);
         const p = polarToCartesian(cx, cy, r + 18, a);
@@ -105,7 +105,7 @@ export default function SolarRadiationGauge({
         );
       })}
 
-      {/* Aguja */}
+      
       <line
         x1={cx}
         y1={cy}
