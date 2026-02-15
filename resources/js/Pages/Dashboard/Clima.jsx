@@ -5,6 +5,7 @@ import { Head } from "@inertiajs/react";
 
 import TarjetaKpi from "@/Components/Comp/kpi/TarjetaKpi";
 import GraficaTemperatura from "@/Components/Comp/grafica/GraficaTemperatura";
+import RadiacionSolarGauge from "@/Components/Comp/grafica/RadiacionSolarGauge";
 
 const COLORS = {
     temp: "#6E8CFB",
@@ -67,15 +68,26 @@ export default function Clima() {
                                 unit="km/h"
                                 color={COLORS.wind}
                             />
+                            <div className="lg:col-span-8">
+                            <div className="h-72 bg-white/5 border-white dark:bg-slate-900/40 dark:border-white/10 rounded-lg shadow p-6">
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                                    Condiciones Climáticas
+                                </h3>
+                                <RadiacionSolarGauge
+                                    series={climaSeries}
+                                    colors={COLORS}
+                                />
+                            </div>
+                        </div>
                         </div>
 
                         {/* Gráfica */}
                         <div className="lg:col-span-8">
-                            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                            <div className="h-80 bg-white/5 border-white dark:bg-slate-900/40 dark:border-white/10 rounded-lg shadow p-6">
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                                     Condiciones Climáticas
                                 </h3>
-                                <GraficaTemperatura
+                                <RadiacionSolarGauge
                                     series={climaSeries}
                                     colors={COLORS}
                                 />
