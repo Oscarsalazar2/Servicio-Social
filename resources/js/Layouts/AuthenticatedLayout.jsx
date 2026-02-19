@@ -65,17 +65,18 @@ export default function AuthenticatedLayout({ children }) {
                         <div className="flex items-center gap-2 sm:gap-4 lg:gap-6">
                             <Link
                                 href={route("dashboard")}
-                                className="flex items-center gap-2 flex-shrink-0"
+                                className="flex items-center gap-2"
                             >
                                 <img
-                                    src={logo_liner_s}
-                                    alt="Logo Estación Meteorológica"
-                                    className="h-24 sm:h-32 md:h-40 lg:h-48 w-auto object-contain
+                                        src={logo_liner_s}
+                                        alt="Logo Estaci??n Meteorol??gica"
+                                        className="h-16 w-auto sm:h-26 md:h-28 object-contain
                                         drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]
-                                        sm:drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]"
-                                />
+                                        sm:drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]
+                                        sm:mt-[6px] md:mt-[8px]"
+                                    />
                                 {/*<ApplicationLogo className="block h-8 w-auto fill-current text-white" />*/}
-                                <span className="hidden sm:block text-white font-extrabold tracking-wide text-sm sm:text-base lg:text-lg">
+                                <span className="text-white font-extrabold tracking-wide">
                                     METEOR
                                 </span>
                             </Link>
