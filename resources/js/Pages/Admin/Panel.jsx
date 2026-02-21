@@ -16,6 +16,7 @@ export default function AdminIndex({
     pendingUsers = [],
     rejectedUsers = [],
     allUsers = [],
+    auditLogs = [],
 }) {
     const [section, setSection] = useState("usuarios");
     const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -321,6 +322,7 @@ export default function AdminIndex({
                             pendingUsers={pendingUsers}
                             rejectedUsers={rejectedUsers}
                             allUsers={allUsers}
+                            auditLogs={auditLogs}
                         />
                     </section>
                 </div>
