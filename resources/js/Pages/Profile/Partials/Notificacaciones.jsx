@@ -9,11 +9,13 @@ import { useState, useEffect } from "react";
 export default function Notificacaciones({ className = "" }) {
     const user = usePage().props.auth.user;
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } =
+    const { data, setData, patch, post, errors, processing, recentlySuccessful } =
         useForm({
             enable_notifications: user.enable_notifications || false,
             telegram_username: user.telegram_username || "",
         });
+
+    const [testSuccess, setTestSuccess] = useState(false);
 
     const [notificationsEnabled, setNotificationsEnabled] = useState(
         data.enable_notifications
@@ -25,14 +27,25 @@ export default function Notificacaciones({ className = "" }) {
 
     const submit = (e) => {
         e.preventDefault();
+        setTestSuccess(false);
 
-        patch(route("profile.update")); // Assuming this route handles it, or create a new one
+        patch(route("profile.update"));
+    };
+
+    const testTelegramConnection = (e) => {
+        e.preventDefault();
+
+        post(route("profile.telegram.test"), {
+            preserveScroll: true,
+            onSuccess: () => setTestSuccess(true),
+            onError: () => setTestSuccess(false),
+        });
     };
 
     const handleCheckboxChange = (e) => {
         const checked = e.target.checked;
-        console.log("Checkbox changed:", checked);
         setNotificationsEnabled(checked);
+        setTestSuccess(false);
         setData("enable_notifications", checked);
         if (!checked) {
             setData("telegram_username", "");
@@ -41,10 +54,6 @@ export default function Notificacaciones({ className = "" }) {
 
     return (
         <section className={className}>
-            {console.log(
-                "Rendering with notificationsEnabled:",
-                notificationsEnabled
-            )}
             <header>
                 <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                     Notificaciones
@@ -77,20 +86,35 @@ export default function Notificacaciones({ className = "" }) {
                             value="Usuario de Telegram"
                         />
 
-                        <TextInput
-                            id="telegram_username"
-                            className="mt-1 block w-full"
-                            value={data.telegram_username}
-                            onChange={(e) =>
-                                setData("telegram_username", e.target.value)
-                            }
-                            placeholder="Ingresa tu usuario de Telegram"
-                        />
+                        <div className="mt-1 flex items-end gap-3">
+                            <TextInput
+                                id="telegram_username"
+                                className="block w-full"
+                                value={data.telegram_username}
+                                onChange={(e) =>
+                                    setData("telegram_username", e.target.value)
+                                }
+                                placeholder="Ingresa tu usuario de Telegram"
+                            />
+
+                            <PrimaryButton
+                                type="button"
+                                onClick={testTelegramConnection}
+                                disabled={processing}
+                            >
+                                Probar conexión a Telegram
+                            </PrimaryButton>
+                        </div>
 
                         <InputError
                             message={errors.telegram_username}
                             className="mt-2"
                         />
+                        {testSuccess && (
+                            <p className="mt-2 text-sm text-green-600">
+                                Mensaje de prueba enviado correctamente.
+                            </p>
+                        )}
                     </div>
                 )}
 

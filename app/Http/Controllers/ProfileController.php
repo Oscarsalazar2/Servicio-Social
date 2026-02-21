@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Services\TelegramService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -27,9 +28,12 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request, TelegramService $telegram): RedirectResponse
     {
         $request->user()->fill($request->validated());
+
+        $notificationsSettingsChanged = $request->user()->isDirty('enable_notifications')
+            || $request->user()->isDirty('telegram_username');
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
@@ -37,7 +41,41 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
+        if ($notificationsSettingsChanged && $request->user()->enable_notifications && filled($request->user()->telegram_username)) {
+            $telegram->sendToUser(
+                $request->user(),
+                "🔔 <b>Notificaciones activadas</b>\nHola {$request->user()->name}, tu configuración de Telegram se guardó correctamente."
+            );
+        }
+
         return Redirect::route('profile.edit');
+    }
+
+    public function testTelegram(Request $request, TelegramService $telegram): RedirectResponse
+    {
+        $data = $request->validate([
+            'enable_notifications' => ['required', 'boolean'],
+            'telegram_username' => ['required', 'string', 'max:255'],
+        ]);
+
+        if (!$data['enable_notifications']) {
+            return Redirect::back()->withErrors([
+                'telegram_username' => 'Activa las notificaciones antes de probar Telegram.',
+            ]);
+        }
+
+        $sent = $telegram->sendToTarget(
+            $data['telegram_username'],
+            "🧪 <b>Prueba de conexión</b>\nHola {$request->user()->name}, tu integración con Telegram funciona correctamente."
+        );
+
+        if (!$sent) {
+            return Redirect::back()->withErrors([
+                'telegram_username' => 'No se pudo enviar el mensaje de prueba. Revisa tu usuario/chat_id y el token del bot.',
+            ]);
+        }
+
+        return Redirect::back();
     }
 
     /**

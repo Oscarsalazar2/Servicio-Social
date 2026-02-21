@@ -5,13 +5,16 @@ import FlashMessages from "@/Components/FlashMessages";
 
 import Usuarios from "./section/Usuarios";
 import Activaciones from "./section/Activaciones";
+import Rechazados from "./section/Rechazados";
 import Auditoria from "./section/Auditoria";
 import Reportes from "./section/Reportes";
 import Configuracion from "./section/Configuracion";
 
 export default function AdminIndex({
     pendingActivations = 0,
+    rejectedCount = 0,
     pendingUsers = [],
+    rejectedUsers = [],
     allUsers = [],
 }) {
     const [section, setSection] = useState("usuarios");
@@ -29,6 +32,12 @@ export default function AdminIndex({
                     label: "Activaciones",
                     icon: "fa-user-clock",
                     badge: pendingActivations,
+                },
+                {
+                    key: "rechazados",
+                    label: "Rechazadas",
+                    icon: "fa-user-xmark",
+                    badge: rejectedCount,
                 },
             ],
         },
@@ -64,6 +73,7 @@ export default function AdminIndex({
         const map = {
             usuarios: Usuarios,
             activaciones: Activaciones,
+            rechazados: Rechazados,
             auditoria: Auditoria,
             reportes: Reportes,
             configuracion: Configuracion,
@@ -309,6 +319,7 @@ export default function AdminIndex({
                     <section className="w-full lg:flex-1 rounded-xl sm:rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900 min-h-[500px]">
                         <SectionComponent
                             pendingUsers={pendingUsers}
+                            rejectedUsers={rejectedUsers}
                             allUsers={allUsers}
                         />
                     </section>

@@ -50,6 +50,15 @@ class LoginRequest extends FormRequest
         }
 
         $user = Auth::user();
+        if ($user && $user->role === 'rejected') {
+            Auth::logout();
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => 'Tu solicitud fue rechazada por un administrador.',
+            ]);
+        }
+
         if ($user && $user->is_active === false) {
             Auth::logout();
             RateLimiter::hit($this->throttleKey());
@@ -90,6 +99,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('email')) . '|' . $this->ip());
     }
 }

@@ -22,6 +22,7 @@ Asegúrate de tener instalado:
 Sigue estos pasos en tu terminal:
 
 ### 1. Clonar o descomprimir el proyecto
+
 Si lo descargaste en ZIP:
 
 ```
@@ -31,6 +32,7 @@ C:\xampp\htdocs\Servicio-Social
 ---
 
 ### 2. Instalar dependencias PHP (Composer)
+
 ```
 composer install
 ```
@@ -38,6 +40,7 @@ composer install
 ---
 
 ### 3. Instalar dependencias frontend (Vite)
+
 ```
 npm install
 ```
@@ -45,6 +48,7 @@ npm install
 ---
 
 ### 4. Crear el archivo de entorno
+
 Copia el archivo de ejemplo:
 
 ```
@@ -75,6 +79,7 @@ CREATE DATABASE servicio_social;
 ---
 
 ### 6. Generar APP_KEY
+
 ```
 php artisan key:generate
 ```
@@ -82,6 +87,7 @@ php artisan key:generate
 ---
 
 ### 7. Ejecutar migraciones y seeders
+
 Este proyecto incluye la creación automática del usuario administrador.
 
 ```
@@ -94,21 +100,42 @@ php artisan migrate --seed
 
 Al ejecutar el seeder se creará este usuario:
 
-- **Email:** `admin@demo.com`  
-- **Contraseña:** `password`  
-- **Rol:** Administrador  
+- **Email:** `admin@demo.com`
+- **Contraseña:** `password`
+- **Rol:** Administrador
 - **Email verificado:** Sí
+
+---
+
+## Notificaciones por Telegram
+
+Para habilitar notificaciones por Telegram:
+
+1. Crea un bot con **@BotFather** y copia el token.
+2. En tu archivo `.env` agrega:
+
+```
+TELEGRAM_BOT_TOKEN=tu_token_de_bot
+TELEGRAM_DEFAULT_CHAT_ID=
+TELEGRAM_PARSE_MODE=HTML
+```
+
+3. En el perfil de usuario activa notificaciones y guarda tu `telegram_username`.
+
+Las notificaciones se envían cuando un administrador activa, rechaza, cambia estado o elimina usuarios.
 
 ---
 
 ## Ejecutar el proyecto
 
 ### Levantar backend Laravel:
+
 ```
 php artisan serve
 ```
 
 ### Levantar frontend (Vite):
+
 ```
 npm run dev
 ```
@@ -121,7 +148,7 @@ http://localhost:8000
 
 ---
 
-##  Estructura principal del proyecto
+## Estructura principal del proyecto
 
 ```
 app/
@@ -153,5 +180,3 @@ tailwind.config.js
 - **Ximena Amador**
 
 Proyecto de Servicio Social — Desarrollo Web y IoT
-
-
