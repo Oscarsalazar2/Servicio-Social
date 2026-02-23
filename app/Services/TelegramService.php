@@ -71,10 +71,56 @@ class TelegramService
     {
         $value = trim($telegramUsername);
 
+        // Si ya es un número, retornarlo directamente
         if (is_numeric($value) || str_starts_with($value, '-100')) {
             return $value;
         }
 
-        return str_starts_with($value, '@') ? $value : '@' . $value;
+        // Si es un username (@usuario), intenta resolverlo a chat_id
+        if (str_starts_with($value, '@')) {
+            $chatId = $this->resolveTelegramUsername($value);
+            if ($chatId) {
+                return (string) $chatId;
+            }
+            return $value; // Retorna el username si no se pudo resolver
+        }
+
+        // Si no tiene @, lo agregamos
+        return '@' . $value;
+    }
+
+    private function resolveTelegramUsername(string $username): ?int
+    {
+        try {
+            // Intenta obtener información del usuario/chat usando getChat
+            $cleanUsername = ltrim($username, '@');
+            $botToken = config('services.telegram.bot_token');
+
+            $response = Http::timeout(5)->get("https://api.telegram.org/bot{$botToken}/getChat", [
+                'chat_id' => '@' . $cleanUsername,
+            ]);
+
+            if ($response->successful() && $response->json('ok') === true) {
+                $chatId = $response->json('result.id');
+                Log::info('Username resuelto a chat_id', [
+                    'username' => $username,
+                    'chat_id' => $chatId,
+                ]);
+                return $chatId;
+            }
+
+            Log::warning('No se pudo resolver username', [
+                'username' => $username,
+                'response' => $response->json(),
+            ]);
+
+            return null;
+        } catch (\Exception $e) {
+            Log::warning('Error resolviendo username', [
+                'username' => $username,
+                'error' => $e->getMessage(),
+            ]);
+            return null;
+        }
     }
 }

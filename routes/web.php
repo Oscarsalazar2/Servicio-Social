@@ -7,6 +7,7 @@ use App\Services\TelegramService;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -216,3 +217,12 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+
+Route::get('/test-mail', function () {
+    Mail::raw("Mensaje de prueba METEOR 🚀", function ($message) {
+        $message->to("oskar.salazar2016@gmail.com")
+                ->subject("Luis Gay Gmail");
+    });
+
+    return "Correo enviado";
+});

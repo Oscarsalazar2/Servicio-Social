@@ -25,28 +25,13 @@ export default function Notificacaciones({ className = "" }) {
         setNotificationsEnabled(data.enable_notifications);
     }, [data.enable_notifications]);
 
-    const submit = (e) => {
-        e.preventDefault();
-        setTestSuccess(false);
-
-        patch(route("profile.update"));
-    };
-
-    const testTelegramConnection = (e) => {
-        e.preventDefault();
-
-        post(route("profile.telegram.test"), {
-            preserveScroll: true,
-            onSuccess: () => setTestSuccess(true),
-            onError: () => setTestSuccess(false),
-        });
-    };
-
     const handleCheckboxChange = (e) => {
         const checked = e.target.checked;
         setNotificationsEnabled(checked);
         setTestSuccess(false);
         setData("enable_notifications", checked);
+        
+        // Si desactiva, limpiar username también
         if (!checked) {
             setData("telegram_username", "");
         }
@@ -64,7 +49,11 @@ export default function Notificacaciones({ className = "" }) {
                 </p>
             </header>
 
-            <form onSubmit={submit} className="mt-6 space-y-6">
+            <form onSubmit={(e) => {
+                e.preventDefault();
+                setTestSuccess(false);
+                patch(route("profile.update"));
+            }} className="mt-6 space-y-6">
                 <div>
                     <label className="flex items-center">
                         <input
@@ -99,10 +88,17 @@ export default function Notificacaciones({ className = "" }) {
 
                             <PrimaryButton
                                 type="button"
-                                onClick={testTelegramConnection}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    post(route("profile.telegram.test"), {
+                                        preserveScroll: true,
+                                        onSuccess: () => setTestSuccess(true),
+                                        onError: () => setTestSuccess(false),
+                                    });
+                                }}
                                 disabled={processing}
                             >
-                                Probar conexión a Telegram
+                                Probar conexión
                             </PrimaryButton>
                         </div>
 
@@ -112,7 +108,7 @@ export default function Notificacaciones({ className = "" }) {
                         />
                         {testSuccess && (
                             <p className="mt-2 text-sm text-green-600">
-                                Mensaje de prueba enviado correctamente.
+                                ✓ Conexión exitosa
                             </p>
                         )}
                     </div>

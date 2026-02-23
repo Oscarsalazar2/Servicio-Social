@@ -71,11 +71,11 @@ class ProfileController extends Controller
 
         if (!$sent) {
             return Redirect::back()->withErrors([
-                'telegram_username' => 'No se pudo enviar el mensaje de prueba. Revisa tu usuario/chat_id y el token del bot.',
+                'telegram_username' => 'Conexión fallida. Verifica tu usuario/ID de Telegram.',
             ]);
         }
 
-        return Redirect::back();
+        return Redirect::back()->with('status', '✓ Conexión con Telegram exitosa');
     }
 
     /**
