@@ -71,7 +71,7 @@ export default function Clima() {
                             <div className="lg:col-span-8">
                             <div className="h-72 bg-white/5 border-white dark:bg-slate-900/40 dark:border-white/10 rounded-lg shadow p-6">
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                                    Condiciones Climáticas
+                                    Radiación Solar
                                 </h3>
                                 <RadiacionSolarGauge
                                     series={climaSeries}
@@ -79,13 +79,13 @@ export default function Clima() {
                                 />
                             </div>
                         </div>
-                        </div>
+                    </div>
 
                         {/* Gráfica */}
                         <div className="lg:col-span-8">
                             <div className="h-80 bg-white/5 border-white dark:bg-slate-900/40 dark:border-white/10 rounded-lg shadow p-6">
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                                    Condiciones Climáticas
+                                    Radiación Solar
                                 </h3>
                                 <RadiacionSolarGauge
                                     series={climaSeries}

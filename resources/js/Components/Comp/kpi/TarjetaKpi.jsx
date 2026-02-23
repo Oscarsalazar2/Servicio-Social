@@ -2,6 +2,7 @@ import React from "react";
 
 export default function TarjetaKpi({
     title,
+    extra,
     value,
     unit,
     color,
@@ -11,9 +12,17 @@ export default function TarjetaKpi({
     return (
         <div className="rounded-2xl shadow-sm border p-4 bg-white/5 backdrop-blur border-white/10 dark:bg-slate-900/40 dark:border-white/10">
             <div className="flex items-start justify-between gap-3">
-                <div>
-                    <div className="text-sm font-medium text-gray-700 dark:text-white/70">
-                        {title}
+                <div className="w-full">
+                    <div className="flex justify-between items-center gap-2 w-full">
+                        <span className="text-sm font-medium text-gray-700 dark:text-white/70">
+                            {title}
+                        </span>
+                        
+                        {extra && (
+                            <span className="text-xs text-cyan-700 font-semibold dark:text-cyan-400 whitespace-nowrap ml-4">
+                                {extra}
+                            </span>
+                        )}
                     </div>
                     <div className="mt-2 flex items-baseline gap-2">
                         <div

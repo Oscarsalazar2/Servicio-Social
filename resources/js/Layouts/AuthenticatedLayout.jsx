@@ -101,13 +101,20 @@ export default function AuthenticatedLayout({ children }) {
                                     href={route("dashboard.temp")}
                                     active={isTemp}
                                 >
-                                    Temperatura
+                                    Temperatura y humedad
                                 </TopLink>
+                                
+                                <TopLink
+                                    
+                                >
+                                    Presión
+                                </TopLink>
+                                
                                 <TopLink
                                     href={route("dashboard.climate")}
                                     active={isClimate}
                                 >
-                                    Clima
+                                    Solar
                                 </TopLink>
                                 {/* LANZAMIENTOS - Admin y Launcher */}
                                 {canAccessLauncher &&
