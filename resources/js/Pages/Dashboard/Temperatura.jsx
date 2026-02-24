@@ -95,7 +95,7 @@ export default function Temperatura() {
                                 subtitle={`Actualizado: ${kpi.updated}`}
                                 icon=""
                             />
-                            <TarjetaKpi
+                           {/*  <TarjetaKpi
                                 title="Precipitacion acumulada"
                                 value={kpi.rainAccumulated}
                                 unit="mm"
@@ -110,7 +110,7 @@ export default function Temperatura() {
                                 color={COLORS.rain}
                                 subtitle={`Actualizado: ${kpi.updated}`}
                                 icon=""
-                            />
+                            />*/}
                             <TarjetaKpi
                                 title="Punto de rocio"
                                 value={kpi.dewPoint}

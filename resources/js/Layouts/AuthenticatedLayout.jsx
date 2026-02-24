@@ -49,7 +49,8 @@ export default function AuthenticatedLayout({ children }) {
     const isInicio = current === "dashboard";
     const isWind = current === "dashboard.wind";
     const isTemp = current === "dashboard.temp";
-    const isClimate = current === "dashboard.climate";
+    const isClimate = current === "dashboard.climate"; 
+    const isPressure = current === "dashboard.pressure";
 
     const isAdmin = user?.role === "admin";
     const canAccessLauncher =
@@ -105,7 +106,8 @@ export default function AuthenticatedLayout({ children }) {
                                 </TopLink>
                                 
                                 <TopLink
-                                    
+                                    href={route("dashboard.pressure")}
+                                    activate={isPressure}
                                 >
                                     Presión
                                 </TopLink>
@@ -322,13 +324,19 @@ export default function AuthenticatedLayout({ children }) {
                             href={route("dashboard.temp")}
                             active={isTemp}
                         >
-                            Temperatura
+                            Temperatura y humedad
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            href={route("dashboard.pressure")}
+                            active={isPressure}
+                        >
+                            Presión
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             href={route("dashboard.climate")}
                             active={isClimate}
                         >
-                            Clima
+                            Solar
                         </ResponsiveNavLink>
 
                         {/* LANZAMIENTOS MOBILE - Admin y Launcher */}
