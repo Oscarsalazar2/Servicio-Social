@@ -121,7 +121,8 @@ export default function AuthenticatedLayout({ children }) {
                                 </TopLink>
                                 
                                 <TopLink
-                                    
+                                    href={route("dashboard.pressure")}
+                                    active={isPressure}
                                 >
                                     Presión
                                 </TopLink>
@@ -130,7 +131,7 @@ export default function AuthenticatedLayout({ children }) {
                                     href={route("dashboard.climate")}
                                     active={isClimate}
                                 >
-                                    Solar
+                                    Cielo
                                 </TopLink>
                                 {/* LANZAMIENTOS - Admin y Launcher */}
                                 {canAccessLauncher &&
