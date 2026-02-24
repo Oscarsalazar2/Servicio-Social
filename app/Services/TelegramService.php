@@ -3,37 +3,42 @@
 namespace App\Services;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Telegram\Bot\Api;
 
 class TelegramService
 {
+    private ?Api $telegram = null;
+
     public function send(string $chatId, string $message): bool
     {
-        $botToken = config('services.telegram.bot_token');
-
-        if (blank($botToken) || blank($chatId) || blank($message)) {
+        if (blank(config('services.telegram.bot_token')) || blank($chatId) || blank($message)) {
             return false;
         }
 
-        $response = Http::asForm()->post("https://api.telegram.org/bot{$botToken}/sendMessage", [
-            'chat_id' => $chatId,
-            'text' => $message,
-            'parse_mode' => config('services.telegram.parse_mode', 'HTML'),
-            'disable_web_page_preview' => true,
-        ]);
+        try {
+            $telegram = $this->client();
 
-        if ($response->failed()) {
-            Log::warning('Error enviando notificación a Telegram', [
-                'status' => $response->status(),
-                'body' => $response->json(),
+            if (!$telegram) {
+                return false;
+            }
+
+            $telegram->sendMessage([
                 'chat_id' => $chatId,
+                'text' => $message,
+                'parse_mode' => config('services.telegram.parse_mode', 'HTML'),
+                'disable_web_page_preview' => true,
+            ]);
+
+            return true;
+        } catch (\Throwable $exception) {
+            Log::warning('Error enviando notificación a Telegram', [
+                'chat_id' => $chatId,
+                'error' => $exception->getMessage(),
             ]);
 
             return false;
         }
-
-        return true;
     }
 
     public function sendToUser(User $user, string $message): bool
@@ -92,34 +97,63 @@ class TelegramService
     private function resolveTelegramUsername(string $username): ?int
     {
         try {
-            // Intenta obtener información del usuario/chat usando getChat
             $cleanUsername = ltrim($username, '@');
-            $botToken = config('services.telegram.bot_token');
+            $telegram = $this->client();
 
-            $response = Http::timeout(5)->get("https://api.telegram.org/bot{$botToken}/getChat", [
+            if (!$telegram) {
+                return null;
+            }
+
+            $chat = $telegram->getChat([
                 'chat_id' => '@' . $cleanUsername,
             ]);
 
-            if ($response->successful() && $response->json('ok') === true) {
-                $chatId = $response->json('result.id');
+            $chatId = $chat->get('id');
+
+            if ($chatId) {
                 Log::info('Username resuelto a chat_id', [
                     'username' => $username,
                     'chat_id' => $chatId,
                 ]);
+
                 return $chatId;
             }
 
             Log::warning('No se pudo resolver username', [
                 'username' => $username,
-                'response' => $response->json(),
             ]);
 
             return null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::warning('Error resolviendo username', [
                 'username' => $username,
                 'error' => $e->getMessage(),
             ]);
+            return null;
+        }
+    }
+
+    private function client(): ?Api
+    {
+        if ($this->telegram instanceof Api) {
+            return $this->telegram;
+        }
+
+        $botToken = (string) config('services.telegram.bot_token');
+
+        if (blank($botToken)) {
+            return null;
+        }
+
+        try {
+            $this->telegram = new Api($botToken);
+
+            return $this->telegram;
+        } catch (\Throwable $exception) {
+            Log::warning('No se pudo inicializar el cliente de Telegram', [
+                'error' => $exception->getMessage(),
+            ]);
+
             return null;
         }
     }

@@ -59,13 +59,28 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
         document.getElementById("background")?.classList.add("!hidden");
     };
 
-    const [theme, setTheme] = useState(
-        () => localStorage.getItem("theme") || "dark",
-    );
+    const [theme, setTheme] = useState(() => {
+        if (typeof window === "undefined") {
+            return "dark";
+        }
+
+        const storedTheme = window.localStorage.getItem("theme");
+
+        if (storedTheme === "light" || storedTheme === "dark") {
+            return storedTheme;
+        }
+
+        return window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light";
+    });
+
+    const handleThemeChange = (nextTheme) => {
+        setTheme(nextTheme);
+        window.localStorage.setItem("theme", nextTheme);
+    };
 
     useEffect(() => {
-        localStorage.setItem("theme", theme);
-
         const root = document.documentElement;
         if (theme === "dark") root.classList.add("dark");
         else root.classList.remove("dark");
@@ -122,7 +137,9 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                     <div className="flex items-center gap-1 rounded-xl border border-white/15 bg-white/10 p-1">
                                         <button
                                             type="button"
-                                            onClick={() => setTheme("light")}
+                                            onClick={() =>
+                                                handleThemeChange("light")
+                                            }
                                             className={[
                                                 "rounded-lg px-3 py-1.5 text-xs font-semibold transition",
                                                 theme === "light"
@@ -135,7 +152,9 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                                         <button
                                             type="button"
-                                            onClick={() => setTheme("dark")}
+                                            onClick={() =>
+                                                handleThemeChange("dark")
+                                            }
                                             className={[
                                                 "rounded-lg px-3 py-1.5 text-xs font-semibold transition",
                                                 theme === "dark"
@@ -649,7 +668,6 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                             <h2 className="text-4xl font-bold tracking-tight">
                                                 Ubicación
                                             </h2>
-
                                         </div>
                                         <div className="mt-2 h-1 w-14 rounded-full bg-white/50" />
                                         <p className="text-lg leading-relaxed py-2 text-white/90">
@@ -671,23 +689,31 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 </h2>
                                 <div className="mt-2 h-1 w-14 rounded-full bg-[#009688]/80" />
                                 <p className="max-w-3xl mt-4 text-slate-500 dark:text-slate-400">
-                                    METEOR es un proyecto acádemico de monitoreo metereolgico que
-                                    recopila y visualiza datos climatológicos locales en tiempo real,
-                                    utilizando sensores avanzados y tecnología IoT.
+                                    METEOR es un proyecto acádemico de monitoreo
+                                    metereolgico que recopila y visualiza datos
+                                    climatológicos locales en tiempo real,
+                                    utilizando sensores avanzados y tecnología
+                                    IoT.
                                 </p>
                                 <div className="max-w-5xl mx-auto divide-y divide-slate-100 dark:divide-slate-800">
                                     <details className="group py-5">
                                         <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900 dark:text-white">
                                             ¿Cuál es el propósito del proyecto?
                                             <span className="relative inline-flex h-5 w-5 items-center justify-center transition-transform duration-200 ease-in-out group-open:rotate-180">
-                                                <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-100 group-open:opacity-0">+</span>
-                                                <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-0 group-open:opacity-100">−</span>
+                                                <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-100 group-open:opacity-0">
+                                                    +
+                                                </span>
+                                                <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-0 group-open:opacity-100">
+                                                    −
+                                                </span>
                                             </span>
-
                                         </summary>
                                         <p className="mt-2 text-slate-500 dark:text-slate-400">
-                                            El objetivo es apoyar el parendizaje, el análisis ambiental y
-                                            el uso de datos reales en actividades académicas y proyectos escolares.
+                                            El objetivo es apoyar el
+                                            parendizaje, el análisis ambiental y
+                                            el uso de datos reales en
+                                            actividades académicas y proyectos
+                                            escolares.
                                         </p>
                                     </details>
 
@@ -695,30 +721,41 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                         <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900 dark:dark:text-white">
                                             ¿En qué se enfoca METEOR?
                                             <span className="relative inline-flex h-5 w-5 items-center justify-center transition-transform duration-200 ease-in-out group-open:rotate-180">
-                                                <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-100 group-open:opacity-0">+</span>
-                                                <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-0 group-open:opacity-100">−</span>
+                                                <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-100 group-open:opacity-0">
+                                                    +
+                                                </span>
+                                                <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-0 group-open:opacity-100">
+                                                    −
+                                                </span>
                                             </span>
                                         </summary>
                                         <p className="mt-2 text-slate-500 dark:text-slate-400">
-                                            Se centra en la recopilación y análisis de variables climatológicas
+                                            Se centra en la recopilación y
+                                            análisis de variables climatológicas
                                             del entorno.
                                         </p>
                                     </details>
 
                                     <details className="group py-4">
                                         <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900 dark:text-white">
-                                            ¿En qué estado se encuentra el proyecto?
+                                            ¿En qué estado se encuentra el
+                                            proyecto?
                                             <span className="relative inline-flex h-5 w-5 items-center justify-center transition-transform duration-200 ease-in-out group-open:rotate-180">
-                                                <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-100 group-open:opacity-0">+</span>
-                                                <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-0 group-open:opacity-100">−</span>
+                                                <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-100 group-open:opacity-0">
+                                                    +
+                                                </span>
+                                                <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 ease-in-out opacity-0 group-open:opacity-100">
+                                                    −
+                                                </span>
                                             </span>
                                         </summary>
                                         <p className="mt-2 text-slate-500 dark:text-slate-400">
-                                            Actualmente, METEOR se encuentra en desarrollo y en constante mejora,
-                                            incorporando nuevas funciones conforme se recopilan más datos.
+                                            Actualmente, METEOR se encuentra en
+                                            desarrollo y en constante mejora,
+                                            incorporando nuevas funciones
+                                            conforme se recopilan más datos.
                                         </p>
                                     </details>
-
                                 </div>
                             </div>
                         </section>
