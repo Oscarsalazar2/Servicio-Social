@@ -30,7 +30,9 @@ class PasswordResetLinkController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'email' => 'required|email',
+            'email' => 'required|email|lowercase|exists:users,email',
+        ], [
+            'email.exists' => 'No existe una cuenta registrada con ese correo.',
         ]);
 
         // We will send the password reset link to this user. Once we have attempted

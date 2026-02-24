@@ -33,13 +33,28 @@ export default function AuthenticatedLayout({ children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
-    const [theme, setTheme] = useState(
-        () => localStorage.getItem("theme") || "dark",
-    );
+    const [theme, setTheme] = useState(() => {
+        if (typeof window === "undefined") {
+            return "dark";
+        }
+
+        const storedTheme = window.localStorage.getItem("theme");
+
+        if (storedTheme === "light" || storedTheme === "dark") {
+            return storedTheme;
+        }
+
+        return window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light";
+    });
+
+    const handleThemeChange = (nextTheme) => {
+        setTheme(nextTheme);
+        window.localStorage.setItem("theme", nextTheme);
+    };
 
     useEffect(() => {
-        localStorage.setItem("theme", theme);
-
         const root = document.documentElement;
         if (theme === "dark") root.classList.add("dark");
         else root.classList.remove("dark");
@@ -69,13 +84,13 @@ export default function AuthenticatedLayout({ children }) {
                                 className="flex items-center gap-2"
                             >
                                 <img
-                                        src={logo_liner_s}
-                                        alt="Logo Estaci??n Meteorol??gica"
-                                        className="h-16 w-auto sm:h-26 md:h-28 object-contain
+                                    src={logo_liner_s}
+                                    alt="Logo Estaci??n Meteorol??gica"
+                                    className="h-16 w-auto sm:h-26 md:h-28 object-contain
                                         drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]
                                         sm:drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]
                                         sm:mt-[6px] md:mt-[8px]"
-                                    />
+                                />
                                 {/*<ApplicationLogo className="block h-8 w-auto fill-current text-white" />*/}
                                 <span className="text-white font-extrabold tracking-wide">
                                     METEOR
@@ -106,8 +121,7 @@ export default function AuthenticatedLayout({ children }) {
                                 </TopLink>
                                 
                                 <TopLink
-                                    href={route("dashboard.pressure")}
-                                    activate={isPressure}
+                                    
                                 >
                                     Presión
                                 </TopLink>
@@ -150,7 +164,7 @@ export default function AuthenticatedLayout({ children }) {
                             {/* Toggle Día/Noche - Solo en desktop */}
                             <div className="hidden sm:flex items-center gap-0.5 bg-white/10 p-0.5 rounded-lg border border-white/15">
                                 <button
-                                    onClick={() => setTheme("light")}
+                                    onClick={() => handleThemeChange("light")}
                                     className={[
                                         "px-2 py-1.5 rounded text-xs font-semibold transition",
                                         theme === "light"
@@ -164,7 +178,7 @@ export default function AuthenticatedLayout({ children }) {
                                 </button>
 
                                 <button
-                                    onClick={() => setTheme("dark")}
+                                    onClick={() => handleThemeChange("dark")}
                                     className={[
                                         "px-2 py-1.5 rounded text-xs font-semibold transition",
                                         theme === "dark"
@@ -229,7 +243,7 @@ export default function AuthenticatedLayout({ children }) {
                             {/* Toggle Día/Noche - Solo móvil */}
                             <div className="flex items-center gap-0.5 bg-white/10 p-0.5 rounded-lg border border-white/15">
                                 <button
-                                    onClick={() => setTheme("light")}
+                                    onClick={() => handleThemeChange("light")}
                                     className={[
                                         "px-1.5 py-1 rounded text-xs font-semibold transition",
                                         theme === "light"
@@ -243,7 +257,7 @@ export default function AuthenticatedLayout({ children }) {
                                 </button>
 
                                 <button
-                                    onClick={() => setTheme("dark")}
+                                    onClick={() => handleThemeChange("dark")}
                                     className={[
                                         "px-1.5 py-1 rounded text-xs font-semibold transition",
                                         theme === "dark"
@@ -350,7 +364,7 @@ export default function AuthenticatedLayout({ children }) {
                                 </ResponsiveNavLink>
                             )}
 
-                         {/* ADMIN MOBILE */}
+                        {/* ADMIN MOBILE */}
                         {isAdmin && (
                             <>
                                 <ResponsiveNavLink

@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Models\AuditLog;
 use App\Models\User;
+use App\Notifications\UserStatusChangedNotification;
 use App\Services\TelegramService;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
@@ -85,13 +86,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         })->name('admin.panel');
 
         // Rutas para activar/rechazar usuarios
-        Route::post('/admin/users/{user}/activate', function (User $user, TelegramService $telegram, Request $request) {
+        Route::post('/admin/users/{user}/activate', function (User $user, Request $request) {
             $user->update(['is_active' => true]);
 
-            $telegram->sendToUser(
-                $user,
-                "✅ <b>Cuenta activada</b>\nHola {$user->name}, tu cuenta fue activada y ya puedes usar la plataforma."
-            );
+            $user->notify(new UserStatusChangedNotification('accepted'));
 
             AuditLog::create([
                 'actor_id' => $request->user()?->id,
@@ -108,11 +106,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             return redirect()->back()->with('success', 'Usuario activado correctamente');
         })->name('admin.users.activate');
 
-        Route::post('/admin/users/{user}/reject', function (User $user, TelegramService $telegram, Request $request) {
-            $telegram->sendToUser(
-                $user,
-                "❌ <b>Solicitud rechazada</b>\nHola {$user->name}, tu solicitud de acceso fue rechazada."
-            );
+        Route::post('/admin/users/{user}/reject', function (User $user, Request $request) {
+            $user->notify(new UserStatusChangedNotification('rejected'));
 
             $user->update([
                 'is_active' => false,
@@ -142,7 +137,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             $telegram->sendToUser(
                 $user,
-                "🔄 <b>Solicitud reabierta</b>\nHola {$user->name}, tu solicitud fue reabierta y está nuevamente pendiente de revisión."
+                "<b>Solicitud reabierta</b>\nHola {$user->name}, tu solicitud fue reabierta y está nuevamente pendiente de revisión."
             );
 
             AuditLog::create([
@@ -161,15 +156,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         })->name('admin.users.reopen');
 
         // Rutas para gestión de usuarios
-        Route::post('/admin/users/{user}/toggle-status', function (User $user, TelegramService $telegram, Request $request) {
+        Route::post('/admin/users/{user}/toggle-status', function (User $user, Request $request) {
             $user->update(['is_active' => !$user->is_active]);
             $status = $user->is_active ? 'activado' : 'desactivado';
 
-            $icon = $user->is_active ? '✅' : '⛔';
-            $telegram->sendToUser(
-                $user,
-                "{$icon} <b>Estado de cuenta actualizado</b>\nHola {$user->name}, tu cuenta fue {$status} por un administrador."
-            );
+            if (!$user->is_active) {
+                $user->notify(new UserStatusChangedNotification('suspended'));
+            }
 
             AuditLog::create([
                 'actor_id' => $request->user()?->id,
@@ -213,7 +206,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::post('/profile/telegram/test', [ProfileController::class, 'testTelegram'])->name('profile.telegram.test');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
@@ -222,7 +214,7 @@ require __DIR__ . '/auth.php';
 Route::get('/test-mail', function () {
     Mail::raw("Mensaje de prueba METEOR 🚀", function ($message) {
         $message->to("oskar.salazar2016@gmail.com")
-                ->subject("Luis Gay Gmail");
+            ->subject("Luis Gay Gmail");
     });
 
     return "Correo enviado";

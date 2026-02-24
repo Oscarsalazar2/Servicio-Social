@@ -1,9 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 export default function Usuarios({ allUsers = [] }) {
+    const ITEMS_PER_PAGE = 5;
     const [searchTerm, setSearchTerm] = useState("");
     const [roleFilter, setRoleFilter] = useState("all");
     const [statusFilter, setStatusFilter] = useState("all");
+    const [currentPage, setCurrentPage] = useState(1);
 
     // Formatear datos de usuarios
     const users = allUsers.map((user) => ({
@@ -41,6 +43,33 @@ export default function Usuarios({ allUsers = [] }) {
             return matchesSearch && matchesRole && matchesStatus;
         });
     }, [users, searchTerm, roleFilter, statusFilter]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, roleFilter, statusFilter]);
+
+    const totalPages = Math.max(
+        1,
+        Math.ceil(filteredUsers.length / ITEMS_PER_PAGE),
+    );
+
+    useEffect(() => {
+        if (currentPage > totalPages) {
+            setCurrentPage(totalPages);
+        }
+    }, [currentPage, totalPages]);
+
+    const paginatedUsers = useMemo(() => {
+        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+        return filteredUsers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    }, [filteredUsers, currentPage]);
+
+    const startItem =
+        filteredUsers.length === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1;
+    const endItem =
+        filteredUsers.length === 0
+            ? 0
+            : Math.min(currentPage * ITEMS_PER_PAGE, filteredUsers.length);
 
     const handleView = (userId) => {
         console.log("Ver usuario:", userId);
@@ -165,7 +194,7 @@ export default function Usuarios({ allUsers = [] }) {
                                 </thead>
                                 <tbody className="bg-white dark:bg-slate-900 divide-y divide-slate-200 dark:divide-slate-700">
                                     {filteredUsers.length > 0 ? (
-                                        filteredUsers.map((user) => (
+                                        paginatedUsers.map((user) => (
                                             <tr
                                                 key={user.id}
                                                 className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
@@ -266,6 +295,44 @@ export default function Usuarios({ allUsers = [] }) {
                         </div>
                     </div>
                 </div>
+
+                {filteredUsers.length > 0 && (
+                    <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                            Mostrando {startItem}-{endItem} de{" "}
+                            {filteredUsers.length}
+                        </p>
+                        <div className="flex items-center gap-2">
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setCurrentPage((prev) =>
+                                        Math.max(1, prev - 1),
+                                    )
+                                }
+                                disabled={currentPage === 1}
+                                className="px-3 py-1.5 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Anterior
+                            </button>
+                            <span className="px-3 py-1.5 text-xs sm:text-sm rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                                Página {currentPage} de {totalPages}
+                            </span>
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setCurrentPage((prev) =>
+                                        Math.min(totalPages, prev + 1),
+                                    )
+                                }
+                                disabled={currentPage === totalPages}
+                                className="px-3 py-1.5 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Siguiente
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -7,18 +7,18 @@ import { useForm, usePage } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 
 export default function Notificacaciones({ className = "" }) {
-    const user = usePage().props.auth.user;
+    const { auth, telegram } = usePage().props;
+    const user = auth.user;
+    const botUsername = telegram?.botUsername || "";
 
-    const { data, setData, patch, post, errors, processing, recentlySuccessful } =
+    const { data, setData, patch, errors, processing, recentlySuccessful } =
         useForm({
             enable_notifications: user.enable_notifications || false,
             telegram_username: user.telegram_username || "",
         });
 
-    const [testSuccess, setTestSuccess] = useState(false);
-
     const [notificationsEnabled, setNotificationsEnabled] = useState(
-        data.enable_notifications
+        data.enable_notifications,
     );
 
     useEffect(() => {
@@ -28,9 +28,8 @@ export default function Notificacaciones({ className = "" }) {
     const handleCheckboxChange = (e) => {
         const checked = e.target.checked;
         setNotificationsEnabled(checked);
-        setTestSuccess(false);
         setData("enable_notifications", checked);
-        
+
         // Si desactiva, limpiar username también
         if (!checked) {
             setData("telegram_username", "");
@@ -49,11 +48,13 @@ export default function Notificacaciones({ className = "" }) {
                 </p>
             </header>
 
-            <form onSubmit={(e) => {
-                e.preventDefault();
-                setTestSuccess(false);
-                patch(route("profile.update"));
-            }} className="mt-6 space-y-6">
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    patch(route("profile.update"));
+                }}
+                className="mt-6 space-y-6"
+            >
                 <div>
                     <label className="flex items-center">
                         <input
@@ -90,15 +91,24 @@ export default function Notificacaciones({ className = "" }) {
                                 type="button"
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    post(route("profile.telegram.test"), {
-                                        preserveScroll: true,
-                                        onSuccess: () => setTestSuccess(true),
-                                        onError: () => setTestSuccess(false),
-                                    });
+                                    const username = botUsername.replace(
+                                        /^@/,
+                                        "",
+                                    );
+
+                                    if (!username) {
+                                        return;
+                                    }
+
+                                    window.open(
+                                        `https://t.me/${username}`,
+                                        "_blank",
+                                        "noopener,noreferrer",
+                                    );
                                 }}
-                                disabled={processing}
+                                disabled={processing || !botUsername}
                             >
-                                Probar conexión
+                                Abrir chat del bot
                             </PrimaryButton>
                         </div>
 
@@ -106,9 +116,10 @@ export default function Notificacaciones({ className = "" }) {
                             message={errors.telegram_username}
                             className="mt-2"
                         />
-                        {testSuccess && (
-                            <p className="mt-2 text-sm text-green-600">
-                                ✓ Conexión exitosa
+                        {!botUsername && (
+                            <p className="mt-2 text-sm text-amber-600">
+                                Configura TELEGRAM_BOT_USERNAME para habilitar
+                                el acceso directo al chat del bot.
                             </p>
                         )}
                     </div>

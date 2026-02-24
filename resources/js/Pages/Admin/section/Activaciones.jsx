@@ -1,9 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { router } from "@inertiajs/react";
 
 export default function Activaciones({ pendingUsers = [] }) {
+    const ITEMS_PER_PAGE = 5;
     const [searchTerm, setSearchTerm] = useState("");
     const [processing, setProcessing] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
 
     // Formatear datos de usuarios pendientes
     const pendingActivations = pendingUsers.map((user) => ({
@@ -34,6 +36,41 @@ export default function Activaciones({ pendingUsers = [] }) {
             return matchesSearch;
         });
     }, [pendingActivations, searchTerm]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm]);
+
+    const totalPages = Math.max(
+        1,
+        Math.ceil(filteredActivations.length / ITEMS_PER_PAGE),
+    );
+
+    useEffect(() => {
+        if (currentPage > totalPages) {
+            setCurrentPage(totalPages);
+        }
+    }, [currentPage, totalPages]);
+
+    const paginatedActivations = useMemo(() => {
+        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+        return filteredActivations.slice(
+            startIndex,
+            startIndex + ITEMS_PER_PAGE,
+        );
+    }, [filteredActivations, currentPage]);
+
+    const startItem =
+        filteredActivations.length === 0
+            ? 0
+            : (currentPage - 1) * ITEMS_PER_PAGE + 1;
+    const endItem =
+        filteredActivations.length === 0
+            ? 0
+            : Math.min(
+                  currentPage * ITEMS_PER_PAGE,
+                  filteredActivations.length,
+              );
 
     const handleActivate = (userId) => {
         if (processing) return;
@@ -134,7 +171,7 @@ export default function Activaciones({ pendingUsers = [] }) {
                                 </thead>
                                 <tbody className="bg-white dark:bg-slate-900 divide-y divide-slate-200 dark:divide-slate-700">
                                     {filteredActivations.length > 0 ? (
-                                        filteredActivations.map(
+                                        paginatedActivations.map(
                                             (activation) => (
                                                 <tr
                                                     key={activation.id}
@@ -224,6 +261,44 @@ export default function Activaciones({ pendingUsers = [] }) {
                         </div>
                     </div>
                 </div>
+
+                {filteredActivations.length > 0 && (
+                    <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                            Mostrando {startItem}-{endItem} de{" "}
+                            {filteredActivations.length}
+                        </p>
+                        <div className="flex items-center gap-2">
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setCurrentPage((prev) =>
+                                        Math.max(1, prev - 1),
+                                    )
+                                }
+                                disabled={currentPage === 1}
+                                className="px-3 py-1.5 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Anterior
+                            </button>
+                            <span className="px-3 py-1.5 text-xs sm:text-sm rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                                Página {currentPage} de {totalPages}
+                            </span>
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setCurrentPage((prev) =>
+                                        Math.min(totalPages, prev + 1),
+                                    )
+                                }
+                                disabled={currentPage === totalPages}
+                                className="px-3 py-1.5 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Siguiente
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

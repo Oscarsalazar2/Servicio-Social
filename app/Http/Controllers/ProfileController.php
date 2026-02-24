@@ -51,33 +51,6 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit');
     }
 
-    public function testTelegram(Request $request, TelegramService $telegram): RedirectResponse
-    {
-        $data = $request->validate([
-            'enable_notifications' => ['required', 'boolean'],
-            'telegram_username' => ['required', 'string', 'max:255'],
-        ]);
-
-        if (!$data['enable_notifications']) {
-            return Redirect::back()->withErrors([
-                'telegram_username' => 'Activa las notificaciones antes de probar Telegram.',
-            ]);
-        }
-
-        $sent = $telegram->sendToTarget(
-            $data['telegram_username'],
-            "🧪 <b>Prueba de conexión</b>\nHola {$request->user()->name}, tu integración con Telegram funciona correctamente."
-        );
-
-        if (!$sent) {
-            return Redirect::back()->withErrors([
-                'telegram_username' => 'Conexión fallida. Verifica tu usuario/ID de Telegram.',
-            ]);
-        }
-
-        return Redirect::back()->with('status', '✓ Conexión con Telegram exitosa');
-    }
-
     /**
      * Delete the user's account.
      */
