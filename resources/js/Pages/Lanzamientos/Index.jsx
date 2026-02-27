@@ -69,6 +69,9 @@ export default function PetIndex() {
     }
 
     const [openAdd, setOpenAdd] = useState(false);
+    const [openNuevoLanzamiento, setOpenNuevoLanzamiento] = useState(false);
+    const [openDetalle, setOpenDetalle] = useState(false);
+    const [registroSeleccionado, setRegistroSeleccionado] = useState(null);
 
     const form = useForm({
         name: "",
@@ -106,6 +109,96 @@ export default function PetIndex() {
             ultimaFecha: "15/12/2025 18:40",
         };
     }, []);
+
+    const registrosDemo = useMemo(
+        () => [
+            {
+                id: 1,
+                fecha: "27/02/2026 10:15",
+                botella: "2 L",
+                presion: 78,
+                agua: 650,
+                angulo: 42,
+                altura: 83,
+                distancia: 112,
+                resultado: "Éxito",
+                descripcion:
+                    "Vuelo estable, apertura correcta de paracaídas y recuperación inmediata.",
+            },
+            {
+                id: 2,
+                fecha: "27/02/2026 11:30",
+                botella: "1.5 L",
+                presion: 72,
+                agua: 600,
+                angulo: 40,
+                altura: 74,
+                distancia: 95,
+                resultado: "Éxito",
+                descripcion:
+                    "Lanzamiento limpio, ligera deriva por viento lateral.",
+            },
+            {
+                id: 3,
+                fecha: "27/02/2026 12:05",
+                botella: "2 L",
+                presion: 80,
+                agua: 700,
+                angulo: 38,
+                altura: 58,
+                distancia: 67,
+                resultado: "Fallo",
+                descripcion:
+                    "Pérdida de estabilidad al ascenso y recuperación parcial del cohete.",
+            },
+            {
+                id: 4,
+                fecha: "27/02/2026 13:20",
+                botella: "2 L",
+                presion: 76,
+                agua: 620,
+                angulo: 45,
+                altura: 79,
+                distancia: 101,
+                resultado: "Éxito",
+                descripcion:
+                    "Trayectoria alta con aterrizaje suave en zona segura.",
+            },
+        ],
+        [],
+    );
+
+    const [formLanzamiento, setFormLanzamiento] = useState({
+        fecha: "",
+        botella: "2 L",
+        presion: "",
+        agua: "",
+        angulo: "",
+        altura: "",
+        distancia: "",
+        resultado: "Éxito",
+        descripcion: "",
+    });
+
+    const abrirDetalle = (registro) => {
+        setRegistroSeleccionado(registro);
+        setOpenDetalle(true);
+    };
+
+    const cerrarNuevoLanzamiento = () => {
+        setOpenNuevoLanzamiento(false);
+        setFormLanzamiento({
+            fecha: "",
+            botella: "2 L",
+            presion: "",
+            agua: "",
+            angulo: "",
+            altura: "",
+            distancia: "",
+            resultado: "Éxito",
+            descripcion: "",
+        });
+    };
 
     return (
         <AuthenticatedLayout
@@ -177,12 +270,76 @@ export default function PetIndex() {
                 </div>
 
                 <div className="rounded-2xl shadow-sm border p-4 bg-white dark:bg-slate-900 dark:border-white/10">
-                    <div className="font-bold text-slate-900 dark:text-slate-100">
-                        Registros
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <div className="font-bold text-slate-900 dark:text-slate-100">
+                            Registros
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => setOpenNuevoLanzamiento(true)}
+                            className="w-full sm:w-auto px-3 py-2 rounded-xl text-sm font-semibold bg-[#009688] text-white hover:opacity-90"
+                        >
+                            Registrar nuevo lanzamiento
+                        </button>
                     </div>
-                    <div className="mt-2 text-sm text-slate-500 dark:text-slate-300">
-                        Próximo paso: tabla con (fecha, botella, presión, agua,
-                        ángulo, altura, distancia, resultado).
+                    <div className="mt-3 overflow-x-auto">
+                        <table className="min-w-full text-sm">
+                            <thead>
+                                <tr className="text-left border-b border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300">
+                                    <th className="py-2 pr-4">Fecha</th>
+                                    <th className="py-2 pr-4">Botella</th>
+                                    <th className="py-2 pr-4">Presión (psi)</th>
+                                    <th className="py-2 pr-4">Agua (ml)</th>
+                                    <th className="py-2 pr-4">Ángulo (°)</th>
+                                    <th className="py-2 pr-4">Altura (m)</th>
+                                    <th className="py-2 pr-4">Distancia (m)</th>
+                                    <th className="py-2 pr-2">Resultado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {registrosDemo.map((registro) => (
+                                    <tr
+                                        key={registro.id}
+                                        onClick={() => abrirDetalle(registro)}
+                                        className="border-b border-slate-100 dark:border-white/5 text-slate-800 dark:text-slate-100 cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5"
+                                    >
+                                        <td className="py-2 pr-4 whitespace-nowrap">
+                                            {registro.fecha}
+                                        </td>
+                                        <td className="py-2 pr-4">
+                                            {registro.botella}
+                                        </td>
+                                        <td className="py-2 pr-4">
+                                            {registro.presion}
+                                        </td>
+                                        <td className="py-2 pr-4">
+                                            {registro.agua}
+                                        </td>
+                                        <td className="py-2 pr-4">
+                                            {registro.angulo}
+                                        </td>
+                                        <td className="py-2 pr-4">
+                                            {registro.altura}
+                                        </td>
+                                        <td className="py-2 pr-4">
+                                            {registro.distancia}
+                                        </td>
+                                        <td className="py-2 pr-2">
+                                            <span
+                                                className={`px-2 py-1 rounded-lg text-xs font-semibold ${
+                                                    registro.resultado ===
+                                                    "Éxito"
+                                                        ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
+                                                        : "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300"
+                                                }`}
+                                            >
+                                                {registro.resultado}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -258,7 +415,7 @@ export default function PetIndex() {
                             onChange={(e) =>
                                 form.setData(
                                     "role",
-                                    e.target.checked ? "admin" : "user"
+                                    e.target.checked ? "admin" : "user",
                                 )
                             }
                         />
@@ -287,6 +444,248 @@ export default function PetIndex() {
                         </button>
                     </div>
                 </form>
+            </Modal>
+
+            <Modal
+                open={openNuevoLanzamiento}
+                onClose={cerrarNuevoLanzamiento}
+                title="Registrar nuevo lanzamiento"
+            >
+                <form
+                    className="space-y-3"
+                    onSubmit={(e) => e.preventDefault()}
+                >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label className="text-sm text-slate-600 dark:text-slate-300">
+                                Fecha y hora
+                            </label>
+                            <input
+                                type="datetime-local"
+                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
+                                value={formLanzamiento.fecha}
+                                onChange={(e) =>
+                                    setFormLanzamiento((prev) => ({
+                                        ...prev,
+                                        fecha: e.target.value,
+                                    }))
+                                }
+                            />
+                        </div>
+
+                        <div>
+                            <label className="text-sm text-slate-600 dark:text-slate-300">
+                                Botella
+                            </label>
+                            <select
+                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
+                                value={formLanzamiento.botella}
+                                onChange={(e) =>
+                                    setFormLanzamiento((prev) => ({
+                                        ...prev,
+                                        botella: e.target.value,
+                                    }))
+                                }
+                            >
+                                <option>1.5 L</option>
+                                <option>2 L</option>
+                                <option>2.5 L</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="text-sm text-slate-600 dark:text-slate-300">
+                                Presión (psi)
+                            </label>
+                            <input
+                                type="number"
+                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
+                                value={formLanzamiento.presion}
+                                onChange={(e) =>
+                                    setFormLanzamiento((prev) => ({
+                                        ...prev,
+                                        presion: e.target.value,
+                                    }))
+                                }
+                            />
+                        </div>
+
+                        <div>
+                            <label className="text-sm text-slate-600 dark:text-slate-300">
+                                Agua (ml)
+                            </label>
+                            <input
+                                type="number"
+                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
+                                value={formLanzamiento.agua}
+                                onChange={(e) =>
+                                    setFormLanzamiento((prev) => ({
+                                        ...prev,
+                                        agua: e.target.value,
+                                    }))
+                                }
+                            />
+                        </div>
+
+                        <div>
+                            <label className="text-sm text-slate-600 dark:text-slate-300">
+                                Ángulo (°)
+                            </label>
+                            <input
+                                type="number"
+                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
+                                value={formLanzamiento.angulo}
+                                onChange={(e) =>
+                                    setFormLanzamiento((prev) => ({
+                                        ...prev,
+                                        angulo: e.target.value,
+                                    }))
+                                }
+                            />
+                        </div>
+
+                        <div>
+                            <label className="text-sm text-slate-600 dark:text-slate-300">
+                                Resultado
+                            </label>
+                            <select
+                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
+                                value={formLanzamiento.resultado}
+                                onChange={(e) =>
+                                    setFormLanzamiento((prev) => ({
+                                        ...prev,
+                                        resultado: e.target.value,
+                                    }))
+                                }
+                            >
+                                <option>Éxito</option>
+                                <option>Fallo</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="text-sm text-slate-600 dark:text-slate-300">
+                                Altura (m)
+                            </label>
+                            <input
+                                type="number"
+                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
+                                value={formLanzamiento.altura}
+                                onChange={(e) =>
+                                    setFormLanzamiento((prev) => ({
+                                        ...prev,
+                                        altura: e.target.value,
+                                    }))
+                                }
+                            />
+                        </div>
+
+                        <div>
+                            <label className="text-sm text-slate-600 dark:text-slate-300">
+                                Distancia (m)
+                            </label>
+                            <input
+                                type="number"
+                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
+                                value={formLanzamiento.distancia}
+                                onChange={(e) =>
+                                    setFormLanzamiento((prev) => ({
+                                        ...prev,
+                                        distancia: e.target.value,
+                                    }))
+                                }
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="text-sm text-slate-600 dark:text-slate-300">
+                            Descripción
+                        </label>
+                        <textarea
+                            rows={3}
+                            className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
+                            placeholder="Describe observaciones del lanzamiento"
+                            value={formLanzamiento.descripcion}
+                            onChange={(e) =>
+                                setFormLanzamiento((prev) => ({
+                                    ...prev,
+                                    descripcion: e.target.value,
+                                }))
+                            }
+                        />
+                    </div>
+
+                    <div className="flex justify-end gap-2 pt-2">
+                        <button
+                            type="button"
+                            onClick={cerrarNuevoLanzamiento}
+                            className="px-4 py-2 rounded-xl border"
+                        >
+                            Cerrar
+                        </button>
+                        <button
+                            type="button"
+                            className="px-4 py-2 rounded-xl bg-[#009688] text-white font-semibold"
+                        >
+                            Guardar
+                        </button>
+                    </div>
+                </form>
+            </Modal>
+
+            <Modal
+                open={openDetalle}
+                onClose={() => setOpenDetalle(false)}
+                title="Detalle del lanzamiento"
+            >
+                {registroSeleccionado ? (
+                    <div className="space-y-3 text-sm text-slate-700 dark:text-slate-200">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div>
+                                <strong>Fecha:</strong>{" "}
+                                {registroSeleccionado.fecha}
+                            </div>
+                            <div>
+                                <strong>Botella:</strong>{" "}
+                                {registroSeleccionado.botella}
+                            </div>
+                            <div>
+                                <strong>Presión:</strong>{" "}
+                                {registroSeleccionado.presion} psi
+                            </div>
+                            <div>
+                                <strong>Agua:</strong>{" "}
+                                {registroSeleccionado.agua} ml
+                            </div>
+                            <div>
+                                <strong>Ángulo:</strong>{" "}
+                                {registroSeleccionado.angulo}°
+                            </div>
+                            <div>
+                                <strong>Altura:</strong>{" "}
+                                {registroSeleccionado.altura} m
+                            </div>
+                            <div>
+                                <strong>Distancia:</strong>{" "}
+                                {registroSeleccionado.distancia} m
+                            </div>
+                            <div>
+                                <strong>Resultado:</strong>{" "}
+                                {registroSeleccionado.resultado}
+                            </div>
+                        </div>
+                        <div className="rounded-xl border border-slate-200 dark:border-white/10 p-3 bg-slate-50 dark:bg-slate-950/50">
+                            <div className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-300 mb-1">
+                                Descripción
+                            </div>
+                            <div>
+                                {registroSeleccionado.descripcion ||
+                                    "Sin descripción registrada."}
+                            </div>
+                        </div>
+                    </div>
+                ) : null}
             </Modal>
         </AuthenticatedLayout>
     );

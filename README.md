@@ -1,7 +1,9 @@
-# Servicio Social – Sistema Web (Laravel 10)
+# Estación Meteorológica – Sistema Web (Laravel)
 
-Este proyecto es una aplicación web desarrollada con **Laravel 10**, **Vite**, **TailwindCSS** y **Blade**, diseñada como parte del proyecto de Servicio Social.  
-Incluye autenticación, panel administrador, gestión de usuarios y las migraciones completas necesarias para levantar el sistema desde cero.
+Este proyecto es una aplicación web desarrollada con **Laravel**, **Inertia + React**, **Vite** y **TailwindCSS**, diseñada como parte del proyecto de Servicio Social.  
+Incluye autenticación, panel administrador, gestión de usuarios, auditoría y módulo de lanzamientos.
+
+> **Nota:** este es un proyecto **privado** de uso interno.
 
 ---
 
@@ -23,10 +25,10 @@ Sigue estos pasos en tu terminal:
 
 ### 1. Clonar o descomprimir el proyecto
 
-Si lo descargaste en ZIP:
+Si lo descargaste en ZIP o ya está en tu entorno local:
 
 ```
-C:\xampp\htdocs\Servicio-Social
+C:\xampp\htdocs\Estacion-Meteorologica
 ```
 
 ---
@@ -49,10 +51,10 @@ npm install
 
 ### 4. Crear el archivo de entorno
 
-Copia el archivo de ejemplo:
+Copia el archivo de ejemplo (Windows):
 
 ```
-cp .env.example .env
+copy .env.example .env
 ```
 
 ---
@@ -62,18 +64,18 @@ cp .env.example .env
 Edita el archivo `.env`:
 
 ```
-DB_CONNECTION=mysql o pgsql
+DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=servicio_social
-DB_USERNAME=root post
+DB_DATABASE=estacion_meteorologica
+DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Crea la base en MySQL o PostgreSQL pero mejor postgres:
+Crea la base en MySQL/MariaDB:
 
 ```
-CREATE DATABASE servicio_social;
+CREATE DATABASE estacion_meteorologica;
 ```
 
 ---
@@ -96,14 +98,11 @@ php artisan migrate --seed
 
 ---
 
-## Usuario administrador generado automáticamente
+## Usuario administrador (según seeder)
 
-Al ejecutar el seeder se creará este usuario:
+Al ejecutar el seeder se crea el usuario administrador definido en `database/seeders/AdminUserSeeder.php`.
 
-- **Email:** `admin@demo.com`
-- **Contraseña:** `password`
-- **Rol:** Administrador
-- **Email verificado:** Sí
+Revisa/ajusta estos datos directamente en el seeder antes de usar en producción.
 
 ---
 
@@ -122,7 +121,7 @@ TELEGRAM_PARSE_MODE=HTML
 
 3. En el perfil de usuario activa notificaciones y guarda tu `telegram_username`.
 
-Las notificaciones se envían cuando un administrador activa, rechaza, cambia estado o elimina usuarios.
+Las notificaciones se envían cuando un administrador activa, rechaza, reabre, cambia estado o elimina usuarios.
 
 ---
 
@@ -154,22 +153,33 @@ http://localhost:8000
 app/
 database/
 routes/
+resources/js/
 resources/views/
 public/
 vite.config.js
 tailwind.config.js
 ```
 
+### Rutas modulares
+
+```
+routes/web.php
+routes/dashboard.php
+routes/lanzamientos.php
+routes/admin.php
+routes/auth.php
+```
+
 ---
 
 ## Tecnologías utilizadas
 
-- **Laravel 10**
+- **Laravel**
 - **Laravel Breeze (auth)**
+- **Inertia.js + React**
 - **TailwindCSS**
 - **Vite**
-- **MySQL**
-- **Blade Templates**
+- **MySQL/MariaDB**
 
 ---
 
