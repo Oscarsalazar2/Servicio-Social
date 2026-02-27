@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { router } from "@inertiajs/react";
 
 export default function Usuarios({ allUsers = [] }) {
     const ITEMS_PER_PAGE = 5;
@@ -6,28 +7,48 @@ export default function Usuarios({ allUsers = [] }) {
     const [roleFilter, setRoleFilter] = useState("all");
     const [statusFilter, setStatusFilter] = useState("all");
     const [currentPage, setCurrentPage] = useState(1);
+    const [activeModal, setActiveModal] = useState(null);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [processingAction, setProcessingAction] = useState(false);
+    const [formErrors, setFormErrors] = useState({});
+    const [editForm, setEditForm] = useState({
+        name: "",
+        email: "",
+        role: "Usuario",
+        status: "Activo",
+    });
 
-    // Formatear datos de usuarios
-    const users = allUsers.map((user) => ({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        registrationDate: new Date(user.created_at).toLocaleDateString(
-            "es-ES",
-            {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-            },
-        ),
-        role:
-            user.role === "admin"
-                ? "Admin"
-                : user.role === "launcher"
-                  ? "Lanzador"
-                  : "Usuario",
-        status: user.is_active ? "Activo" : "Inactivo",
-    }));
+    const users = useMemo(
+        () =>
+            allUsers.map((user) => ({
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                registrationDate: new Date(user.created_at).toLocaleDateString(
+                    "es-ES",
+                    {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                    },
+                ),
+                role:
+                    user.role === "admin"
+                        ? "Admin"
+                        : user.role === "launcher"
+                          ? "Lanzador"
+                          : user.role === "rejected"
+                            ? "Rechazado"
+                            : "Usuario",
+                status: user.is_active ? "Activo" : "Inactivo",
+                reason:
+                    user.motivo ||
+                    user.reason ||
+                    user.registration_reason ||
+                    "Sin motivo registrado",
+            })),
+        [allUsers],
+    );
 
     // Filtrar usuarios
     const filteredUsers = useMemo(() => {
@@ -72,18 +93,81 @@ export default function Usuarios({ allUsers = [] }) {
             : Math.min(currentPage * ITEMS_PER_PAGE, filteredUsers.length);
 
     const handleView = (userId) => {
-        console.log("Ver usuario:", userId);
-        // Funcionalidad deshabilitada temporalmente
+        const user = users.find((item) => item.id === userId);
+        if (!user) return;
+
+        setSelectedUser(user);
+        setActiveModal("view");
     };
 
     const handleEdit = (userId) => {
-        console.log("Editar usuario:", userId);
-        // Funcionalidad deshabilitada temporalmente
+        const user = users.find((item) => item.id === userId);
+        if (!user) return;
+
+        setSelectedUser(user);
+        setEditForm({
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            status: user.status,
+        });
+        setFormErrors({});
+        setActiveModal("edit");
     };
 
     const handleDelete = (userId) => {
-        console.log("Eliminar usuario:", userId);
-        // Funcionalidad deshabilitada temporalmente
+        const user = users.find((item) => item.id === userId);
+        if (!user) return;
+
+        setSelectedUser(user);
+        setActiveModal("delete");
+    };
+
+    const closeModal = () => {
+        if (processingAction) return;
+        setActiveModal(null);
+        setSelectedUser(null);
+        setFormErrors({});
+    };
+
+    const handleSaveEdit = () => {
+        if (!selectedUser) return;
+        setProcessingAction(true);
+
+        const payload = {
+            name: editForm.name,
+            email: editForm.email,
+            role: editForm.role,
+            status: editForm.status,
+        };
+
+        router.patch(route("admin.users.update", selectedUser.id), payload, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setProcessingAction(false);
+                closeModal();
+            },
+            onError: (errors) => {
+                setFormErrors(errors || {});
+                setProcessingAction(false);
+            },
+        });
+    };
+
+    const handleConfirmDelete = () => {
+        if (!selectedUser) return;
+        setProcessingAction(true);
+
+        router.delete(route("admin.users.delete", selectedUser.id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                setProcessingAction(false);
+                closeModal();
+            },
+            onError: () => {
+                setProcessingAction(false);
+            },
+        });
     };
 
     return (
@@ -132,6 +216,7 @@ export default function Usuarios({ allUsers = [] }) {
                             <option value="Admin">Admin</option>
                             <option value="Lanzador">Lanzador</option>
                             <option value="Usuario">Usuario</option>
+                            <option value="Rechazado">Rechazado</option>
                         </select>
                     </div>
 
@@ -213,10 +298,10 @@ export default function Usuarios({ allUsers = [] }) {
                                                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
                                                             ${
                                                                 user.role ===
-                                                                "admin"
+                                                                "Admin"
                                                                     ? "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300"
                                                                     : user.role ===
-                                                                        "launcher"
+                                                                        "Lanzador"
                                                                       ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
                                                                       : "bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300"
                                                             }`}
@@ -253,7 +338,7 @@ export default function Usuarios({ allUsers = [] }) {
                                                                 )
                                                             }
                                                             className="p-2 text-[#009688] dark:text-[#4DB6AC] hover:bg-teal-50 dark:hover:bg-teal-900/30 rounded-lg transition-colors"
-                                                            title="Cambiar estado"
+                                                            title="Editar"
                                                             type="button"
                                                         >
                                                             <i className="fa-solid fa-pen-to-square text-sm"></i>
@@ -296,7 +381,7 @@ export default function Usuarios({ allUsers = [] }) {
                     </div>
                 </div>
 
-                {filteredUsers.length > 0 && (
+                {filteredUsers.length > ITEMS_PER_PAGE && (
                     <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-3">
                         <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                             Mostrando {startItem}-{endItem} de{" "}
@@ -334,6 +419,284 @@ export default function Usuarios({ allUsers = [] }) {
                     </div>
                 )}
             </div>
+
+            {activeModal && selectedUser && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <button
+                        type="button"
+                        onClick={closeModal}
+                        className="absolute inset-0 bg-slate-900/60"
+                        aria-label="Cerrar modal"
+                    ></button>
+
+                    <div className="relative w-full max-w-lg rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-xl p-5 sm:p-6 space-y-4">
+                        {activeModal === "view" && (
+                            <>
+                                <div className="flex items-start justify-between gap-3">
+                                    <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                                        Datos del usuario
+                                    </h3>
+                                    <button
+                                        type="button"
+                                        onClick={closeModal}
+                                        className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg"
+                                    >
+                                        <i className="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                                    <div className="rounded-lg bg-slate-50 dark:bg-slate-800 p-3">
+                                        <p className="text-xs uppercase text-slate-500 dark:text-slate-400">
+                                            Nombre
+                                        </p>
+                                        <p className="mt-1 font-semibold text-slate-900 dark:text-white">
+                                            {selectedUser.name}
+                                        </p>
+                                    </div>
+                                    <div className="rounded-lg bg-slate-50 dark:bg-slate-800 p-3">
+                                        <p className="text-xs uppercase text-slate-500 dark:text-slate-400">
+                                            Correo
+                                        </p>
+                                        <p className="mt-1 font-semibold text-slate-900 dark:text-white break-all">
+                                            {selectedUser.email}
+                                        </p>
+                                    </div>
+                                    <div className="rounded-lg bg-slate-50 dark:bg-slate-800 p-3">
+                                        <p className="text-xs uppercase text-slate-500 dark:text-slate-400">
+                                            Rol
+                                        </p>
+                                        <p className="mt-1 font-semibold text-slate-900 dark:text-white">
+                                            {selectedUser.role}
+                                        </p>
+                                    </div>
+                                    <div className="rounded-lg bg-slate-50 dark:bg-slate-800 p-3">
+                                        <p className="text-xs uppercase text-slate-500 dark:text-slate-400">
+                                            Estado
+                                        </p>
+                                        <p className="mt-1 font-semibold text-slate-900 dark:text-white">
+                                            {selectedUser.status}
+                                        </p>
+                                    </div>
+                                    <div className="sm:col-span-2 rounded-lg bg-slate-50 dark:bg-slate-800 p-3">
+                                        <p className="text-xs uppercase text-slate-500 dark:text-slate-400">
+                                            Motivo
+                                        </p>
+                                        <p className="mt-1 text-slate-800 dark:text-slate-200">
+                                            {selectedUser.reason}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-end">
+                                    <button
+                                        type="button"
+                                        onClick={closeModal}
+                                        className="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                                    >
+                                        Cerrar
+                                    </button>
+                                </div>
+                            </>
+                        )}
+
+                        {activeModal === "edit" && (
+                            <>
+                                <div className="flex items-start justify-between gap-3">
+                                    <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                                        Editar usuario
+                                    </h3>
+                                    <button
+                                        type="button"
+                                        onClick={closeModal}
+                                        className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg"
+                                    >
+                                        <i className="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+
+                                <div className="space-y-3">
+                                    <div>
+                                        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+                                            Nombre
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={editForm.name}
+                                            onChange={(e) =>
+                                                setEditForm((current) => ({
+                                                    ...current,
+                                                    name: e.target.value,
+                                                }))
+                                            }
+                                            className="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+                                        />
+                                        {formErrors.name && (
+                                            <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                                                {formErrors.name}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+                                            Correo
+                                        </label>
+                                        <input
+                                            type="email"
+                                            value={editForm.email}
+                                            onChange={(e) =>
+                                                setEditForm((current) => ({
+                                                    ...current,
+                                                    email: e.target.value,
+                                                }))
+                                            }
+                                            className="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+                                        />
+                                        {formErrors.email && (
+                                            <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                                                {formErrors.email}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+                                                Rol
+                                            </label>
+                                            <select
+                                                value={editForm.role}
+                                                onChange={(e) =>
+                                                    setEditForm((current) => ({
+                                                        ...current,
+                                                        role: e.target.value,
+                                                    }))
+                                                }
+                                                className="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+                                            >
+                                                <option value="Admin">
+                                                    Admin
+                                                </option>
+                                                <option value="Lanzador">
+                                                    Lanzador
+                                                </option>
+                                                <option value="Usuario">
+                                                    Usuario
+                                                </option>
+                                                <option value="Rechazado">
+                                                    Rechazado
+                                                </option>
+                                            </select>
+                                            {formErrors.role && (
+                                                <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                                                    {formErrors.role}
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+                                                Estado
+                                            </label>
+                                            <select
+                                                value={editForm.status}
+                                                onChange={(e) =>
+                                                    setEditForm((current) => ({
+                                                        ...current,
+                                                        status: e.target.value,
+                                                    }))
+                                                }
+                                                className="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+                                            >
+                                                <option value="Activo">
+                                                    Activo
+                                                </option>
+                                                <option value="Inactivo">
+                                                    Inactivo
+                                                </option>
+                                            </select>
+                                            {formErrors.status && (
+                                                <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                                                    {formErrors.status}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center justify-end gap-2 pt-1">
+                                    <button
+                                        type="button"
+                                        onClick={closeModal}
+                                        disabled={processingAction}
+                                        className="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleSaveEdit}
+                                        disabled={processingAction}
+                                        className="px-4 py-2 rounded-lg bg-[#009688] hover:bg-[#00796B] text-white font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+                                    >
+                                        {processingAction
+                                            ? "Guardando..."
+                                            : "Guardar cambios"}
+                                    </button>
+                                </div>
+                            </>
+                        )}
+
+                        {activeModal === "delete" && (
+                            <>
+                                <div className="flex items-start justify-between gap-3">
+                                    <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                                        Eliminar usuario
+                                    </h3>
+                                    <button
+                                        type="button"
+                                        onClick={closeModal}
+                                        className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg"
+                                    >
+                                        <i className="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+
+                                <p className="text-sm text-slate-700 dark:text-slate-300">
+                                    ¿Seguro que deseas eliminar a
+                                    <span className="font-semibold">
+                                        {` ${selectedUser.name}`}
+                                    </span>
+                                    ? Esta acción eliminará el usuario en el
+                                    sistema.
+                                </p>
+
+                                <div className="flex items-center justify-end gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={closeModal}
+                                        disabled={processingAction}
+                                        className="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleConfirmDelete}
+                                        disabled={processingAction}
+                                        className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+                                    >
+                                        {processingAction
+                                            ? "Eliminando..."
+                                            : "Eliminar"}
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

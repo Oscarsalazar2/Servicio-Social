@@ -64,7 +64,7 @@ export default function AuthenticatedLayout({ children }) {
     const isInicio = current === "dashboard";
     const isWind = current === "dashboard.wind";
     const isTemp = current === "dashboard.temp";
-    const isClimate = current === "dashboard.climate"; 
+    const isSky = current === "dashboard.sky";
     const isPressure = current === "dashboard.pressure";
 
     const isAdmin = user?.role === "admin";
@@ -119,17 +119,17 @@ export default function AuthenticatedLayout({ children }) {
                                 >
                                     Temperatura y humedad
                                 </TopLink>
-                                
+
                                 <TopLink
                                     href={route("dashboard.pressure")}
                                     active={isPressure}
                                 >
                                     Presión
                                 </TopLink>
-                                
+
                                 <TopLink
-                                    href={route("dashboard.climate")}
-                                    active={isClimate}
+                                    href={route("dashboard.sky")}
+                                    active={isSky}
                                 >
                                     Cielo
                                 </TopLink>
@@ -348,10 +348,10 @@ export default function AuthenticatedLayout({ children }) {
                             Presión
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
-                            href={route("dashboard.climate")}
-                            active={isClimate}
+                            href={route("dashboard.sky")}
+                            active={isSky}
                         >
-                            Solar
+                            Cielo
                         </ResponsiveNavLink>
 
                         {/* LANZAMIENTOS MOBILE - Admin y Launcher */}

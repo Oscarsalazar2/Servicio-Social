@@ -220,7 +220,7 @@ export default function Rechazados({ rejectedUsers = [] }) {
                     </div>
                 </div>
 
-                {filteredRequests.length > 0 && (
+                {filteredRequests.length > ITEMS_PER_PAGE && (
                     <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-3">
                         <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                             Mostrando {startItem}-{endItem} de{" "}

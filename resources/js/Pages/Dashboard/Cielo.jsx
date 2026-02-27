@@ -1,10 +1,10 @@
-
 import React, { useMemo } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
 import TarjetaKpi from "@/Components/Comp/kpi/TarjetaKpi";
 import RadiacionSolarGauge from "@/Components/Comp/grafica/RadiacionSolarGauge";
+import GraficaNubes from "@/Components/Comp/grafica/GraficaNubes";
 
 const COLORS = {
     temp: "#6E8CFB",
@@ -24,7 +24,7 @@ const calcularRadiacionSolar = () => {
 // Aproximación simple basada en temperatura y humedad
 const calcularPuntoDeRocio = (temp, humedad) => {
     // Fórmula aproximada: Td = T - ((100 - HR) / 5)
-    const td = temp - ((100 - humedad) / 5);
+    const td = temp - (100 - humedad) / 5;
     return Math.round(td * 10) / 10;
 };
 
@@ -39,12 +39,14 @@ const calcularAlturaDeNubes = (temp, humedad) => {
 export default function Clima() {
     const climaSeries = useMemo(() => {
         return Array.from({ length: 24 }).map((_, i) => {
-            const temp = Math.round(
-                (Math.sin(i / 4) * 4 + 2 + Math.random() * 0.7) * 10
-            ) / 10;
-            const hum = Math.round(
-                (Math.cos(i / 5) * 18 + 65 + Math.random() * 3) * 10
-            ) / 10;
+            const temp =
+                Math.round(
+                    (Math.sin(i / 4) * 4 + 2 + Math.random() * 0.7) * 10,
+                ) / 10;
+            const hum =
+                Math.round(
+                    (Math.cos(i / 5) * 18 + 65 + Math.random() * 3) * 10,
+                ) / 10;
             return {
                 t: `${String(i).padStart(2, "0")}:00`,
                 temp: temp,
@@ -74,7 +76,6 @@ export default function Clima() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                         {/* KPIs */}
                         <div className="lg:col-span-4 space-y-4">
-                            
                             <TarjetaKpi
                                 title="Radiación Solar"
                                 value={kpi.solar}
@@ -88,29 +89,29 @@ export default function Clima() {
                                 color={COLORS.cloudHeight}
                             />
                             <div className="lg:col-span-8">
-                            <div className="h-72 bg-white/5 border-white dark:bg-slate-900/40 dark:border-white/10 rounded-lg shadow p-6">
-                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                                    Radiación Solar
-                                </h3>
-                                <RadiacionSolarGauge
-                                    value={kpi.solar}
-                                    series={climaSeries}
-                                    colors={COLORS}
-                                />
+                                <div className="h-72 bg-white/5 border-white dark:bg-slate-900/40 dark:border-white/10 rounded-lg shadow p-6">
+                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                                        Radiación Solar
+                                    </h3>
+                                    <RadiacionSolarGauge
+                                        value={kpi.solar}
+                                        series={climaSeries}
+                                        colors={COLORS}
+                                    />
+                                </div>
                             </div>
                         </div>
-                    </div>
 
                         {/* Gráfica */}
                         <div className="lg:col-span-8">
-                            <div className="h-80 bg-white/5 border-white dark:bg-slate-900/40 dark:border-white/10 rounded-lg shadow p-6">
+                            <div className="bg-white/5 border-white dark:bg-slate-900/40 dark:border-white/10 rounded-lg shadow p-6">
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                                    Radiación Solar
+                                    Gráfica de Nubes
                                 </h3>
-                                <RadiacionSolarGauge
-                                    value={kpi.solar}
+                                <GraficaNubes
                                     series={climaSeries}
                                     colors={COLORS}
+                                    height={240}
                                 />
                             </div>
                         </div>

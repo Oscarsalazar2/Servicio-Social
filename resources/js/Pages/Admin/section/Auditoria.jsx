@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import logo_liner_s from "../../../../images/logo_copia.png";
 
 export default function Auditoria({
     pendingUsers = [],
@@ -19,10 +20,74 @@ export default function Auditoria({
             "user.rejected": "Solicitud rechazada",
             "user.reopened": "Solicitud reabierta",
             "user.toggled_status": "Estado cambiado",
+            "user.updated": "Cuenta actualizada",
             "user.deleted": "Usuario eliminado",
         };
 
         return labels[action] ?? action;
+    };
+
+    const formatValue = (field, value) => {
+        if (field === "is_active") {
+            return value ? "Activo" : "Inactivo";
+        }
+
+        if (field === "role") {
+            const roleMap = {
+                admin: "Admin",
+                launcher: "Lanzador",
+                user: "Usuario",
+                rejected: "Rechazado",
+            };
+
+            return roleMap[value] ?? value;
+        }
+
+        return value;
+    };
+
+    const formatStatus = (status) => {
+        const statusMap = {
+            active: "activo",
+            rejected: "rechazado",
+            pending: "pendiente",
+            deleted: "eliminado",
+            suspended: "suspendido",
+        };
+
+        return statusMap[status] ?? status;
+    };
+
+    const formatDetail = (log) => {
+        if (log.action === "user.updated") {
+            const oldValues = log.metadata?.old ?? {};
+            const newValues = log.metadata?.new ?? {};
+
+            const fieldLabels = {
+                name: "Nombre",
+                email: "Correo",
+                role: "Rol",
+                is_active: "Estado",
+            };
+
+            const changes = Object.keys(fieldLabels)
+                .filter((field) => oldValues[field] !== newValues[field])
+                .map((field) => {
+                    const oldValue = formatValue(field, oldValues[field]);
+                    const newValue = formatValue(field, newValues[field]);
+                    return `${fieldLabels[field]}: ${oldValue} → ${newValue}`;
+                });
+
+            return changes.length > 0
+                ? `Se cambió ${changes.join(" | ")}`
+                : "Cuenta actualizada sin cambios detectados.";
+        }
+
+        if (log.metadata?.status) {
+            return `Estado: ${formatStatus(log.metadata.status)}`;
+        }
+
+        return "Sin detalle adicional";
     };
 
     const events = useMemo(() => {
@@ -33,9 +98,7 @@ export default function Auditoria({
                     user: log.target_user_name || "Usuario",
                     email: log.target_user_email || "Sin correo",
                     type: actionLabel(log.action),
-                    detail: log.metadata?.status
-                        ? `Estado: ${log.metadata.status}`
-                        : "Sin detalle adicional",
+                    detail: formatDetail(log),
                     actor: log.actor_name || "Administrador",
                     ip: log.ip_address || "N/A",
                     dateRaw: log.created_at,
@@ -165,58 +228,318 @@ export default function Auditoria({
         const rows = filteredEvents
             .map(
                 (event) => `
-          <tr>
-            <td>${event.user}</td>
-            <td>${event.email}</td>
-            <td>${event.type}</td>
-            <td>${event.actor}</td>
-            <td>${event.detail}</td>
-            <td>${event.ip}</td>
-            <td>${event.dateTime}</td>
-          </tr>
-        `,
+        <tr>
+          <td class="mono">${event.user ?? ""}</td>
+          <td>${event.email ?? ""}</td>
+          <td><span class="badge">${event.type ?? ""}</span></td>
+          <td>${event.actor ?? ""}</td>
+          <td class="detail" title="${String(event.detail ?? "").replace(/"/g, "&quot;")}">${event.detail ?? ""}</td>
+          <td class="mono">${event.ip ?? ""}</td>
+          <td class="mono">${event.dateTime ?? ""}</td>
+        </tr>
+      `,
             )
             .join("");
 
         const printWindow = window.open("", "_blank", "width=1200,height=800");
-
         if (!printWindow) return;
 
+        const now = new Date();
+        const printedAt = now.toLocaleString("es-MX", {
+            year: "numeric",
+            month: "long",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+
         printWindow.document.write(`
-      <html>
-        <head>
-          <title>Auditoría</title>
-          <style>
-            body { font-family: Arial, sans-serif; padding: 24px; color: #0f172a; }
-            h1 { margin-bottom: 8px; }
-            p { margin-top: 0; color: #475569; }
-            table { width: 100%; border-collapse: collapse; margin-top: 16px; }
-            th, td { border: 1px solid #cbd5e1; padding: 8px; font-size: 12px; text-align: left; }
-            th { background: #f1f5f9; }
-          </style>
-        </head>
-        <body>
-          <h1>Reporte de Auditoría</h1>
-          <p>Eventos: ${filteredEvents.length}</p>
-          <table>
-            <thead>
-              <tr>
-                <th>Usuario</th>
-                <th>Correo</th>
-                <th>Acción</th>
-                <th>Realizado por</th>
-                <th>Detalle</th>
-                <th>IP</th>
-                <th>Fecha y hora</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${rows}
-            </tbody>
-          </table>
-        </body>
-      </html>
-    `);
+<html>
+  <head>
+    <title>METEOR • Reporte de Auditoría</title>
+    <meta charset="utf-8" />
+    <style>
+      :root{
+        --bg: #ffffff;
+        --text: #0b1220;
+        --muted: #526175;
+        --line: #e6edf5;
+
+        /* Accent METEOR (ajústalo a tu marca) */
+        --accent: #2563eb;  /* azul serio */
+        --accent2:#22c55e;  /* verde */
+        --thead: #0b1220;   /* header tabla oscuro */
+        --theadText: #ffffff;
+
+        --chipBg: #eff6ff;
+        --chipTx: #1d4ed8;
+      }
+
+      *{ box-sizing:border-box; }
+      body{
+        margin:0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Helvetica Neue", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      .page{
+        padding: 18px 18px 14px;
+        max-width: 1300px;
+        margin: 0 auto;
+      }
+
+      /* Header corporativo blanco */
+      .head{
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        overflow: hidden;
+      }
+      .accentbar{
+        height: 8px;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+      }
+      .headinner{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap: 16px;
+        padding: 14px 16px;
+        background: #fff;
+      }
+
+      .brand{
+        display:flex;
+        align-items:center;
+        gap: 14px;
+        min-width: 0;
+      }
+
+      /* LOGO GRANDE y limpio */
+      .logoBox{
+        width: 110px;
+        height: 110px;
+        border-radius: 14px;
+        background: #fff;
+        display:grid;
+        place-items:center;
+        overflow:hidden;
+      }
+      .logo{
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 10px; /* quita si tu logo ya viene recortado */
+      }
+
+      .brandText{ min-width:0; }
+      .brandName{
+        margin:0;
+        font-size: 12px;
+        letter-spacing:.22em;
+        text-transform:uppercase;
+        color: var(--muted);
+        font-weight: 800;
+      }
+      .title{
+        margin: 6px 0 0;
+        font-size: 20px;
+        font-weight: 900;
+        letter-spacing: .2px;
+      }
+      .subtitle{
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      .meta{
+        text-align:right;
+        font-size: 12px;
+        color: var(--muted);
+        white-space:nowrap;
+      }
+      .meta strong{ color: var(--text); }
+      .chip{
+        display:inline-flex;
+        gap:8px;
+        align-items:center;
+        margin-top:8px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: var(--chipBg);
+        color: var(--chipTx);
+        border: 1px solid #dbeafe;
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .stats{
+        margin-top: 12px;
+        display:grid;
+        grid-template-columns: repeat(3, minmax(0,1fr));
+        gap: 10px;
+      }
+      .stat{
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px 12px;
+        background: #fff;
+      }
+      .stat .k{ margin:0; color: var(--muted); font-size: 11px; }
+      .stat .v{ margin:6px 0 0; font-size: 18px; font-weight: 900; }
+
+      .card{
+        margin-top: 12px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        overflow:hidden;
+      }
+
+      /* TABLA: layout fijo + anchos para que no se “rompa” */
+      table{
+        width:100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+      thead th{
+        background: var(--thead);
+        color: var(--theadText);
+        font-size: 11px;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        padding: 10px 10px;
+        border-bottom: 1px solid #0f172a;
+      }
+      tbody td{
+        padding: 10px 10px;
+        font-size: 12px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+      }
+      tbody tr:nth-child(even) td{ background:#fafcff; }
+
+      .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace; }
+
+      .badge {
+        display: inline-block;
+        padding: 4px 10px;
+        color: #1d4ed8;
+        font-weight: 850;
+        font-size: 11px;
+        }
+
+      /* Ajuste fuerte: columna detalle no se aplasta */
+      .detail{
+        white-space: normal;
+        line-height: 1.25;
+      }
+
+      /* Anchos por columna (ajústalos a tu gusto) */
+      col.user   { width: 12%; }
+      col.email  { width: 18%; }
+      col.type   { width: 12%; }
+      col.actor  { width: 14%; }
+      col.detail { width: 28%; }
+      col.ip     { width: 8%;  }
+      col.dt     { width: 8%;  }
+
+      .footer{
+        margin-top: 10px;
+        display:flex;
+        justify-content:space-between;
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+            /* IMPRESIÓN: vertical (mismo diseño, ajustes de encaje) */
+      @media print{
+                @page { size: A4 portrait; margin: 10mm; }
+        .page{ padding:0; max-width:none; }
+
+                .logoBox{ width: 86px; height: 86px; }
+                .title{ font-size: 18px; }
+                .subtitle{ font-size: 11px; }
+                .meta{ font-size: 11px; }
+
+                thead th{ font-size: 10px; padding: 8px 8px; }
+                tbody td{ font-size: 11px; padding: 8px 8px; }
+
+                col.user   { width: 13%; }
+                col.email  { width: 18%; }
+                col.type   { width: 12%; }
+                col.actor  { width: 13%; }
+                col.detail { width: 28%; }
+                col.ip     { width: 7%;  }
+                col.dt     { width: 9%;  }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="page">
+      <div class="head">
+        <div class="accentbar"></div>
+        <div class="headinner">
+          <div class="brand">
+            <div class="logoBox">
+              <img src="${logo_liner_s}" alt="Logo METEOR" class="logo" />
+            </div>
+
+            <div class="brandText">
+              <p class="brandName">METEOR</p>
+              <h1 class="title">Reporte de Auditoría</h1>
+              <p class="subtitle">Registro de eventos filtrados. Útil para revisión, control interno y evidencia.</p>
+            </div>
+          </div>
+
+          <div class="meta">
+            <div><strong>Generado:</strong> ${printedAt}</div>
+            <div><strong>Total:</strong> ${filteredEvents.length}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <table>
+          <colgroup>
+            <col class="user" />
+            <col class="email" />
+            <col class="type" />
+            <col class="actor" />
+            <col class="detail" />
+            <col class="ip" />
+            <col class="dt" />
+          </colgroup>
+
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Correo</th>
+              <th>Acción</th>
+              <th>Realizado por</th>
+              <th>Detalle</th>
+              <th>IP</th>
+              <th>Fecha y hora</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            ${rows || `<tr><td colspan="7" style="padding:14px;color:#526175;">No hay eventos para mostrar.</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="footer">
+        <span>Documento generado automáticamente • METEOR</span>
+        <span class="mono">Página 1</span>
+      </div>
+    </div>
+  </body>
+</html>
+`);
 
         printWindow.document.close();
         printWindow.focus();
