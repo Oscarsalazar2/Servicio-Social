@@ -46,15 +46,15 @@ export default function Temperatura() {
 
     const last = thSeries[thSeries.length - 1];
     const temps = thSeries.map((s) => s.temp);
-    const totalRain =Math.round(thSeries.reduce((acc, s) => acc + s.rain, 0) * 10) / 10;
+    //const totalRain =Math.round(thSeries.reduce((acc, s) => acc + s.rain, 0) * 10) / 10;
     const minTemp = Math.round(Math.min(...temps) * 10) / 10;
     const maxTemp = Math.round(Math.max(...temps) * 10) / 10;
     const kpi = {
         temp: last.temp,
         hum: last.hum,
         dewPoint: last.dewPoint,
-        rainAccumulated: totalRain,
-        rainRate: last.rain,
+        /*rainAccumulated: totalRain,*/
+       /* rainRate: last.rain,*/
         feels: Math.round((last.temp - (100 - last.hum) / 8) * 10) / 10,
         minTemp,
         maxTemp,
@@ -95,7 +95,7 @@ export default function Temperatura() {
                                 subtitle={`Actualizado: ${kpi.updated}`}
                                 icon=""
                             />
-                            <TarjetaKpi
+                           {/*  <TarjetaKpi
                                 title="Precipitacion acumulada"
                                 value={kpi.rainAccumulated}
                                 unit="mm"
@@ -110,7 +110,7 @@ export default function Temperatura() {
                                 color={COLORS.rain}
                                 subtitle={`Actualizado: ${kpi.updated}`}
                                 icon=""
-                            />
+                            />*/}
                             <TarjetaKpi
                                 title="Punto de rocio"
                                 value={kpi.dewPoint}

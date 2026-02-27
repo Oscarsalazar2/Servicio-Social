@@ -26,6 +26,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard/viento', fn() => Inertia::render('Dashboard/Viento'))->name('dashboard.wind');
     Route::get('/dashboard/temperatura', fn() => Inertia::render('Dashboard/Temperatura'))->name('dashboard.temp');
     Route::get('/dashboard/clima', fn() => Inertia::render('Dashboard/Clima'))->name('dashboard.climate');
+    Route::get('/dashboard/presion', fn()=>Inertia::render('Dashboard/Presion'))->name('dashboard.pressure');
 
     /* Lanzamientos - Acceso para Admin y Launcher */
     Route::middleware('launcher.or.admin')->group(function () {
