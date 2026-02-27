@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function Auditoria({
     pendingUsers = [],
@@ -6,10 +6,12 @@ export default function Auditoria({
     allUsers = [],
     auditLogs = [],
 }) {
+    const ITEMS_PER_PAGE = 5;
     const [searchTerm, setSearchTerm] = useState("");
     const [typeFilter, setTypeFilter] = useState("all");
     const [dateFrom, setDateFrom] = useState("");
     const [dateTo, setDateTo] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
 
     const actionLabel = (action) => {
         const labels = {
@@ -123,6 +125,35 @@ export default function Auditoria({
         });
     }, [events, searchTerm, typeFilter, dateFrom, dateTo]);
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, typeFilter, dateFrom, dateTo]);
+
+    const totalPages = Math.max(
+        1,
+        Math.ceil(filteredEvents.length / ITEMS_PER_PAGE),
+    );
+
+    useEffect(() => {
+        if (currentPage > totalPages) {
+            setCurrentPage(totalPages);
+        }
+    }, [currentPage, totalPages]);
+
+    const paginatedEvents = useMemo(() => {
+        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+        return filteredEvents.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    }, [filteredEvents, currentPage]);
+
+    const startItem =
+        filteredEvents.length === 0
+            ? 0
+            : (currentPage - 1) * ITEMS_PER_PAGE + 1;
+    const endItem =
+        filteredEvents.length === 0
+            ? 0
+            : Math.min(currentPage * ITEMS_PER_PAGE, filteredEvents.length);
+
     const clearFilters = () => {
         setSearchTerm("");
         setTypeFilter("all");
@@ -200,11 +231,26 @@ export default function Auditoria({
             (event) => event.type === "Rechazado",
         ).length;
         const activos = events.filter(
-            (event) => event.type === "Activo",
+            (event) =>
+                event.type === "Activo" || event.type === "Usuario activado",
         ).length;
 
         return { pendientes, rechazados, activos };
     }, [events]);
+
+    const formatonombre = (name) => {
+        const normalized = (name || "").replace(/\s+/g, " ").trim();
+        const words = normalized ? normalized.split(" ") : [];
+
+        const top = words.slice(0, 2).join(" ") || "Sin nombre";
+        let bottom = words.slice(2, 4).join(" ");
+
+        if (words.length > 4) {
+            bottom = `${bottom}…`;
+        }
+
+        return { top, bottom };
+    };
 
     const typeBadgeClass = (type) => {
         if (type === "Pendiente") {
@@ -307,22 +353,24 @@ export default function Auditoria({
                         />
                     </div>
 
-                    <button
-                        type="button"
-                        onClick={clearFilters}
-                        className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-                    >
-                        Limpiar
-                    </button>
+                    <div className="flex gap-2 sm:w-auto">
+                        <button
+                            type="button"
+                            onClick={clearFilters}
+                            className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                        >
+                            Limpiar
+                        </button>
 
-                    <button
-                        type="button"
-                        onClick={handlePrint}
-                        className="px-4 py-2.5 rounded-xl bg-[#009688] text-white hover:bg-[#00796B] transition flex items-center gap-2"
-                    >
-                        <i className="fa-solid fa-print"></i>
-                        Imprimir
-                    </button>
+                        <button
+                            type="button"
+                            onClick={handlePrint}
+                            className="px-4 py-2.5 rounded-xl bg-[#009688] text-white hover:bg-[#00796B] transition flex items-center gap-2"
+                        >
+                            <i className="fa-solid fa-print"></i>
+                            Imprimir
+                        </button>
+                    </div>
                 </div>
 
                 <div className="flex justify-between items-center mb-4 pb-3 border-b border-slate-200 dark:border-slate-700">
@@ -366,13 +414,32 @@ export default function Auditoria({
                                 </thead>
                                 <tbody className="bg-white dark:bg-slate-900 divide-y divide-slate-200 dark:divide-slate-700">
                                     {filteredEvents.length > 0 ? (
-                                        filteredEvents.map((event) => (
+                                        paginatedEvents.map((event) => (
                                             <tr
                                                 key={event.id}
                                                 className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
                                             >
-                                                <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-slate-900 dark:text-white">
-                                                    {event.user}
+                                                <td className="px-4 py-3 text-sm font-medium text-slate-900 dark:text-white">
+                                                    <div className="leading-tight">
+                                                        <p className="whitespace-nowrap">
+                                                            {
+                                                                formatonombre(
+                                                                    event.user,
+                                                                ).top
+                                                            }
+                                                        </p>
+                                                        {formatonombre(
+                                                            event.user,
+                                                        ).bottom && (
+                                                            <p className="whitespace-nowrap text-slate-600 dark:text-slate-400">
+                                                                {
+                                                                    formatonombre(
+                                                                        event.user,
+                                                                    ).bottom
+                                                                }
+                                                            </p>
+                                                        )}
+                                                    </div>
                                                 </td>
                                                 <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-600 dark:text-slate-400">
                                                     {event.email}
@@ -384,8 +451,27 @@ export default function Auditoria({
                                                         {event.type}
                                                     </span>
                                                 </td>
-                                                <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-600 dark:text-slate-400">
-                                                    {event.actor}
+                                                <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">
+                                                    <div className="leading-tight">
+                                                        <p className="whitespace-nowrap text-slate-700 dark:text-slate-300">
+                                                            {
+                                                                formatonombre(
+                                                                    event.actor,
+                                                                ).top
+                                                            }
+                                                        </p>
+                                                        {formatonombre(
+                                                            event.actor,
+                                                        ).bottom && (
+                                                            <p className="whitespace-nowrap">
+                                                                {
+                                                                    formatonombre(
+                                                                        event.actor,
+                                                                    ).bottom
+                                                                }
+                                                            </p>
+                                                        )}
+                                                    </div>
                                                 </td>
                                                 <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400 max-w-xs">
                                                     {event.detail}
@@ -393,7 +479,7 @@ export default function Auditoria({
                                                 <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-600 dark:text-slate-400">
                                                     {event.ip}
                                                 </td>
-                                                <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-600 dark:text-slate-400">
+                                                <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400 whitespace-nowrap">
                                                     {event.dateTime}
                                                 </td>
                                             </tr>
@@ -419,6 +505,44 @@ export default function Auditoria({
                         </div>
                     </div>
                 </div>
+
+                {filteredEvents.length > 0 && (
+                    <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                            Mostrando {startItem}-{endItem} de{" "}
+                            {filteredEvents.length}
+                        </p>
+                        <div className="flex items-center gap-2">
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setCurrentPage((prev) =>
+                                        Math.max(1, prev - 1),
+                                    )
+                                }
+                                disabled={currentPage === 1}
+                                className="px-3 py-1.5 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Anterior
+                            </button>
+                            <span className="px-3 py-1.5 text-xs sm:text-sm rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                                Página {currentPage} de {totalPages}
+                            </span>
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setCurrentPage((prev) =>
+                                        Math.min(totalPages, prev + 1),
+                                    )
+                                }
+                                disabled={currentPage === totalPages}
+                                className="px-3 py-1.5 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Siguiente
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
