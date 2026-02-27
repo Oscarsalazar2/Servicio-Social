@@ -4,32 +4,55 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
 import TarjetaKpi from "@/Components/Comp/kpi/TarjetaKpi";
-import GraficaTemperatura from "@/Components/Comp/grafica/GraficaTemperatura";
 import RadiacionSolarGauge from "@/Components/Comp/grafica/RadiacionSolarGauge";
 
 const COLORS = {
     temp: "#6E8CFB",
     hum: "#00B7B5",
     wind: "#018790",
+    solar: "#FFB84D",
+    cloudHeight: "#9B59B6",
+};
+
+// Fórmula para calcular radiación solar (W/m²)
+const calcularRadiacionSolar = () => {
+    // Datos random entre 0 y 950 W/m²
+    return Math.round(Math.random() * 950 * 10) / 10;
+};
+
+// Fórmula para calcular punto de rocío (°C)
+// Aproximación simple basada en temperatura y humedad
+const calcularPuntoDeRocio = (temp, humedad) => {
+    // Fórmula aproximada: Td = T - ((100 - HR) / 5)
+    const td = temp - ((100 - humedad) / 5);
+    return Math.round(td * 10) / 10;
+};
+
+// Fórmula para calcular altura base de nubes (m)
+// Altura ≈ 125 × (T - Td)
+const calcularAlturaDeNubes = (temp, humedad) => {
+    const puntodeRocio = calcularPuntoDeRocio(temp, humedad);
+    const altura = 125 * (temp - puntodeRocio);
+    return Math.round(Math.max(0, altura) * 10) / 10;
 };
 
 export default function Clima() {
     const climaSeries = useMemo(() => {
-        return Array.from({ length: 24 }).map((_, i) => ({
-            t: `${String(i).padStart(2, "0")}:00`,
-            temp:
-                Math.round(
-                    (Math.sin(i / 4) * 4 + 2 + Math.random() * 0.7) * 10
-                ) / 10,
-            hum:
-                Math.round(
-                    (Math.cos(i / 5) * 18 + 65 + Math.random() * 3) * 10
-                ) / 10,
-            wind:
-                Math.round(
-                    (Math.sin(i / 3) * 5 + 10 + Math.random() * 2) * 10
-                ) / 10,
-        }));
+        return Array.from({ length: 24 }).map((_, i) => {
+            const temp = Math.round(
+                (Math.sin(i / 4) * 4 + 2 + Math.random() * 0.7) * 10
+            ) / 10;
+            const hum = Math.round(
+                (Math.cos(i / 5) * 18 + 65 + Math.random() * 3) * 10
+            ) / 10;
+            return {
+                t: `${String(i).padStart(2, "0")}:00`,
+                temp: temp,
+                hum: hum,
+                solar: calcularRadiacionSolar(),
+                cloudHeight: calcularAlturaDeNubes(temp, hum),
+            };
+        });
     }, []);
 
     const last = climaSeries[climaSeries.length - 1];
@@ -37,7 +60,8 @@ export default function Clima() {
     const kpi = {
         temp: last.temp,
         hum: last.hum,
-        wind: last.wind,
+        solar: last.solar,
+        cloudHeight: last.cloudHeight,
         updated: "15/12/2025 20:00",
     };
 
@@ -50,23 +74,18 @@ export default function Clima() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                         {/* KPIs */}
                         <div className="lg:col-span-4 space-y-4">
+                            
                             <TarjetaKpi
-                                title="Temperatura"
-                                value={kpi.temp}
-                                unit="°C"
-                                color={COLORS.temp}
+                                title="Radiación Solar"
+                                value={kpi.solar}
+                                unit="W/m²"
+                                color={COLORS.solar}
                             />
                             <TarjetaKpi
-                                title="Humedad"
-                                value={kpi.hum}
-                                unit="%"
-                                color={COLORS.hum}
-                            />
-                            <TarjetaKpi
-                                title="Viento"
-                                value={kpi.wind}
-                                unit="km/h"
-                                color={COLORS.wind}
+                                title="Altura de Nubes"
+                                value={kpi.cloudHeight}
+                                unit="m"
+                                color={COLORS.cloudHeight}
                             />
                             <div className="lg:col-span-8">
                             <div className="h-72 bg-white/5 border-white dark:bg-slate-900/40 dark:border-white/10 rounded-lg shadow p-6">
@@ -74,6 +93,7 @@ export default function Clima() {
                                     Radiación Solar
                                 </h3>
                                 <RadiacionSolarGauge
+                                    value={kpi.solar}
                                     series={climaSeries}
                                     colors={COLORS}
                                 />
@@ -88,6 +108,7 @@ export default function Clima() {
                                     Radiación Solar
                                 </h3>
                                 <RadiacionSolarGauge
+                                    value={kpi.solar}
                                     series={climaSeries}
                                     colors={COLORS}
                                 />
