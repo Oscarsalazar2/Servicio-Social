@@ -118,7 +118,7 @@ export default function PetIndex() {
                 botella: "2 L",
                 presion: 78,
                 agua: 650,
-                angulo: 42,
+                modeloBotella: "Coca-Cola",
                 altura: 83,
                 distancia: 112,
                 resultado: "Éxito",
@@ -131,7 +131,7 @@ export default function PetIndex() {
                 botella: "1.5 L",
                 presion: 72,
                 agua: 600,
-                angulo: 40,
+                modeloBotella: "Pepsi",
                 altura: 74,
                 distancia: 95,
                 resultado: "Éxito",
@@ -144,7 +144,7 @@ export default function PetIndex() {
                 botella: "2 L",
                 presion: 80,
                 agua: 700,
-                angulo: 38,
+                modeloBotella: "Sprite",
                 altura: 58,
                 distancia: 67,
                 resultado: "Fallo",
@@ -157,13 +157,14 @@ export default function PetIndex() {
                 botella: "2 L",
                 presion: 76,
                 agua: 620,
-                angulo: 45,
+                modeloBotella: "Fanta",
                 altura: 79,
                 distancia: 101,
                 resultado: "Éxito",
                 descripcion:
                     "Trayectoria alta con aterrizaje suave en zona segura.",
             },
+            
         ],
         [],
     );
@@ -173,7 +174,7 @@ export default function PetIndex() {
         botella: "2 L",
         presion: "",
         agua: "",
-        angulo: "",
+        modeloBotella: "Coca-Cola",
         altura: "",
         distancia: "",
         resultado: "Éxito",
@@ -192,7 +193,7 @@ export default function PetIndex() {
             botella: "2 L",
             presion: "",
             agua: "",
-            angulo: "",
+            modeloBotella: "Coca-Cola",
             altura: "",
             distancia: "",
             resultado: "Éxito",
@@ -290,7 +291,7 @@ export default function PetIndex() {
                                     <th className="py-2 pr-4">Botella</th>
                                     <th className="py-2 pr-4">Presión (psi)</th>
                                     <th className="py-2 pr-4">Agua (ml)</th>
-                                    <th className="py-2 pr-4">Ángulo (°)</th>
+                                    <th className="py-2 pr-4">Modelo de botella</th>
                                     <th className="py-2 pr-4">Altura (m)</th>
                                     <th className="py-2 pr-4">Distancia (m)</th>
                                     <th className="py-2 pr-2">Resultado</th>
@@ -316,7 +317,7 @@ export default function PetIndex() {
                                             {registro.agua}
                                         </td>
                                         <td className="py-2 pr-4">
-                                            {registro.angulo}
+                                            {registro.modeloBotella}
                                         </td>
                                         <td className="py-2 pr-4">
                                             {registro.altura}
@@ -462,7 +463,7 @@ export default function PetIndex() {
                             </label>
                             <input
                                 type="datetime-local"
-                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
+                                className="mt-1 w-full rounded-xl border p-2  bg-white dark:bg-slate-950 dark:border-white/10 dark:text-slate-400"
                                 value={formLanzamiento.fecha}
                                 onChange={(e) =>
                                     setFormLanzamiento((prev) => ({
@@ -478,7 +479,7 @@ export default function PetIndex() {
                                 Botella
                             </label>
                             <select
-                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
+                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10 dark:text-slate-400"
                                 value={formLanzamiento.botella}
                                 onChange={(e) =>
                                     setFormLanzamiento((prev) => ({
@@ -499,7 +500,7 @@ export default function PetIndex() {
                             </label>
                             <input
                                 type="number"
-                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
+                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10 dark:text-slate-400"
                                 value={formLanzamiento.presion}
                                 onChange={(e) =>
                                     setFormLanzamiento((prev) => ({
@@ -516,7 +517,7 @@ export default function PetIndex() {
                             </label>
                             <input
                                 type="number"
-                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
+                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10 dark:text-slate-400"
                                 value={formLanzamiento.agua}
                                 onChange={(e) =>
                                     setFormLanzamiento((prev) => ({
@@ -529,19 +530,36 @@ export default function PetIndex() {
 
                         <div>
                             <label className="text-sm text-slate-600 dark:text-slate-300">
-                                Ángulo (°)
+                                Modelo de botella
                             </label>
                             <input
-                                type="number"
-                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
-                                value={formLanzamiento.angulo}
+                                type="text"
+                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10 dark:text-slate-400"
+                                value={formLanzamiento.modeloBotella}
                                 onChange={(e) =>
                                     setFormLanzamiento((prev) => ({
                                         ...prev,
-                                        angulo: e.target.value,
+                                        modeloBotella: e.target.value,
                                     }))
                                 }
                             />
+                            {/*<select
+                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10 dark:text-slate-400"
+                                value={formLanzamiento.modeloBotella}
+                                onChange={(e) =>
+                                    setFormLanzamiento((prev) => ({
+                                        ...prev,
+                                        modeloBotella: e.target.value,
+                                    }))
+                                }
+                            >
+                                <option>Coca-Cola</option>
+                                <option>Pepsi</option>
+                                <option>Sprite</option>
+                                <option>Fanta</option>
+                                <option>7UP</option>
+                                <option>Tehuacán</option>
+                            </select>*/}
                         </div>
 
                         <div>
@@ -549,7 +567,7 @@ export default function PetIndex() {
                                 Resultado
                             </label>
                             <select
-                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
+                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10 dark:text-slate-400"
                                 value={formLanzamiento.resultado}
                                 onChange={(e) =>
                                     setFormLanzamiento((prev) => ({
@@ -569,7 +587,7 @@ export default function PetIndex() {
                             </label>
                             <input
                                 type="number"
-                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
+                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10 dark:text-slate-400"
                                 value={formLanzamiento.altura}
                                 onChange={(e) =>
                                     setFormLanzamiento((prev) => ({
@@ -586,7 +604,7 @@ export default function PetIndex() {
                             </label>
                             <input
                                 type="number"
-                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
+                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10 dark:text-slate-400"
                                 value={formLanzamiento.distancia}
                                 onChange={(e) =>
                                     setFormLanzamiento((prev) => ({
@@ -604,7 +622,7 @@ export default function PetIndex() {
                         </label>
                         <textarea
                             rows={3}
-                            className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
+                            className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10 dark:text-slate-400"
                             placeholder="Describe observaciones del lanzamiento"
                             value={formLanzamiento.descripcion}
                             onChange={(e) =>
@@ -620,7 +638,7 @@ export default function PetIndex() {
                         <button
                             type="button"
                             onClick={cerrarNuevoLanzamiento}
-                            className="px-4 py-2 rounded-xl border"
+                            className="px-4 py-2 rounded-xl border dark:text-slate-400 dark:border-white/10"
                         >
                             Cerrar
                         </button>
@@ -659,8 +677,8 @@ export default function PetIndex() {
                                 {registroSeleccionado.agua} ml
                             </div>
                             <div>
-                                <strong>Ángulo:</strong>{" "}
-                                {registroSeleccionado.angulo}°
+                                <strong>Modelo de botella:</strong>{" "}
+                                {registroSeleccionado.modeloBotella}
                             </div>
                             <div>
                                 <strong>Altura:</strong>{" "}
