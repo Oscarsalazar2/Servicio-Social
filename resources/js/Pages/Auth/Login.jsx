@@ -5,6 +5,7 @@ import GuestLayout from "@/Layouts/GuestLayout";
 export default function Login({ status, canResetPassword }) {
     const [active, setActive] = useState(false);
     const [showPendingModal, setShowPendingModal] = useState(false);
+    const [showLoginPassword, setShowLoginPassword] = useState(false);
     const { url, props } = usePage();
     const registrationPending = props?.flash?.registrationPending;
 
@@ -236,15 +237,38 @@ export default function Login({ status, canResetPassword }) {
                             </p>
                         )}
 
-                        <input
-                            type="password"
-                            placeholder="Contraseña"
-                            value={loginForm.data.password}
-                            onChange={(e) =>
-                                loginForm.setData("password", e.target.value)
-                            }
-                            required
-                        />
+                        <div className="password-input-wrap">
+                            <input
+                                type={showLoginPassword ? "text" : "password"}
+                                placeholder="Contraseña"
+                                value={loginForm.data.password}
+                                onChange={(e) =>
+                                    loginForm.setData("password", e.target.value)
+                                }
+                                required
+                            />
+                            <button
+                                type="button"
+                                className="password-toggle"
+                                onClick={() =>
+                                    setShowLoginPassword((prev) => !prev)
+                                }
+                                aria-label={
+                                    showLoginPassword
+                                        ? "Ocultar contraseña"
+                                        : "Mostrar contraseña"
+                                }
+                            >
+                                <i
+                                    className={`fa-solid ${
+                                        showLoginPassword
+                                            ? "fa-eye-slash"
+                                            : "fa-eye"
+                                    }`}
+                                    aria-hidden="true"
+                                />
+                            </button>
+                        </div>
                         {loginForm.errors.password && (
                             <p className="field-error">
                                 {loginForm.errors.password}
