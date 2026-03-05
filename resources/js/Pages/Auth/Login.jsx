@@ -158,7 +158,7 @@ export default function Login({ status, canResetPassword }) {
                             onChange={(e) =>
                                 registerForm.setData(
                                     "password_confirmation",
-                                    e.target.value
+                                    e.target.value,
                                 )
                             }
                             required
@@ -243,7 +243,10 @@ export default function Login({ status, canResetPassword }) {
                                 placeholder="Contraseña"
                                 value={loginForm.data.password}
                                 onChange={(e) =>
-                                    loginForm.setData("password", e.target.value)
+                                    loginForm.setData(
+                                        "password",
+                                        e.target.value,
+                                    )
                                 }
                                 required
                             />
@@ -283,7 +286,7 @@ export default function Login({ status, canResetPassword }) {
                                 onChange={(e) =>
                                     loginForm.setData(
                                         "remember",
-                                        e.target.checked
+                                        e.target.checked,
                                     )
                                 }
                             />

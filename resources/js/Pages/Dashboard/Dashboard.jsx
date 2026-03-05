@@ -2,9 +2,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
-const GRID_PREFS_STORAGE_KEY = "dashboard:grid:visibleFields";
+const CLAVE_STORAGE_PREFS_GRID = "dashboard:grid:visibleFields";
 
-const COLORS = {
+const COLORES = {
     temp: "#6E8CFB",
     tempAlt: "#00B7B5",
     hum: "#018790",
@@ -12,7 +12,7 @@ const COLORS = {
     windDir: "#FA812F",
 };
 
-const ADAPTIVE_LAYOUTS = {
+const LAYOUTS_ADAPTATIVOS = {
     1: ["md:col-span-9 md:row-span-9"],
     2: ["md:col-span-6 md:row-span-9", "md:col-span-3 md:row-span-9"],
     3: [
@@ -74,7 +74,7 @@ const ADAPTIVE_LAYOUTS = {
 };
 
 export default function Dashboard() {
-    const windSeries = useMemo(() => {
+    const serieViento = useMemo(() => {
         return Array.from({ length: 24 }).map((_, i) => ({
             t: `${String(i).padStart(2, "0")}:00`,
             vel: Math.max(
@@ -87,7 +87,7 @@ export default function Dashboard() {
         }));
     }, []);
 
-    const thSeries = useMemo(() => {
+    const serieTempHum = useMemo(() => {
         return Array.from({ length: 24 }).map((_, i) => ({
             t: `${String(i).padStart(2, "0")}:00`,
             temp:
@@ -102,23 +102,26 @@ export default function Dashboard() {
     }, []);
 
     // KPIs
-    const lastWind = windSeries[windSeries.length - 1];
-    const lastTH = thSeries[thSeries.length - 1];
+    const ultimoViento = serieViento[serieViento.length - 1];
+    const ultimaTempHum = serieTempHum[serieTempHum.length - 1];
 
-    const windKpi = {
-        speed: lastWind.vel,
-        dir: lastWind.dir,
+    const kpiViento = {
+        speed: ultimoViento.vel,
+        dir: ultimoViento.dir,
     };
 
-    const tempKpi = {
-        temp: lastTH.temp,
-        hum: lastTH.hum,
-        feels: Math.round((lastTH.temp - (100 - lastTH.hum) / 8) * 10) / 10,
+    const kpiTemp = {
+        temp: ultimaTempHum.temp,
+        hum: ultimaTempHum.hum,
+        feels:
+            Math.round(
+                (ultimaTempHum.temp - (100 - ultimaTempHum.hum) / 8) * 10,
+            ) / 10,
     };
 
-    const radiationValue = 428;
-    const uvIndex = Number((radiationValue / 100).toFixed(1));
-    const lastUpdated = useMemo(
+    const valorRadiacion = 428;
+    const indiceUv = Number((valorRadiacion / 100).toFixed(1));
+    const ultimaActualizacion = useMemo(
         () =>
             new Date().toLocaleString("es-MX", {
                 day: "2-digit",
@@ -131,57 +134,57 @@ export default function Dashboard() {
         [],
     );
 
-    const gridFields = useMemo(
+    const camposGrid = useMemo(
         () => [
             {
                 id: "windSpeed",
                 label: "Velocidad del viento",
-                value: windKpi.speed,
+                value: kpiViento.speed,
                 unit: "km/h",
                 layout: "md:col-span-3 md:row-span-3",
-                color: COLORS.wind,
+                color: COLORES.wind,
                 iconClass: "fa-wind",
             },
             {
                 id: "windDirection",
                 label: "Dirección del viento",
-                value: windKpi.dir,
+                value: kpiViento.dir,
                 unit: "°",
                 layout: "md:col-span-3 md:row-span-3",
-                color: COLORS.windDir,
+                color: COLORES.windDir,
                 iconClass: "fa-compass",
             },
             {
                 id: "temperature",
                 label: "Temperatura",
-                value: tempKpi.temp,
+                value: kpiTemp.temp,
                 unit: "°C",
                 layout: "md:col-span-3 md:row-span-3",
-                color: COLORS.temp,
+                color: COLORES.temp,
                 iconClass: "fa-temperature-three-quarters",
             },
             {
                 id: "humidity",
                 label: "Humedad",
-                value: tempKpi.hum,
+                value: kpiTemp.hum,
                 unit: "%",
                 layout: "md:col-span-3 md:row-span-2",
-                color: COLORS.hum,
+                color: COLORES.hum,
                 iconClass: "fa-droplet",
             },
             {
                 id: "feelsLike",
                 label: "Sensación térmica",
-                value: tempKpi.feels,
+                value: kpiTemp.feels,
                 unit: "°C",
                 layout: "md:col-span-3 md:row-span-2",
-                color: COLORS.tempAlt,
+                color: COLORES.tempAlt,
                 iconClass: "fa-person-rays",
             },
             {
                 id: "radiation",
                 label: "Radiación",
-                value: radiationValue,
+                value: valorRadiacion,
                 unit: "W/m²",
                 layout: "md:col-span-3 md:row-span-2",
                 color: "#38bdf8",
@@ -208,7 +211,7 @@ export default function Dashboard() {
             {
                 id: "uvIndex",
                 label: "Índice UV",
-                value: uvIndex,
+                value: indiceUv,
                 unit: "UV",
                 layout: "md:col-span-3 md:row-span-2",
                 color: "#ef4444",
@@ -217,36 +220,37 @@ export default function Dashboard() {
             },
         ],
         [
-            windKpi.speed,
-            windKpi.dir,
-            tempKpi.temp,
-            tempKpi.hum,
-            tempKpi.feels,
-            radiationValue,
-            uvIndex,
+            kpiViento.speed,
+            kpiViento.dir,
+            kpiTemp.temp,
+            kpiTemp.hum,
+            kpiTemp.feels,
+            valorRadiacion,
+            indiceUv,
         ],
     );
 
-    const allFieldIds = useMemo(
-        () => gridFields.map((field) => field.id),
-        [gridFields],
+    const todosLosIdsCampos = useMemo(
+        () => camposGrid.map((campo) => campo.id),
+        [camposGrid],
     );
 
-    const [visibleFieldIds, setVisibleFieldIds] = useState(
-        () => new Set(allFieldIds),
+    const [idsCamposVisibles, setIdsCamposVisibles] = useState(
+        () => new Set(todosLosIdsCampos),
     );
-    const [isFieldListOpen, setIsFieldListOpen] = useState(false);
-    const [hasLoadedGridPrefs, setHasLoadedGridPrefs] = useState(false);
+    const [listaCamposAbierta, setListaCamposAbierta] = useState(false);
+    const [prefsGridCargadas, setPrefsGridCargadas] = useState(false);
 
-    const visibleGridFields = gridFields.filter((field) =>
-        visibleFieldIds.has(field.id),
+    const camposVisiblesGrid = camposGrid.filter((campo) =>
+        idsCamposVisibles.has(campo.id),
     );
 
-    const adaptiveLayouts =
-        ADAPTIVE_LAYOUTS[visibleGridFields.length] || ADAPTIVE_LAYOUTS[9];
+    const layoutsAdaptativos =
+        LAYOUTS_ADAPTATIVOS[camposVisiblesGrid.length] ||
+        LAYOUTS_ADAPTATIVOS[9];
 
-    const sizePreset = useMemo(() => {
-        if (visibleGridFields.length <= 2) {
+    const presetTamano = useMemo(() => {
+        if (camposVisiblesGrid.length <= 2) {
             return {
                 cardPadding: "p-6 md:p-8",
                 iconBox: "w-16 h-16 md:w-20 md:h-20",
@@ -259,7 +263,7 @@ export default function Dashboard() {
             };
         }
 
-        if (visibleGridFields.length <= 4) {
+        if (camposVisiblesGrid.length <= 4) {
             return {
                 cardPadding: "p-5 md:p-6",
                 iconBox: "w-14 h-14 md:w-16 md:h-16",
@@ -282,22 +286,22 @@ export default function Dashboard() {
             meta: "text-xs",
             contentGap: "gap-4",
         };
-    }, [visibleGridFields.length]);
+    }, [camposVisiblesGrid.length]);
 
-    const toggleField = (fieldId) => {
-        setVisibleFieldIds((previous) => {
-            const next = new Set(previous);
-            if (next.has(fieldId)) {
-                next.delete(fieldId);
+    const alternarCampo = (idCampo) => {
+        setIdsCamposVisibles((anterior) => {
+            const siguiente = new Set(anterior);
+            if (siguiente.has(idCampo)) {
+                siguiente.delete(idCampo);
             } else {
-                next.add(fieldId);
+                siguiente.add(idCampo);
             }
-            return next;
+            return siguiente;
         });
     };
 
-    const showAllFields = () => setVisibleFieldIds(new Set(allFieldIds));
-    const hideAllFields = () => setVisibleFieldIds(new Set());
+    const mostrarTodo = () => setIdsCamposVisibles(new Set(todosLosIdsCampos));
+    const ocultarTodo = () => setIdsCamposVisibles(new Set());
 
     useEffect(() => {
         if (typeof window === "undefined") {
@@ -305,37 +309,41 @@ export default function Dashboard() {
         }
 
         try {
-            const raw = window.localStorage.getItem(GRID_PREFS_STORAGE_KEY);
-            if (!raw) {
-                setHasLoadedGridPrefs(true);
+            const valorGuardado = window.localStorage.getItem(
+                CLAVE_STORAGE_PREFS_GRID,
+            );
+            if (!valorGuardado) {
+                setPrefsGridCargadas(true);
                 return;
             }
 
-            const parsed = JSON.parse(raw);
-            if (!Array.isArray(parsed)) {
-                setHasLoadedGridPrefs(true);
+            const datosParseados = JSON.parse(valorGuardado);
+            if (!Array.isArray(datosParseados)) {
+                setPrefsGridCargadas(true);
                 return;
             }
 
-            const validIds = parsed.filter((id) => allFieldIds.includes(id));
-            setVisibleFieldIds(new Set(validIds));
+            const idsValidos = datosParseados.filter((id) =>
+                todosLosIdsCampos.includes(id),
+            );
+            setIdsCamposVisibles(new Set(idsValidos));
         } catch {
-            setVisibleFieldIds(new Set(allFieldIds));
+            setIdsCamposVisibles(new Set(todosLosIdsCampos));
         } finally {
-            setHasLoadedGridPrefs(true);
+            setPrefsGridCargadas(true);
         }
-    }, [allFieldIds]);
+    }, [todosLosIdsCampos]);
 
     useEffect(() => {
-        if (typeof window === "undefined" || !hasLoadedGridPrefs) {
+        if (typeof window === "undefined" || !prefsGridCargadas) {
             return;
         }
 
         window.localStorage.setItem(
-            GRID_PREFS_STORAGE_KEY,
-            JSON.stringify(Array.from(visibleFieldIds)),
+            CLAVE_STORAGE_PREFS_GRID,
+            JSON.stringify(Array.from(idsCamposVisibles)),
         );
-    }, [visibleFieldIds, hasLoadedGridPrefs]);
+    }, [idsCamposVisibles, prefsGridCargadas]);
 
     return (
         <AuthenticatedLayout>
@@ -354,14 +362,14 @@ export default function Dashboard() {
                             <div className="relative flex items-center gap-2">
                                 <button
                                     type="button"
-                                    onClick={showAllFields}
+                                    onClick={mostrarTodo}
                                     className="px-3 py-2 rounded-lg text-sm font-semibold bg-white text-gray-800 border border-gray-300 hover:bg-gray-50 dark:bg-[#0f1d3d] dark:text-gray-100 dark:border-slate-700"
                                 >
                                     Mostrar todo
                                 </button>
                                 <button
                                     type="button"
-                                    onClick={hideAllFields}
+                                    onClick={ocultarTodo}
                                     className="px-3 py-2 rounded-lg text-sm font-semibold bg-white text-gray-800 border border-gray-300 hover:bg-gray-50 dark:bg-[#0f1d3d] dark:text-gray-100 dark:border-slate-700"
                                 >
                                     Quitar todo
@@ -370,18 +378,20 @@ export default function Dashboard() {
                                 <button
                                     type="button"
                                     onClick={() =>
-                                        setIsFieldListOpen((prev) => !prev)
+                                        setListaCamposAbierta((prev) => !prev)
                                     }
                                     className="px-3 py-2 rounded-lg text-sm font-semibold bg-white text-gray-800 border border-gray-300 hover:bg-gray-50 dark:bg-[#0f1d3d] dark:text-gray-100 dark:border-slate-700 flex items-center gap-2"
                                 >
                                     Lista
                                     <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 dark:bg-slate-800 dark:text-gray-200">
-                                        {visibleGridFields.length}/
-                                        {gridFields.length}
+                                        {camposVisiblesGrid.length}/
+                                        {camposGrid.length}
                                     </span>
                                     <span
                                         className={`text-gray-500 dark:text-gray-300 transition-transform ${
-                                            isFieldListOpen ? "rotate-180" : ""
+                                            listaCamposAbierta
+                                                ? "rotate-180"
+                                                : ""
                                         }`}
                                         aria-hidden="true"
                                     >
@@ -389,7 +399,7 @@ export default function Dashboard() {
                                     </span>
                                 </button>
 
-                                {isFieldListOpen ? (
+                                {listaCamposAbierta ? (
                                     <div
                                         className="absolute right-0 top-full mt-2 w-80 max-h-96 overflow-y-auto rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-[#0f1d3d] shadow-lg z-30 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
                                         style={{
@@ -398,30 +408,30 @@ export default function Dashboard() {
                                         }}
                                     >
                                         <ul className="p-2 space-y-2">
-                                            {gridFields.map((field) => {
-                                                const isVisible =
-                                                    visibleFieldIds.has(
-                                                        field.id,
+                                            {camposGrid.map((campo) => {
+                                                const esVisible =
+                                                    idsCamposVisibles.has(
+                                                        campo.id,
                                                     );
 
                                                 return (
                                                     <li
-                                                        key={field.id}
+                                                        key={campo.id}
                                                         className="flex items-center justify-between rounded-lg px-2 py-2 border border-gray-200/80 dark:border-slate-700/80 bg-white dark:bg-[#12224a]/80"
                                                     >
                                                         <label
-                                                            htmlFor={`field-${field.id}`}
+                                                            htmlFor={`field-${campo.id}`}
                                                             className="flex items-center gap-3 text-sm text-gray-800 dark:text-gray-100 cursor-pointer"
                                                         >
                                                             <input
-                                                                id={`field-${field.id}`}
+                                                                id={`field-${campo.id}`}
                                                                 type="checkbox"
                                                                 checked={
-                                                                    isVisible
+                                                                    esVisible
                                                                 }
                                                                 onChange={() =>
-                                                                    toggleField(
-                                                                        field.id,
+                                                                    alternarCampo(
+                                                                        campo.id,
                                                                     )
                                                                 }
                                                                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
@@ -430,20 +440,20 @@ export default function Dashboard() {
                                                                 className="w-2.5 h-2.5 rounded-full"
                                                                 style={{
                                                                     backgroundColor:
-                                                                        field.color,
+                                                                        campo.color,
                                                                 }}
                                                             />
-                                                            {field.label}
+                                                            {campo.label}
                                                         </label>
 
                                                         <span
                                                             className={`text-xs font-semibold px-2 py-1 rounded-md ${
-                                                                isVisible
+                                                                esVisible
                                                                     ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
                                                                     : "bg-gray-100 text-gray-600 dark:bg-slate-800 dark:text-gray-300"
                                                             }`}
                                                         >
-                                                            {isVisible
+                                                            {esVisible
                                                                 ? "Visible"
                                                                 : "Oculto"}
                                                         </span>
@@ -456,61 +466,61 @@ export default function Dashboard() {
                             </div>
                         </div>
 
-                        {visibleGridFields.length === 0 ? (
+                        {camposVisiblesGrid.length === 0 ? (
                             <div className="rounded-2xl border border-dashed border-slate-400/50 dark:border-slate-600/60 p-8 text-center text-gray-700 dark:text-gray-300 bg-white/70 dark:bg-[#0b1735]">
                                 No hay campos visibles. Usa los botones para
                                 volver a mostrar métricas.
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-9 md:grid-rows-9 gap-3 md:auto-rows-[56px] md:grid-flow-dense">
-                                {visibleGridFields.map((field, index) => (
+                                {camposVisiblesGrid.map((campo, indice) => (
                                     <div
-                                        key={field.id}
-                                        className={`h-full rounded-2xl shadow-md border border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-[#0b1735] ${sizePreset.cardPadding} ${adaptiveLayouts[index]}`}
+                                        key={campo.id}
+                                        className={`h-full rounded-2xl shadow-md border border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-[#0b1735] ${presetTamano.cardPadding} ${layoutsAdaptativos[indice]}`}
                                     >
                                         <div
-                                            className={`${sizePreset.title} font-semibold tracking-wide text-gray-900 dark:text-gray-100`}
+                                            className={`${presetTamano.title} font-semibold tracking-wide text-gray-900 dark:text-gray-100`}
                                         >
-                                            {field.label}
+                                            {campo.label}
                                         </div>
                                         <div
-                                            className={`mt-4 h-[calc(100%-2rem)] flex items-center ${sizePreset.contentGap}`}
+                                            className={`mt-4 h-[calc(100%-2rem)] flex items-center ${presetTamano.contentGap}`}
                                         >
                                             <div
-                                                className={`${sizePreset.iconBox} rounded-xl bg-gray-200/70 dark:bg-slate-800/70 flex items-center justify-center`}
+                                                className={`${presetTamano.iconBox} rounded-xl bg-gray-200/70 dark:bg-slate-800/70 flex items-center justify-center`}
                                             >
                                                 <i
-                                                    className={`fa-solid ${field.iconClass} ${sizePreset.icon}`}
+                                                    className={`fa-solid ${campo.iconClass} ${presetTamano.icon}`}
                                                     style={{ color: "#b8b8b8" }}
                                                 />
                                             </div>
 
                                             <div className="flex-1 text-center">
                                                 <div
-                                                    className={`${sizePreset.meta} text-gray-500 dark:text-gray-300`}
+                                                    className={`${presetTamano.meta} text-gray-500 dark:text-gray-300`}
                                                 >
                                                     Ultimo Valor Registrado
                                                 </div>
                                                 <div
-                                                    className={`mt-1 ${sizePreset.value} leading-none font-black`}
+                                                    className={`mt-1 ${presetTamano.value} leading-none font-black`}
                                                     style={{
-                                                        color: field.color,
+                                                        color: campo.color,
                                                     }}
                                                 >
-                                                    {field.value}
-                                                    {field.unit ? (
+                                                    {campo.value}
+                                                    {campo.unit ? (
                                                         <span
-                                                            className={`ml-1 ${sizePreset.unit} font-bold text-gray-700 dark:text-gray-200`}
+                                                            className={`ml-1 ${presetTamano.unit} font-bold text-gray-700 dark:text-gray-200`}
                                                         >
-                                                            {field.unit}
+                                                            {campo.unit}
                                                         </span>
                                                     ) : null}
                                                 </div>
                                                 <div
-                                                    className={`mt-2 ${sizePreset.meta} text-gray-500 dark:text-gray-300`}
+                                                    className={`mt-2 ${presetTamano.meta} text-gray-500 dark:text-gray-300`}
                                                 >
                                                     Ultima Actualización:{" "}
-                                                    {lastUpdated}
+                                                    {ultimaActualizacion}
                                                 </div>
                                             </div>
                                         </div>
