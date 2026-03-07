@@ -119,6 +119,7 @@ export default function PetIndex() {
                 presion: 78,
                 agua: 650,
                 modeloBotella: "Coca-Cola",
+                usoBotella: 3,
                 altura: 83,
                 distancia: 112,
                 resultado: "Éxito",
@@ -132,6 +133,7 @@ export default function PetIndex() {
                 presion: 72,
                 agua: 600,
                 modeloBotella: "Pepsi",
+                usoBotella: 1,
                 altura: 74,
                 distancia: 95,
                 resultado: "Éxito",
@@ -145,6 +147,7 @@ export default function PetIndex() {
                 presion: 80,
                 agua: 700,
                 modeloBotella: "Sprite",
+                usoBotella: 2,
                 altura: 58,
                 distancia: 67,
                 resultado: "Fallo",
@@ -158,6 +161,7 @@ export default function PetIndex() {
                 presion: 76,
                 agua: 620,
                 modeloBotella: "Fanta",
+                usoBotella: 4,
                 altura: 79,
                 distancia: 101,
                 resultado: "Éxito",
@@ -174,7 +178,8 @@ export default function PetIndex() {
         botella: "2 L",
         presion: "",
         agua: "",
-        modeloBotella: "Coca-Cola",
+        modeloBotella: "",
+        usoBotella: "",
         altura: "",
         distancia: "",
         resultado: "Éxito",
@@ -193,7 +198,8 @@ export default function PetIndex() {
             botella: "2 L",
             presion: "",
             agua: "",
-            modeloBotella: "Coca-Cola",
+            modeloBotella: "",
+            usoBotella: "",
             altura: "",
             distancia: "",
             resultado: "Éxito",
@@ -292,6 +298,7 @@ export default function PetIndex() {
                                     <th className="py-2 pr-4">Presión (psi)</th>
                                     <th className="py-2 pr-4">Agua (ml)</th>
                                     <th className="py-2 pr-4">Modelo de botella</th>
+                                    <th className="py-2 pr-4">Uso de botella</th>
                                     <th className="py-2 pr-4">Altura (m)</th>
                                     <th className="py-2 pr-4">Distancia (m)</th>
                                     <th className="py-2 pr-2">Resultado</th>
@@ -320,11 +327,15 @@ export default function PetIndex() {
                                             {registro.modeloBotella}
                                         </td>
                                         <td className="py-2 pr-4">
+                                            {registro.usoBotella}
+                                        </td>
+                                        <td className="py-2 pr-4">
                                             {registro.altura}
                                         </td>
                                         <td className="py-2 pr-4">
                                             {registro.distancia}
                                         </td>
+                                        
                                         <td className="py-2 pr-2">
                                             <span
                                                 className={`px-2 py-1 rounded-lg text-xs font-semibold ${
@@ -488,9 +499,9 @@ export default function PetIndex() {
                                     }))
                                 }
                             >
-                                <option>1.5 L</option>
+                                <option>1.75 L</option>
                                 <option>2 L</option>
-                                <option>2.5 L</option>
+                                
                             </select>
                         </div>
 
@@ -561,24 +572,11 @@ export default function PetIndex() {
                                 <option>Tehuacán</option>
                             </select>*/}
                         </div>
-
                         <div>
                             <label className="text-sm text-slate-600 dark:text-slate-300">
-                                Resultado
+                                Uso de botella
                             </label>
-                            <select
-                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10 dark:text-slate-400"
-                                value={formLanzamiento.resultado}
-                                onChange={(e) =>
-                                    setFormLanzamiento((prev) => ({
-                                        ...prev,
-                                        resultado: e.target.value,
-                                    }))
-                                }
-                            >
-                                <option>Éxito</option>
-                                <option>Fallo</option>
-                            </select>
+                            <input type="number" className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10 dark:text-slate-400"/>
                         </div>
 
                         <div>
@@ -613,6 +611,24 @@ export default function PetIndex() {
                                     }))
                                 }
                             />
+                        </div>
+                        <div>
+                            <label className="text-sm text-slate-600 dark:text-slate-300">
+                                Resultado
+                            </label>
+                            <select
+                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10 dark:text-slate-400"
+                                value={formLanzamiento.resultado}
+                                onChange={(e) =>
+                                    setFormLanzamiento((prev) => ({
+                                        ...prev,
+                                        resultado: e.target.value,
+                                    }))
+                                }
+                            >
+                                <option>Éxito</option>
+                                <option>Fallo</option>
+                            </select>
                         </div>
                     </div>
 
@@ -679,6 +695,10 @@ export default function PetIndex() {
                             <div>
                                 <strong>Modelo de botella:</strong>{" "}
                                 {registroSeleccionado.modeloBotella}
+                            </div>
+                            <div>
+                                <strong>Uso de botella:</strong>{" "}
+                                {registroSeleccionado.usoBotella}
                             </div>
                             <div>
                                 <strong>Altura:</strong>{" "}

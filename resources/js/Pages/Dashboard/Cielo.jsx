@@ -20,6 +20,12 @@ const calcularRadiacionSolar = () => {
     return Math.round(Math.random() * 950 * 10) / 10;
 };
 
+const calcularIndiceUV = (solar) => {
+    // Índice UV aproximado: UV = Solar / 250
+    const uv = solar / 250;
+    return Math.round(uv * 10) / 10;
+}
+
 // Fórmula para calcular punto de rocío (°C)
 // Aproximación simple basada en temperatura y humedad
 const calcularPuntoDeRocio = (temp, humedad) => {
@@ -39,6 +45,7 @@ const calcularAlturaDeNubes = (temp, humedad) => {
 export default function Clima() {
     const climaSeries = useMemo(() => {
         return Array.from({ length: 24 }).map((_, i) => {
+            const solar = calcularRadiacionSolar();
             const temp =
                 Math.round(
                     (Math.sin(i / 4) * 4 + 2 + Math.random() * 0.7) * 10,
@@ -51,7 +58,8 @@ export default function Clima() {
                 t: `${String(i).padStart(2, "0")}:00`,
                 temp: temp,
                 hum: hum,
-                solar: calcularRadiacionSolar(),
+                solar: solar,
+                uv: calcularIndiceUV(solar),
                 cloudHeight: calcularAlturaDeNubes(temp, hum),
             };
         });
@@ -63,6 +71,7 @@ export default function Clima() {
         temp: last.temp,
         hum: last.hum,
         solar: last.solar,
+        uv: last.uv,
         cloudHeight: last.cloudHeight,
         updated: "15/12/2025 20:00",
     };
@@ -81,6 +90,12 @@ export default function Clima() {
                                 value={kpi.solar}
                                 unit="W/m²"
                                 color={COLORS.solar}
+                            />
+                            <TarjetaKpi
+                                title="Indice UV"
+                                value={kpi.uv}
+                                unit="UV"
+                                color={COLORS.hum}
                             />
                             <TarjetaKpi
                                 title="Altura de Nubes"
