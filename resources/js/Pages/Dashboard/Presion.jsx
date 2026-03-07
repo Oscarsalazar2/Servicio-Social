@@ -3,8 +3,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
 import TarjetaKpi from "@/Components/Comp/kpi/TarjetaKpi";
-import GraficaTemperatura from "@/Components/Comp/grafica/GraficaTemperatura";
-import RadiacionSolarGauge from "@/Components/Comp/grafica/RadiacionSolarGauge";
 import GraficaPresion from "@/Components/Comp/grafica/GraficaPresion";
 
 const COLORS = {

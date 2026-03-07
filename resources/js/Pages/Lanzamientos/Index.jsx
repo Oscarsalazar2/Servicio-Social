@@ -2,14 +2,27 @@ import React, { useMemo, useState } from "react";
 import { Head, useForm, usePage } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
-function KpiCard({ title, value, unit, subtitle }) {
+const COLORES = {
+    temp: "#6E8CFB",
+    tempAlt: "#00B7B5",
+    hum: "#018790",
+    wind: "#FAB12F",
+    presion: "#FF6B6B",
+};
+
+function KpiCard({ title, value, unit, subtitle, color }) {
     return (
-        <div className="rounded-2xl shadow-sm border p-4 bg-white dark:bg-slate-900 dark:border-white/10">
+        <div
+            className="rounded-2xl shadow-sm border p-4 bg-white dark:bg-slate-900 dark:border-white/10"
+        >
             <div className="text-sm font-medium text-slate-500 dark:text-slate-300">
                 {title}
             </div>
             <div className="mt-2 flex items-baseline gap-2">
-                <div className="text-4xl font-extrabold text-slate-900 dark:text-slate-100">
+                <div
+                    className="text-4xl font-extrabold text-slate-900 dark:text-slate-100"
+                    style={color ? { color } : undefined}
+                >
                     {value}
                 </div>
                 <div className="text-sm font-semibold text-slate-500 dark:text-slate-300">
@@ -51,6 +64,7 @@ function Modal({ open, onClose, title, children }) {
 export default function PetIndex() {
     const user = usePage().props.auth.user;
 
+
     // Seguridad extra en UI (backend ya lo protege)
     console.log("ROL DEL USUARIO:", user?.role);
     if (user?.role !== "admin") {
@@ -67,6 +81,8 @@ export default function PetIndex() {
             </AuthenticatedLayout>
         );
     }
+
+    
 
     const [openAdd, setOpenAdd] = useState(false);
     const [openNuevoLanzamiento, setOpenNuevoLanzamiento] = useState(false);
@@ -90,6 +106,61 @@ export default function PetIndex() {
             },
         });
     };
+
+    const serieViento = useMemo(() => {
+        return Array.from({ length: 24 }).map((_, i) => ({
+            t: `${String(i).padStart(2, "0")}:00`,
+            vel: Math.max(
+                0,
+                Math.round(
+                    (Math.sin(i / 3) * 8 + 12 + Math.random() * 3) * 10
+                ) / 10
+            ),
+            dir: Math.round((i * 15 + 210 + Math.random() * 20) % 360),
+        }));
+    }, []);
+
+    const serieTempHum = useMemo(() => {
+        return Array.from({ length: 24 }).map((_, i) => ({
+            t: `${String(i).padStart(2, "0")}:00`,
+            temp:
+                Math.round(
+                    (Math.sin(i / 4) * 4 + 2 + Math.random() * 0.7) * 10
+                ) / 10,
+            hum:
+                Math.round(
+                    (Math.cos(i / 5) * 18 + 65 + Math.random() * 3) * 10
+                ) / 10,
+        }));
+    }, []);
+
+    const ultimoViento = serieViento[serieViento.length - 1];
+    const ultimaTempHum = serieTempHum[serieTempHum.length - 1];
+
+    const kpiViento = {
+        speed: ultimoViento.vel,
+        dir: ultimoViento.dir,
+    };
+
+    const kpiTemp = {
+        temp: ultimaTempHum.temp,
+        hum: ultimaTempHum.hum,
+        feels:
+            Math.round(
+                (ultimaTempHum.temp - (100 - ultimaTempHum.hum) / 8) * 10
+            ) / 10,
+    };
+
+    const kpiPresion =
+        Math.round(
+            (1013 + Math.cos(serieTempHum.length / 4) * 4 + Math.random() * 1.5) *
+                10
+        ) / 10;
+
+    const valorRadiacion = 428;
+    const indiceUv = Number((valorRadiacion / 100).toFixed(1));
+
+
 
     // KPIs demo (luego conectas a BD/API)
     const kpi = useMemo(() => {
@@ -208,6 +279,7 @@ export default function PetIndex() {
     };
 
     return (
+
         <AuthenticatedLayout
             header={
                 <div className="flex items-center justify-between gap-3">
@@ -225,9 +297,62 @@ export default function PetIndex() {
             }
         >
             <Head title="Lanzamiento de cohetes" />
-
+            
             <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+
                 {/* KPIs */}
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                
+                <div className="xl:col-span-2">
+                    <KpiCard
+                        title="Condiciones Optimas"
+                        value={kpiViento.speed}
+                        unit="km/h"
+
+                    />
+                </div>
+
+                <div>
+                    <KpiCard
+                        title="Velocidad del viento"
+                        value={kpiViento.speed}
+                        unit="km/h"
+                        color={COLORES.wind}
+                    />
+                </div>
+
+                
+                <div>
+                    <KpiCard
+                        title="Temperatura"
+                        value={kpiTemp.temp}
+                        unit="°C"
+                        color={COLORES.temp}
+                    />
+                </div>
+
+                
+                <div>
+                    <KpiCard
+                        title="Humedad"
+                        value={kpiTemp.hum}
+                        unit="%"
+                        color={COLORES.hum}
+                    />
+                </div>
+
+               
+                <div>
+                    <KpiCard
+                        title="Presión"
+                        value={kpiPresion}
+                        unit="hPa"
+                        color={COLORES.presion}
+                    />
+                </div>
+            </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <KpiCard
                         title="Lanzamientos"
@@ -464,10 +589,10 @@ export default function PetIndex() {
                 title="Registrar nuevo lanzamiento"
             >
                 <form
-                    className="space-y-3"
+                    className="space-y-3 "
                     onSubmit={(e) => e.preventDefault()}
                 >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-3">
                         <div>
                             <label className="text-sm text-slate-600 dark:text-slate-300">
                                 Fecha y hora
@@ -484,27 +609,6 @@ export default function PetIndex() {
                                 }
                             />
                         </div>
-
-                        <div>
-                            <label className="text-sm text-slate-600 dark:text-slate-300">
-                                Botella
-                            </label>
-                            <select
-                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10 dark:text-slate-400"
-                                value={formLanzamiento.botella}
-                                onChange={(e) =>
-                                    setFormLanzamiento((prev) => ({
-                                        ...prev,
-                                        botella: e.target.value,
-                                    }))
-                                }
-                            >
-                                <option>1.75 L</option>
-                                <option>2 L</option>
-                                
-                            </select>
-                        </div>
-
                         <div>
                             <label className="text-sm text-slate-600 dark:text-slate-300">
                                 Presión (psi)
@@ -538,6 +642,27 @@ export default function PetIndex() {
                                 }
                             />
                         </div>
+                        <div>
+                            <label className="text-sm text-slate-600 dark:text-slate-300">
+                                Botella
+                            </label>
+                            <select
+                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10 dark:text-slate-400"
+                                value={formLanzamiento.botella}
+                                onChange={(e) =>
+                                    setFormLanzamiento((prev) => ({
+                                        ...prev,
+                                        botella: e.target.value,
+                                    }))
+                                }
+                            >
+                                <option>1.75 L</option>
+                                <option>2 L</option>
+                                
+                            </select>
+                        </div>
+
+                        
 
                         <div>
                             <label className="text-sm text-slate-600 dark:text-slate-300">
