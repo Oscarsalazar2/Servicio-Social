@@ -8,6 +8,9 @@ const COLORES = {
     hum: "#018790",
     wind: "#FAB12F",
     presion: "#FF6B6B",
+    optimo: "#4CAF50",
+    no_recomendable: "#F44336",
+    aceptable: "#FF9800",
 };
 
 function KpiCard({ title, value, unit, subtitle, color }) {
@@ -20,7 +23,7 @@ function KpiCard({ title, value, unit, subtitle, color }) {
             </div>
             <div className="mt-2 flex items-baseline gap-2">
                 <div
-                    className="text-4xl font-extrabold text-slate-900 dark:text-slate-100"
+                    className="text-2xl font-extrabold text-slate-900 dark:text-slate-100"
                     style={color ? { color } : undefined}
                 >
                     {value}
@@ -107,6 +110,7 @@ export default function PetIndex() {
         });
     };
 
+
     const serieViento = useMemo(() => {
         return Array.from({ length: 24 }).map((_, i) => ({
             t: `${String(i).padStart(2, "0")}:00`,
@@ -116,7 +120,6 @@ export default function PetIndex() {
                     (Math.sin(i / 3) * 8 + 12 + Math.random() * 3) * 10
                 ) / 10
             ),
-            dir: Math.round((i * 15 + 210 + Math.random() * 20) % 360),
         }));
     }, []);
 
@@ -125,7 +128,7 @@ export default function PetIndex() {
             t: `${String(i).padStart(2, "0")}:00`,
             temp:
                 Math.round(
-                    (Math.sin(i / 4) * 4 + 2 + Math.random() * 0.7) * 10
+                    (Math.sin(i / 4) * 4 + 2 + Math.random() * 6) * 10
                 ) / 10,
             hum:
                 Math.round(
@@ -139,7 +142,6 @@ export default function PetIndex() {
 
     const kpiViento = {
         speed: ultimoViento.vel,
-        dir: ultimoViento.dir,
     };
 
     const kpiTemp = {
@@ -147,7 +149,7 @@ export default function PetIndex() {
         hum: ultimaTempHum.hum,
         feels:
             Math.round(
-                (ultimaTempHum.temp - (100 - ultimaTempHum.hum) / 8) * 10
+                (ultimaTempHum.temp - (100 - ultimaTempHum.hum) / 5) * 10
             ) / 10,
     };
 
@@ -157,10 +159,62 @@ export default function PetIndex() {
                 10
         ) / 10;
 
-    const valorRadiacion = 428;
-    const indiceUv = Number((valorRadiacion / 100).toFixed(1));
+    const condicionesOptimas = useMemo(() => {
+        const vientoIdeal = kpiViento.speed; 
+        const tempIdeal = kpiTemp.temp; 
+        const humIdeal = kpiTemp.hum; 
+        const presionIdeal = kpiPresion; 
+        
+        {/*Ejemplo Optimo */}
+        {/*const vientoIdeal = 6; 
+        const tempIdeal = 22; 
+        const humIdeal = 45; 
+        const presionIdeal = 1015;*/}
 
+        {/*Ejemplo Aceptable*/}
+        {/*const vientoIdeal = 12; 
+        const tempIdeal = 32; 
+        const humIdeal = 70; 
+        const presionIdeal = 1002;*/}
+        {/*Ejemplo No recomendable*/}
+        {/*const vientoIdeal = 20; 
+        const tempIdeal = 28; 
+        const humIdeal = 85; 
+        const presionIdeal = 990;*/}
 
+        if (
+        vientoIdeal > 15 ||
+        tempIdeal < 5 || tempIdeal > 35 ||
+        humIdeal > 85 ||
+        presionIdeal < 990
+    ) {
+        return "No recomendable";
+    }
+
+    if (
+        vientoIdeal <= 10 &&
+        tempIdeal >= 15 && tempIdeal <= 30 &&
+        humIdeal >= 30 && humIdeal <= 60 &&
+        presionIdeal >= 1005 && presionIdeal <= 1025
+    ) {
+        return "Óptimo";
+    }
+
+    return "Aceptable";
+
+    }, [kpiViento.speed, kpiTemp.temp, kpiTemp.hum, kpiPresion]);
+
+    const colorCondiciones = useMemo(() => {
+        const estado = String(condicionesOptimas)
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/\s+/g, "_");
+
+        if (estado === "optimo") return COLORES.optimo;
+        if (estado === "aceptable") return COLORES.aceptable;
+        return COLORES.no_recomendable;
+    }, [condicionesOptimas]);
 
     // KPIs demo (luego conectas a BD/API)
     const kpi = useMemo(() => {
@@ -175,7 +229,7 @@ export default function PetIndex() {
             fallidos,
             tasaExito,
             alturaMax: 83,
-            distanciaMax: 112,
+            //distanciaMax: 112,
             tiempoVueloMax: 9.6,
             ultimaFecha: "15/12/2025 18:40",
         };
@@ -186,13 +240,17 @@ export default function PetIndex() {
             {
                 id: 1,
                 fecha: "27/02/2026 10:15",
+                viento: 68,
+                humedad: 23,
+                temperatura: 24,
+                presion_atm: 1002,
                 botella: "2 L",
                 presion: 78,
                 agua: 650,
                 modeloBotella: "Coca-Cola",
                 usoBotella: 3,
                 altura: 83,
-                distancia: 112,
+                //distancia: 112,
                 resultado: "Éxito",
                 descripcion:
                     "Vuelo estable, apertura correcta de paracaídas y recuperación inmediata.",
@@ -200,13 +258,17 @@ export default function PetIndex() {
             {
                 id: 2,
                 fecha: "27/02/2026 11:30",
+                viento: 52,
+                humedad: 40,
+                temperatura: 32,
+                presion_atm: 808,
                 botella: "1.5 L",
                 presion: 72,
                 agua: 600,
                 modeloBotella: "Pepsi",
                 usoBotella: 1,
                 altura: 74,
-                distancia: 95,
+                //distancia: 95,
                 resultado: "Éxito",
                 descripcion:
                     "Lanzamiento limpio, ligera deriva por viento lateral.",
@@ -214,13 +276,17 @@ export default function PetIndex() {
             {
                 id: 3,
                 fecha: "27/02/2026 12:05",
+                viento: 80,
+                humedad: 18,
+                temperatura: 28,
+                presion_atm: 990,
                 botella: "2 L",
                 presion: 80,
                 agua: 700,
                 modeloBotella: "Sprite",
                 usoBotella: 2,
                 altura: 58,
-                distancia: 67,
+                //distancia: 67,
                 resultado: "Fallo",
                 descripcion:
                     "Pérdida de estabilidad al ascenso y recuperación parcial del cohete.",
@@ -228,13 +294,17 @@ export default function PetIndex() {
             {
                 id: 4,
                 fecha: "27/02/2026 13:20",
+                viento: 45,
+                humedad: 30,
+                temperatura: 22,
+                presion_atm: 1010,
                 botella: "2 L",
                 presion: 76,
                 agua: 620,
                 modeloBotella: "Fanta",
                 usoBotella: 4,
                 altura: 79,
-                distancia: 101,
+                //distancia: 101,
                 resultado: "Éxito",
                 descripcion:
                     "Trayectoria alta con aterrizaje suave en zona segura.",
@@ -252,7 +322,7 @@ export default function PetIndex() {
         modeloBotella: "",
         usoBotella: "",
         altura: "",
-        distancia: "",
+        //distancia: "",
         resultado: "Éxito",
         descripcion: "",
     });
@@ -272,7 +342,7 @@ export default function PetIndex() {
             modeloBotella: "",
             usoBotella: "",
             altura: "",
-            distancia: "",
+            //distancia: "",
             resultado: "Éxito",
             descripcion: "",
         });
@@ -302,14 +372,13 @@ export default function PetIndex() {
 
                 {/* KPIs */}
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 
                 <div className="xl:col-span-2">
                     <KpiCard
-                        title="Condiciones Optimas"
-                        value={kpiViento.speed}
-                        unit="km/h"
-
+                        title="Condiciones climatólogicas para lanzamientos"
+                        value={condicionesOptimas}
+                        color={colorCondiciones}
                     />
                 </div>
 
@@ -353,13 +422,35 @@ export default function PetIndex() {
                 </div>
             </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2  md:grid-cols-3 gap-4">
                     <KpiCard
                         title="Lanzamientos"
                         value={kpi.total}
                         unit=""
                         subtitle={`Último: ${kpi.ultimaFecha}`}
                     />
+                    <KpiCard
+                        title="Altura máxima"
+                        value={kpi.alturaMax}
+                        unit="m"
+                        subtitle="Mejor lanzamiento"
+                    />
+                    {/*<KpiCard
+                        title="Distancia máxima"
+                        value={kpi.distanciaMax}
+                        unit="m"
+                        subtitle="Con viento/ángulo"
+                    />*/}
+                    <KpiCard
+                        title="Tiempo vuelo máx."
+                        value={kpi.tiempoVueloMax}
+                        unit="s"
+                        subtitle="Despegue → aterrizaje"
+                    />
+                    
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <KpiCard
                         title="Éxitos"
                         value={kpi.exitosos}
@@ -378,27 +469,7 @@ export default function PetIndex() {
                         unit="%"
                         subtitle="Éxitos / Total"
                     />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <KpiCard
-                        title="Altura máxima"
-                        value={kpi.alturaMax}
-                        unit="m"
-                        subtitle="Mejor lanzamiento"
-                    />
-                    <KpiCard
-                        title="Distancia máxima"
-                        value={kpi.distanciaMax}
-                        unit="m"
-                        subtitle="Con viento/ángulo"
-                    />
-                    <KpiCard
-                        title="Tiempo vuelo máx."
-                        value={kpi.tiempoVueloMax}
-                        unit="s"
-                        subtitle="Despegue → aterrizaje"
-                    />
+                    
                 </div>
 
                 <div className="rounded-2xl shadow-sm border p-4 bg-white dark:bg-slate-900 dark:border-white/10">
@@ -419,13 +490,17 @@ export default function PetIndex() {
                             <thead>
                                 <tr className="text-left border-b border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300">
                                     <th className="py-2 pr-4">Fecha</th>
+                                    <th className="py-2 pr-4">Viento</th>
+                                    <th className="py-2 pr-4">Humedad</th>
+                                    <th className="py-2 pr-4">Temperatura</th>
+                                    <th className="py-2 pr-4">Presión Atm.</th>
                                     <th className="py-2 pr-4">Botella</th>
                                     <th className="py-2 pr-4">Presión (psi)</th>
                                     <th className="py-2 pr-4">Agua (ml)</th>
                                     <th className="py-2 pr-4">Modelo de botella</th>
                                     <th className="py-2 pr-4">Uso de botella</th>
                                     <th className="py-2 pr-4">Altura (m)</th>
-                                    <th className="py-2 pr-4">Distancia (m)</th>
+                                    {/*<th className="py-2 pr-4">Distancia (m)</th>*/}
                                     <th className="py-2 pr-2">Resultado</th>
                                 </tr>
                             </thead>
@@ -438,6 +513,18 @@ export default function PetIndex() {
                                     >
                                         <td className="py-2 pr-4 whitespace-nowrap">
                                             {registro.fecha}
+                                        </td>
+                                        <td className="py-2 pr-4 whitespace-nowrap">
+                                            {registro.viento} km/h
+                                        </td>
+                                        <td className="py-2 pr-4 whitespace-nowrap">
+                                            {registro.humedad}%
+                                        </td>
+                                        <td className="py-2 pr-4 whitespace-nowrap">
+                                            {registro.temperatura}°C
+                                        </td>
+                                        <td className="py-2 pr-4">
+                                            {registro.presion_atm} hPa
                                         </td>
                                         <td className="py-2 pr-4">
                                             {registro.botella}
@@ -457,9 +544,9 @@ export default function PetIndex() {
                                         <td className="py-2 pr-4">
                                             {registro.altura}
                                         </td>
-                                        <td className="py-2 pr-4">
+                                        {/* <td className="py-2 pr-4">
                                             {registro.distancia}
-                                        </td>
+                                        </td>*/}
                                         
                                         <td className="py-2 pr-2">
                                             <span
@@ -589,10 +676,10 @@ export default function PetIndex() {
                 title="Registrar nuevo lanzamiento"
             >
                 <form
-                    className="space-y-3 "
+                    className="space-y-2"
                     onSubmit={(e) => e.preventDefault()}
                 >
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3  gap-3">
                         <div>
                             <label className="text-sm text-slate-600 dark:text-slate-300">
                                 Fecha y hora
@@ -663,7 +750,6 @@ export default function PetIndex() {
                         </div>
 
                         
-
                         <div>
                             <label className="text-sm text-slate-600 dark:text-slate-300">
                                 Modelo de botella
@@ -696,6 +782,7 @@ export default function PetIndex() {
                                 <option>7UP</option>
                                 <option>Tehuacán</option>
                             </select>*/}
+
                         </div>
                         <div>
                             <label className="text-sm text-slate-600 dark:text-slate-300">
@@ -722,7 +809,7 @@ export default function PetIndex() {
                         </div>
 
                         <div>
-                            <label className="text-sm text-slate-600 dark:text-slate-300">
+                            {/*<label className="text-sm text-slate-600 dark:text-slate-300">
                                 Distancia (m)
                             </label>
                             <input
@@ -735,9 +822,7 @@ export default function PetIndex() {
                                         distancia: e.target.value,
                                     }))
                                 }
-                            />
-                        </div>
-                        <div>
+                            />*/}
                             <label className="text-sm text-slate-600 dark:text-slate-300">
                                 Resultado
                             </label>
@@ -755,6 +840,7 @@ export default function PetIndex() {
                                 <option>Fallo</option>
                             </select>
                         </div>
+                        
                     </div>
 
                     <div>
@@ -806,6 +892,22 @@ export default function PetIndex() {
                                 {registroSeleccionado.fecha}
                             </div>
                             <div>
+                                <strong>Viento:</strong>{" "}
+                                {registroSeleccionado.viento}km/h
+                            </div>
+                            <div>
+                                <strong>Humedad:</strong>{" "}
+                                {registroSeleccionado.humedad}%
+                            </div>
+                            <div>
+                                <strong>Temperatura:</strong>{" "}
+                                {registroSeleccionado.temperatura}°C
+                            </div>
+                            <div>
+                                <strong>Presión Atm.:</strong>{" "}
+                                {registroSeleccionado.presion_atm} hPa
+                            </div>
+                            <div>
                                 <strong>Botella:</strong>{" "}
                                 {registroSeleccionado.botella}
                             </div>
@@ -829,10 +931,10 @@ export default function PetIndex() {
                                 <strong>Altura:</strong>{" "}
                                 {registroSeleccionado.altura} m
                             </div>
-                            <div>
+                            {/*<div>
                                 <strong>Distancia:</strong>{" "}
                                 {registroSeleccionado.distancia} m
-                            </div>
+                            </div>*/}
                             <div>
                                 <strong>Resultado:</strong>{" "}
                                 {registroSeleccionado.resultado}

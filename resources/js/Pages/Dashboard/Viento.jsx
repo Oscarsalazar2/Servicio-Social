@@ -10,6 +10,8 @@ import KpiDireccionViento from "@/Components/Comp/kpi/KpiDireccionViento";
 const COLORS = {
     wind: "#FAB12F",
     windDir: "#FA812F",
+    vibrationOn: "#F44336",
+    vibrationOff: "#4CAF50",
 };
 
 export default function Viento() {
@@ -47,12 +49,24 @@ export default function Viento() {
     );
 
     const last = windSeries[windSeries.length - 1];
+
+    const vibrationDetected = useMemo(() => Math.random() >= 0.5, []);
+
+    const vibrationStatus = useMemo(() => {
+        return vibrationDetected
+            ? "Con vibracion"
+            : "Sin vibración";
+    }, [vibrationDetected]);
+
     const kpi = {
         windSpeed: last.vel,
         windGust: last.gust,
         windDir: last.dir,
+        vibration: vibrationStatus,
         updated: "15/12/2025 20:00",
     };
+
+    
 
     return (
         <AuthenticatedLayout>
@@ -75,6 +89,17 @@ export default function Viento() {
                                 value={kpi.windGust}
                                 unit="km/h"
                                 color={COLORS.wind}
+                                subtitle={`Actualizado: ${kpi.updated}`}
+                            />
+                            <TarjetaKpi
+                                title="Vibración"
+                                value={kpi.vibration}
+                                unit=""
+                                color={
+                                    vibrationDetected
+                                        ? COLORS.vibrationOn
+                                        : COLORS.vibrationOff
+                                }
                                 subtitle={`Actualizado: ${kpi.updated}`}
                             />
 

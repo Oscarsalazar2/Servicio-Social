@@ -367,13 +367,19 @@ export default function Login({ status, canResetPassword }) {
                             <i className="fa-regular fa-id-card"></i>
                         </div>
                         <h3>Registro pendiente</h3>
-                        <p>
+                        {/*<p>
                             Tu cuenta ha sido creada correctamente.
                             <br />
                             Para activarla, acude a tu{" "}
                             <b>Centro de Salud más cercano</b> con tu
                             identificación para completar tu registro en
                             eCartilla.
+                        </p>*/}
+                        <p>
+                            Tu cuenta ha sido creada correctamente.
+                            <br /><br />    
+                             El personal administrativo revisará tu registro, 
+                            una vez aprobado, recibirás un correo electrónico con la confirmación.
                         </p>
                         <button
                             className="btn-rojo--blanco"
