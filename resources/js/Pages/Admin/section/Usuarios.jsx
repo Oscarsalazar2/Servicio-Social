@@ -119,8 +119,22 @@ export default function Usuarios({ allUsers = [] }) {
         const user = users.find((item) => item.id === userId);
         if (!user) return;
 
+        const confirmed = window.confirm("¿Eliminar este usuario?");
+        if (!confirmed) return;
+
         setSelectedUser(user);
-        setActiveModal("delete");
+        setProcessingAction(true);
+
+        router.delete(route("admin.users.delete", user.id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                setProcessingAction(false);
+                closeModal();
+            },
+            onError: () => {
+                setProcessingAction(false);
+            },
+        });
     };
 
     const closeModal = () => {

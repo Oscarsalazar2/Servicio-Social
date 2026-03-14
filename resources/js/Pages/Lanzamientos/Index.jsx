@@ -69,7 +69,7 @@ export default function PetIndex() {
 
 
     // Seguridad extra en UI (backend ya lo protege)
-    console.log("ROL DEL USUARIO:", user?.role);
+    {/*console.log("ROL DEL USUARIO:", user?.role);
     if (user?.role !== "admin") {
         return (
             <AuthenticatedLayout
@@ -83,7 +83,7 @@ export default function PetIndex() {
                 </div>
             </AuthenticatedLayout>
         );
-    }
+    }*/}
 
     
 
@@ -176,6 +176,7 @@ export default function PetIndex() {
         const tempIdeal = 32; 
         const humIdeal = 70; 
         const presionIdeal = 1002;*/}
+        
         {/*Ejemplo No recomendable*/}
         {/*const vientoIdeal = 20; 
         const tempIdeal = 28; 
