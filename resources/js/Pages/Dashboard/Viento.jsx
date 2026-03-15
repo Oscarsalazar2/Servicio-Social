@@ -54,7 +54,7 @@ export default function Viento() {
 
     const vibrationStatus = useMemo(() => {
         return vibrationDetected
-            ? "Con vibracion"
+            ? "Con vibración"
             : "Sin vibración";
     }, [vibrationDetected]);
 

@@ -5,6 +5,8 @@ import { Head } from "@inertiajs/react";
 import TarjetaKpi from "@/Components/Comp/kpi/TarjetaKpi";
 import RadiacionSolarGauge from "@/Components/Comp/grafica/RadiacionSolarGauge";
 import GraficaNubes from "@/Components/Comp/grafica/GraficaNubes";
+import GraficaNubes2 from "@/Components/Comp/grafica/GraficaNubes2";
+
 
 const COLORS = {
     temp: "#6E8CFB",
@@ -104,7 +106,7 @@ export default function Clima() {
                                 color={COLORS.cloudHeight}
                             />
                             <div className="lg:col-span-8">
-                                <div className="h-72 bg-white/5 border-white dark:bg-slate-900/40 dark:border-white/10 rounded-lg shadow p-6">
+                                <div className="h-72 bg-white/5 border border-white dark:bg-slate-900/40 dark:border-white/10 rounded-lg shadow p-6">
                                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                                         Radiación Solar
                                     </h3>
@@ -119,11 +121,11 @@ export default function Clima() {
 
                         {/* Gráfica */}
                         <div className="lg:col-span-8">
-                            <div className="bg-white/5 border-white dark:bg-slate-900/40 dark:border-white/10 rounded-lg shadow p-6">
+                            <div className="bg-white/5 border border-white dark:bg-slate-900/40 dark:border-white/10 rounded-lg shadow p-6">
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                                     Gráfica de Nubes
                                 </h3>
-                                <GraficaNubes
+                                <GraficaNubes2
                                     series={climaSeries}
                                     colors={COLORS}
                                     height={240}

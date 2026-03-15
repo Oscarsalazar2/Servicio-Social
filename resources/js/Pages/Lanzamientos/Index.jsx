@@ -41,12 +41,14 @@ function KpiCard({ title, value, unit, subtitle, color }) {
     );
 }
 
-function Modal({ open, onClose, title, children }) {
+function Modal({ open, onClose, title, children, maxWidthClass = "max-w-lg" }) {
     if (!open) return null;
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-            <div className="relative w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 border dark:border-white/10 p-5 shadow-xl">
+            <div
+                className={`relative w-full ${maxWidthClass} rounded-2xl bg-white dark:bg-slate-900 border dark:border-white/10 p-5 shadow-xl`}
+            >
                 <div className="flex items-center justify-between">
                     <div className="text-lg font-bold text-slate-900 dark:text-slate-100">
                         {title}
@@ -241,6 +243,7 @@ export default function PetIndex() {
             {
                 id: 1,
                 fecha: "27/02/2026 10:15",
+                condicionesOptimas: "Óptimo",
                 viento: 68,
                 humedad: 23,
                 temperatura: 24,
@@ -259,6 +262,7 @@ export default function PetIndex() {
             {
                 id: 2,
                 fecha: "27/02/2026 11:30",
+                condicionesOptimas: "Aceptable",
                 viento: 52,
                 humedad: 40,
                 temperatura: 32,
@@ -277,6 +281,7 @@ export default function PetIndex() {
             {
                 id: 3,
                 fecha: "27/02/2026 12:05",
+                condicionesOptimas: "No recomendable",
                 viento: 80,
                 humedad: 18,
                 temperatura: 28,
@@ -295,6 +300,7 @@ export default function PetIndex() {
             {
                 id: 4,
                 fecha: "27/02/2026 13:20",
+                condicionesOptimas: "Óptimo",
                 viento: 45,
                 humedad: 30,
                 temperatura: 22,
@@ -377,7 +383,7 @@ export default function PetIndex() {
                 
                 <div className="xl:col-span-2">
                     <KpiCard
-                        title="Condiciones climatólogicas para lanzamientos"
+                        title="Parámetro de lanzamientos"
                         value={condicionesOptimas}
                         color={colorCondiciones}
                     />
@@ -415,7 +421,7 @@ export default function PetIndex() {
                
                 <div>
                     <KpiCard
-                        title="Presión"
+                        title="Presión Atmosférica"
                         value={kpiPresion}
                         unit="hPa"
                         color={COLORES.presion}
@@ -491,10 +497,12 @@ export default function PetIndex() {
                             <thead>
                                 <tr className="text-left border-b border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300">
                                     <th className="py-2 pr-4">Fecha</th>
-                                    <th className="py-2 pr-4">Viento</th>
-                                    <th className="py-2 pr-4">Humedad</th>
-                                    <th className="py-2 pr-4">Temperatura</th>
-                                    <th className="py-2 pr-4">Presión Atm.</th>
+                                    <th className="py-2 pr-4">Parámetro</th>
+                                    <th className="py-2 pr-4">Condiciones climáticas</th>
+                                    {/*<th className="py-2 pr-4">Viento</th>*/}
+                                    {/*<th className="py-2 pr-4">Humedad</th>*/}
+                                    {/*<th className="py-2 pr-4">Temperatura</th>*/}
+                                    {/*<th className="py-2 pr-4">Presión Atm.</th>*/}
                                     <th className="py-2 pr-4">Botella</th>
                                     <th className="py-2 pr-4">Presión (psi)</th>
                                     <th className="py-2 pr-4">Agua (ml)</th>
@@ -516,6 +524,27 @@ export default function PetIndex() {
                                             {registro.fecha}
                                         </td>
                                         <td className="py-2 pr-4 whitespace-nowrap">
+                                            {registro.condicionesOptimas === "Óptimo" ? (
+                                                <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium dark:bg-green-900/40 dark:text-green-300">
+                                                    Óptimo
+                                                </span>
+                                            ) : registro.condicionesOptimas === "Aceptable" ? (
+                                                <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium dark:bg-yellow-900/40 dark:text-yellow-300">
+                                                    Aceptable
+                                                </span>
+                                            ) : (
+                                                <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium dark:bg-red-900/40 dark:text-red-300">
+                                                    No recomendable
+                                                </span>
+                                            )}
+                                        </td>
+                                        <td className="py-2 pr-4 whitespace-nowrap">
+                                            Viento&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;{registro.viento} km/h <br /> 
+                                            Humedad&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;{registro.humedad}% <br />
+                                            Temperatura&ensp;&ensp;&ensp; {registro.temperatura}°C <br />
+                                            Presión Atm.&ensp;&ensp;&ensp; {registro.presion_atm} hPa
+                                        </td>
+                                        {/*<td className="py-2 pr-4 whitespace-nowrap">
                                             {registro.viento} km/h
                                         </td>
                                         <td className="py-2 pr-4 whitespace-nowrap">
@@ -526,7 +555,7 @@ export default function PetIndex() {
                                         </td>
                                         <td className="py-2 pr-4">
                                             {registro.presion_atm} hPa
-                                        </td>
+                                        </td>*/}
                                         <td className="py-2 pr-4">
                                             {registro.botella}
                                         </td>
@@ -675,6 +704,7 @@ export default function PetIndex() {
                 open={openNuevoLanzamiento}
                 onClose={cerrarNuevoLanzamiento}
                 title="Registrar nuevo lanzamiento"
+                maxWidthClass="max-w-xl"
             >
                 <form
                     className="space-y-2"
@@ -791,7 +821,13 @@ export default function PetIndex() {
                             </label>
                             <input type="number" className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10 dark:text-slate-400"/>
                         </div>
-
+                        <div>
+                            <label className="text-sm text-slate-600 dark:text-slate-300">
+                                Parámetro de lanzamiento
+                            </label>
+                            <input type="text" className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-transparent dark:text-slate-400" 
+                            readOnly value={condicionesOptimas}/>
+                        </div>  
                         <div>
                             <label className="text-sm text-slate-600 dark:text-slate-300">
                                 Altura (m)
