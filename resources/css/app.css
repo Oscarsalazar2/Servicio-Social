@@ -33,6 +33,15 @@
     text-decoration: underline;
 }
 
+.scroll-invisible {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scroll-invisible::-webkit-scrollbar {
+    display: none;
+}
+
 /* Botón principal */
 .btn-rojo--blanco {
     background: #ef6b66;

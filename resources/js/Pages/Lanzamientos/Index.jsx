@@ -15,9 +15,7 @@ const COLORES = {
 
 function KpiCard({ title, value, unit, subtitle, color }) {
     return (
-        <div
-            className="rounded-2xl shadow-sm border p-4 bg-white dark:bg-slate-900 dark:border-white/10"
-        >
+        <div className="rounded-2xl shadow-sm border p-4 bg-white dark:bg-slate-900 dark:border-white/10">
             <div className="text-sm font-medium text-slate-500 dark:text-slate-300">
                 {title}
             </div>
@@ -69,9 +67,9 @@ function Modal({ open, onClose, title, children, maxWidthClass = "max-w-lg" }) {
 export default function PetIndex() {
     const user = usePage().props.auth.user;
 
-
     // Seguridad extra en UI (backend ya lo protege)
-    {/*console.log("ROL DEL USUARIO:", user?.role);
+    {
+        /*console.log("ROL DEL USUARIO:", user?.role);
     if (user?.role !== "admin") {
         return (
             <AuthenticatedLayout
@@ -85,33 +83,13 @@ export default function PetIndex() {
                 </div>
             </AuthenticatedLayout>
         );
-    }*/}
-
-    
+    }*/
+    }
 
     const [openAdd, setOpenAdd] = useState(false);
     const [openNuevoLanzamiento, setOpenNuevoLanzamiento] = useState(false);
     const [openDetalle, setOpenDetalle] = useState(false);
     const [registroSeleccionado, setRegistroSeleccionado] = useState(null);
-
-    const form = useForm({
-        name: "",
-        email: "",
-        password: "",
-        role: "user",
-    });
-
-    const submit = (e) => {
-        e.preventDefault();
-        form.post(route("admin.personas.store"), {
-            preserveScroll: true,
-            onSuccess: () => {
-                form.reset();
-                setOpenAdd(false);
-            },
-        });
-    };
-
 
     const serieViento = useMemo(() => {
         return Array.from({ length: 24 }).map((_, i) => ({
@@ -119,8 +97,8 @@ export default function PetIndex() {
             vel: Math.max(
                 0,
                 Math.round(
-                    (Math.sin(i / 3) * 8 + 12 + Math.random() * 3) * 10
-                ) / 10
+                    (Math.sin(i / 3) * 8 + 12 + Math.random() * 3) * 10,
+                ) / 10,
             ),
         }));
     }, []);
@@ -129,12 +107,11 @@ export default function PetIndex() {
         return Array.from({ length: 24 }).map((_, i) => ({
             t: `${String(i).padStart(2, "0")}:00`,
             temp:
-                Math.round(
-                    (Math.sin(i / 4) * 4 + 2 + Math.random() * 6) * 10
-                ) / 10,
+                Math.round((Math.sin(i / 4) * 4 + 2 + Math.random() * 6) * 10) /
+                10,
             hum:
                 Math.round(
-                    (Math.cos(i / 5) * 18 + 65 + Math.random() * 3) * 10
+                    (Math.cos(i / 5) * 18 + 65 + Math.random() * 3) * 10,
                 ) / 10,
         }));
     }, []);
@@ -151,60 +128,77 @@ export default function PetIndex() {
         hum: ultimaTempHum.hum,
         feels:
             Math.round(
-                (ultimaTempHum.temp - (100 - ultimaTempHum.hum) / 5) * 10
+                (ultimaTempHum.temp - (100 - ultimaTempHum.hum) / 5) * 10,
             ) / 10,
     };
 
     const kpiPresion =
         Math.round(
-            (1013 + Math.cos(serieTempHum.length / 4) * 4 + Math.random() * 1.5) *
-                10
+            (1013 +
+                Math.cos(serieTempHum.length / 4) * 4 +
+                Math.random() * 1.5) *
+                10,
         ) / 10;
 
     const condicionesOptimas = useMemo(() => {
-        const vientoIdeal = kpiViento.speed; 
-        const tempIdeal = kpiTemp.temp; 
-        const humIdeal = kpiTemp.hum; 
-        const presionIdeal = kpiPresion; 
-        
-        {/*Ejemplo Optimo */}
-        {/*const vientoIdeal = 6; 
-        const tempIdeal = 22; 
-        const humIdeal = 45; 
-        const presionIdeal = 1015;*/}
+        const vientoIdeal = kpiViento.speed;
+        const tempIdeal = kpiTemp.temp;
+        const humIdeal = kpiTemp.hum;
+        const presionIdeal = kpiPresion;
 
-        {/*Ejemplo Aceptable*/}
-        {/*const vientoIdeal = 12; 
-        const tempIdeal = 32; 
-        const humIdeal = 70; 
-        const presionIdeal = 1002;*/}
-        
-        {/*Ejemplo No recomendable*/}
-        {/*const vientoIdeal = 20; 
-        const tempIdeal = 28; 
-        const humIdeal = 85; 
-        const presionIdeal = 990;*/}
+        {
+            /*Ejemplo Optimo */
+        }
+        {
+            /*const vientoIdeal = 6;
+        const tempIdeal = 22;
+        const humIdeal = 45;
+        const presionIdeal = 1015;*/
+        }
+
+        {
+            /*Ejemplo Aceptable*/
+        }
+        {
+            /*const vientoIdeal = 12;
+        const tempIdeal = 32;
+        const humIdeal = 70;
+        const presionIdeal = 1002;*/
+        }
+
+        {
+            /*Ejemplo No recomendable*/
+        }
+        {
+            /*const vientoIdeal = 20;
+        const tempIdeal = 28;
+        const humIdeal = 85;
+        const presionIdeal = 990;*/
+        }
 
         if (
-        vientoIdeal > 15 ||
-        tempIdeal < 5 || tempIdeal > 35 ||
-        humIdeal > 85 ||
-        presionIdeal < 990
-    ) {
-        return "No recomendable";
-    }
+            vientoIdeal > 15 ||
+            tempIdeal < 5 ||
+            tempIdeal > 35 ||
+            humIdeal > 85 ||
+            presionIdeal < 990
+        ) {
+            return "No recomendable";
+        }
 
-    if (
-        vientoIdeal <= 10 &&
-        tempIdeal >= 15 && tempIdeal <= 30 &&
-        humIdeal >= 30 && humIdeal <= 60 &&
-        presionIdeal >= 1005 && presionIdeal <= 1025
-    ) {
-        return "Óptimo";
-    }
+        if (
+            vientoIdeal <= 10 &&
+            tempIdeal >= 15 &&
+            tempIdeal <= 30 &&
+            humIdeal >= 30 &&
+            humIdeal <= 60 &&
+            presionIdeal >= 1005 &&
+            presionIdeal <= 1025
+        ) {
+            return "Óptimo";
+        }
 
-    return "Aceptable";
-
+        return "Aceptable";
     }, [kpiViento.speed, kpiTemp.temp, kpiTemp.hum, kpiPresion]);
 
     const colorCondiciones = useMemo(() => {
@@ -243,7 +237,7 @@ export default function PetIndex() {
             {
                 id: 1,
                 fecha: "27/02/2026 10:15",
-                condicionesOptimas: "Óptimo",
+
                 viento: 68,
                 humedad: 23,
                 temperatura: 24,
@@ -256,13 +250,14 @@ export default function PetIndex() {
                 altura: 83,
                 //distancia: 112,
                 resultado: "Éxito",
+                condicionesOptimas: "Óptimo",
                 descripcion:
                     "Vuelo estable, apertura correcta de paracaídas y recuperación inmediata.",
             },
             {
                 id: 2,
                 fecha: "27/02/2026 11:30",
-                condicionesOptimas: "Aceptable",
+
                 viento: 52,
                 humedad: 40,
                 temperatura: 32,
@@ -274,6 +269,7 @@ export default function PetIndex() {
                 usoBotella: 1,
                 altura: 74,
                 //distancia: 95,
+                condicionesOptimas: "Aceptable",
                 resultado: "Éxito",
                 descripcion:
                     "Lanzamiento limpio, ligera deriva por viento lateral.",
@@ -281,7 +277,7 @@ export default function PetIndex() {
             {
                 id: 3,
                 fecha: "27/02/2026 12:05",
-                condicionesOptimas: "No recomendable",
+
                 viento: 80,
                 humedad: 18,
                 temperatura: 28,
@@ -293,6 +289,7 @@ export default function PetIndex() {
                 usoBotella: 2,
                 altura: 58,
                 //distancia: 67,
+                condicionesOptimas: "No recomendable",
                 resultado: "Fallo",
                 descripcion:
                     "Pérdida de estabilidad al ascenso y recuperación parcial del cohete.",
@@ -300,7 +297,7 @@ export default function PetIndex() {
             {
                 id: 4,
                 fecha: "27/02/2026 13:20",
-                condicionesOptimas: "Óptimo",
+
                 viento: 45,
                 humedad: 30,
                 temperatura: 22,
@@ -312,11 +309,11 @@ export default function PetIndex() {
                 usoBotella: 4,
                 altura: 79,
                 //distancia: 101,
+                condicionesOptimas: "Óptimo",
                 resultado: "Éxito",
                 descripcion:
                     "Trayectoria alta con aterrizaje suave en zona segura.",
             },
-            
         ],
         [],
     );
@@ -356,195 +353,196 @@ export default function PetIndex() {
     };
 
     return (
-
         <AuthenticatedLayout
             header={
                 <div className="flex items-center justify-between gap-3">
                     <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                         Lanzamientos de cohetes PET
                     </h2>
-
-                    <button
-                        onClick={() => setOpenAdd(true)}
-                        className="px-4 py-2 rounded-xl text-sm font-semibold bg-[#009688] text-white hover:opacity-90"
-                    >
-                        + Agregar persona
-                    </button>
                 </div>
             }
         >
             <Head title="Lanzamiento de cohetes" />
-            
-            <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
 
-                {/* KPIs */}
-                
+            <div className="max-w-[96rem] mx-auto px-4 py-6 space-y-6">
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                
-                <div className="xl:col-span-2">
-                    <KpiCard
-                        title="Parámetro de lanzamientos"
-                        value={condicionesOptimas}
-                        color={colorCondiciones}
-                    />
-                </div>
-
-                <div>
-                    <KpiCard
-                        title="Velocidad del viento"
-                        value={kpiViento.speed}
-                        unit="km/h"
-                        color={COLORES.wind}
-                    />
-                </div>
-
-                
-                <div>
-                    <KpiCard
-                        title="Temperatura"
-                        value={kpiTemp.temp}
-                        unit="°C"
-                        color={COLORES.temp}
-                    />
-                </div>
-
-                
-                <div>
-                    <KpiCard
-                        title="Humedad"
-                        value={kpiTemp.hum}
-                        unit="%"
-                        color={COLORES.hum}
-                    />
-                </div>
-
-               
-                <div>
-                    <KpiCard
-                        title="Presión Atmosférica"
-                        value={kpiPresion}
-                        unit="hPa"
-                        color={COLORES.presion}
-                    />
-                </div>
-            </div>
-
-                <div className="grid grid-cols-2  md:grid-cols-3 gap-4">
-                    <KpiCard
-                        title="Lanzamientos"
-                        value={kpi.total}
-                        unit=""
-                        subtitle={`Último: ${kpi.ultimaFecha}`}
-                    />
-                    <KpiCard
-                        title="Altura máxima"
-                        value={kpi.alturaMax}
-                        unit="m"
-                        subtitle="Mejor lanzamiento"
-                    />
-                    {/*<KpiCard
-                        title="Distancia máxima"
-                        value={kpi.distanciaMax}
-                        unit="m"
-                        subtitle="Con viento/ángulo"
-                    />*/}
-                    <KpiCard
-                        title="Tiempo vuelo máx."
-                        value={kpi.tiempoVueloMax}
-                        unit="s"
-                        subtitle="Despegue → aterrizaje"
-                    />
-                    
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <KpiCard
-                        title="Éxitos"
-                        value={kpi.exitosos}
-                        unit=""
-                        subtitle="Recuperación OK"
-                    />
-                    <KpiCard
-                        title="Fallos"
-                        value={kpi.fallidos}
-                        unit=""
-                        subtitle="Explosión / sin paracaídas"
-                    />
-                    <KpiCard
-                        title="Tasa de éxito"
-                        value={kpi.tasaExito}
-                        unit="%"
-                        subtitle="Éxitos / Total"
-                    />
-                    
-                </div>
-
-                <div className="rounded-2xl shadow-sm border p-4 bg-white dark:bg-slate-900 dark:border-white/10">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                        <div className="font-bold text-slate-900 dark:text-slate-100">
-                            Registros
-                        </div>
-                        <button
-                            type="button"
-                            onClick={() => setOpenNuevoLanzamiento(true)}
-                            className="w-full sm:w-auto px-3 py-2 rounded-xl text-sm font-semibold bg-[#009688] text-white hover:opacity-90"
-                        >
-                            Registrar nuevo lanzamiento
-                        </button>
+                    <div className="col-span-2 lg:col-span-2">
+                        <KpiCard
+                            title="Parámetro de lanzamientos"
+                            value={condicionesOptimas}
+                            color={colorCondiciones}
+                        />
                     </div>
-                    <div className="mt-3 overflow-x-auto">
-                        <table className="min-w-full text-sm">
-                            <thead>
-                                <tr className="text-left border-b border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300">
-                                    <th className="py-2 pr-4">Fecha</th>
-                                    <th className="py-2 pr-4">Parámetro</th>
-                                    <th className="py-2 pr-4">Condiciones climáticas</th>
-                                    {/*<th className="py-2 pr-4">Viento</th>*/}
-                                    {/*<th className="py-2 pr-4">Humedad</th>*/}
-                                    {/*<th className="py-2 pr-4">Temperatura</th>*/}
-                                    {/*<th className="py-2 pr-4">Presión Atm.</th>*/}
-                                    <th className="py-2 pr-4">Botella</th>
-                                    <th className="py-2 pr-4">Presión (psi)</th>
-                                    <th className="py-2 pr-4">Agua (ml)</th>
-                                    <th className="py-2 pr-4">Modelo de botella</th>
-                                    <th className="py-2 pr-4">Uso de botella</th>
-                                    <th className="py-2 pr-4">Altura (m)</th>
-                                    {/*<th className="py-2 pr-4">Distancia (m)</th>*/}
-                                    <th className="py-2 pr-2">Resultado</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {registrosDemo.map((registro) => (
-                                    <tr
-                                        key={registro.id}
-                                        onClick={() => abrirDetalle(registro)}
-                                        className="border-b border-slate-100 dark:border-white/5 text-slate-800 dark:text-slate-100 cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5"
-                                    >
-                                        <td className="py-2 pr-4 whitespace-nowrap">
-                                            {registro.fecha}
-                                        </td>
-                                        <td className="py-2 pr-4 whitespace-nowrap">
-                                            {registro.condicionesOptimas === "Óptimo" ? (
-                                                <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium dark:bg-green-900/40 dark:text-green-300">
-                                                    Óptimo
-                                                </span>
-                                            ) : registro.condicionesOptimas === "Aceptable" ? (
-                                                <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium dark:bg-yellow-900/40 dark:text-yellow-300">
-                                                    Aceptable
-                                                </span>
-                                            ) : (
-                                                <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium dark:bg-red-900/40 dark:text-red-300">
-                                                    No recomendable
-                                                </span>
-                                            )}
-                                        </td>
-                                        <td className="py-2 pr-4 whitespace-nowrap">
-                                            Viento&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;{registro.viento} km/h <br /> 
-                                            Humedad&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;{registro.humedad}% <br />
-                                            Temperatura&ensp;&ensp;&ensp; {registro.temperatura}°C <br />
-                                            Presión Atm.&ensp;&ensp;&ensp; {registro.presion_atm} hPa
-                                        </td>
-                                        {/*<td className="py-2 pr-4 whitespace-nowrap">
+
+                    <div>
+                        <KpiCard
+                            title="Velocidad del viento"
+                            value={kpiViento.speed}
+                            unit="km/h"
+                            color={COLORES.wind}
+                        />
+                    </div>
+
+                    <div>
+                        <KpiCard
+                            title="Temperatura"
+                            value={kpiTemp.temp}
+                            unit="°C"
+                            color={COLORES.temp}
+                        />
+                    </div>
+
+                    <div>
+                        <KpiCard
+                            title="Humedad"
+                            value={kpiTemp.hum}
+                            unit="%"
+                            color={COLORES.hum}
+                        />
+                    </div>
+
+                    <div>
+                        <KpiCard
+                            title="Presión Atmosférica"
+                            value={kpiPresion}
+                            unit="hPa"
+                            color={COLORES.presion}
+                        />
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 items-start">
+                    <div className="xl:col-span-1 space-y-4">
+                        <h1 className="block md:hidden text-lg font-bold text-slate-900 dark:text-slate-100">
+                            Estadísticas
+                        </h1>
+                        <div className="grid grid-cols-2 gap-4">
+                            <KpiCard
+                                title="Lanzamientos"
+                                value={kpi.total}
+                                unit=""
+                                subtitle={`Último: ${kpi.ultimaFecha}`}
+                            />
+                            <KpiCard
+                                title="Altura máxima"
+                                value={kpi.alturaMax}
+                                unit="m"
+                                subtitle="Mejor lanzamiento"
+                            />
+                            <KpiCard
+                                title="Tiempo vuelo máx."
+                                value={kpi.tiempoVueloMax}
+                                unit="s"
+                                subtitle="Despegue → aterrizaje"
+                            />
+                            <KpiCard
+                                title="Tasa de éxito"
+                                value={kpi.tasaExito}
+                                unit="%"
+                                subtitle="Éxitos / Total"
+                            />
+                            <KpiCard
+                                title="Éxitos"
+                                value={kpi.exitosos}
+                                unit=""
+                                subtitle="Recuperación OK"
+                            />
+                            <KpiCard
+                                title="Fallos"
+                                value={kpi.fallidos}
+                                unit=""
+                                subtitle="Explosión / sin paracaídas"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="xl:col-span-3 rounded-2xl shadow-sm border p-4 bg-white dark:bg-slate-900 dark:border-white/10">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div className="font-bold text-slate-900 dark:text-slate-100">
+                                Registros
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setOpenNuevoLanzamiento(true)}
+                                className="w-full sm:w-auto px-3 py-2 rounded-xl text-sm font-semibold bg-[#009688] text-white hover:opacity-90"
+                            >
+                                Registrar nuevo lanzamiento
+                            </button>
+                        </div>
+                        <div className="scroll-invisible mt-3 overflow-x-auto">
+                            <table className="min-w-full text-sm">
+                                <thead>
+                                    <tr className="text-left border-b border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300">
+                                        <th className="py-2 pr-4">Fecha</th>
+                                        <th className="py-2 pr-4">
+                                            Condiciones climáticas
+                                        </th>
+                                        {/*<th className="py-2 pr-4">Viento</th>*/}
+                                        {/*<th className="py-2 pr-4">Humedad</th>*/}
+                                        {/*<th className="py-2 pr-4">Temperatura</th>*/}
+                                        {/*<th className="py-2 pr-4">Presión Atm.</th>*/}
+                                        <th className="py-2 pr-4">Botella</th>
+                                        <th className="py-2 pr-4">
+                                            Presión (psi)
+                                        </th>
+                                        <th className="py-2 pr-4">Agua (ml)</th>
+                                        <th className="py-2 pr-4">
+                                            Modelo de botella
+                                        </th>
+                                        <th className="py-2 pr-4">
+                                            Uso de botella
+                                        </th>
+                                        <th className="py-2 pr-4">
+                                            Altura (m)
+                                        </th>
+                                        {/*<th className="py-2 pr-4">Distancia (m)</th>*/}
+                                        <th className="py-2 pr-4">Parámetro</th>
+                                        <th className="py-2 pr-2">Resultado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {registrosDemo.map((registro) => (
+                                        <tr
+                                            key={registro.id}
+                                            onClick={() =>
+                                                abrirDetalle(registro)
+                                            }
+                                            className="border-b border-slate-100 dark:border-white/5 text-slate-800 dark:text-slate-100 cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5"
+                                        >
+                                            <td className="py-2 pr-4 whitespace-nowrap">
+                                                {registro.fecha}
+                                            </td>
+
+                                            <td className="py-2 pr-4">
+                                                <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 whitespace-nowrap text-xs leading-snug">
+                                                    <span className="text-slate-500 dark:text-slate-400">
+                                                        Viento
+                                                    </span>
+                                                    <span>
+                                                        {registro.viento} km/h
+                                                    </span>
+                                                    <span className="text-slate-500 dark:text-slate-400">
+                                                        Humedad
+                                                    </span>
+                                                    <span>
+                                                        {registro.humedad}%
+                                                    </span>
+                                                    <span className="text-slate-500 dark:text-slate-400">
+                                                        Temperatura
+                                                    </span>
+                                                    <span>
+                                                        {registro.temperatura}°C
+                                                    </span>
+                                                    <span className="text-slate-500 dark:text-slate-400">
+                                                        Presión Atm.
+                                                    </span>
+                                                    <span>
+                                                        {registro.presion_atm}{" "}
+                                                        hPa
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            {/*<td className="py-2 pr-4 whitespace-nowrap">
                                             {registro.viento} km/h
                                         </td>
                                         <td className="py-2 pr-4 whitespace-nowrap">
@@ -556,149 +554,69 @@ export default function PetIndex() {
                                         <td className="py-2 pr-4">
                                             {registro.presion_atm} hPa
                                         </td>*/}
-                                        <td className="py-2 pr-4">
-                                            {registro.botella}
-                                        </td>
-                                        <td className="py-2 pr-4">
-                                            {registro.presion}
-                                        </td>
-                                        <td className="py-2 pr-4">
-                                            {registro.agua}
-                                        </td>
-                                        <td className="py-2 pr-4">
-                                            {registro.modeloBotella}
-                                        </td>
-                                        <td className="py-2 pr-4">
-                                            {registro.usoBotella}
-                                        </td>
-                                        <td className="py-2 pr-4">
-                                            {registro.altura}
-                                        </td>
-                                        {/* <td className="py-2 pr-4">
+                                            <td className="py-2 pr-4">
+                                                {registro.botella}
+                                            </td>
+                                            <td className="py-2 pr-4">
+                                                {registro.presion}
+                                            </td>
+                                            <td className="py-2 pr-4">
+                                                {registro.agua}
+                                            </td>
+                                            <td className="py-2 pr-4">
+                                                {registro.modeloBotella}
+                                            </td>
+                                            <td className="py-2 pr-4">
+                                                {registro.usoBotella}
+                                            </td>
+                                            <td className="py-2 pr-4">
+                                                {registro.altura}
+                                            </td>
+                                            {/* <td className="py-2 pr-4">
                                             {registro.distancia}
                                         </td>*/}
-                                        
-                                        <td className="py-2 pr-2">
-                                            <span
-                                                className={`px-2 py-1 rounded-lg text-xs font-semibold ${
-                                                    registro.resultado ===
-                                                    "Éxito"
-                                                        ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
-                                                        : "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300"
-                                                }`}
-                                            >
-                                                {registro.resultado}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+
+                                            <td className="py-2 pr-4 whitespace-nowrap">
+                                                {registro.condicionesOptimas ===
+                                                "Óptimo" ? (
+                                                    <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium dark:bg-green-900/40 dark:text-green-300">
+                                                        Óptimo
+                                                    </span>
+                                                ) : registro.condicionesOptimas ===
+                                                  "Aceptable" ? (
+                                                    <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium dark:bg-yellow-900/40 dark:text-yellow-300">
+                                                        Aceptable
+                                                    </span>
+                                                ) : (
+                                                    <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium dark:bg-red-900/40 dark:text-red-300">
+                                                        No recomendable
+                                                    </span>
+                                                )}
+                                            </td>
+
+                                            <td className="py-2 pr-2">
+                                                <span
+                                                    className={`px-2 py-1 rounded-lg text-xs font-semibold ${
+                                                        registro.resultado ===
+                                                        "Éxito"
+                                                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
+                                                            : "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300"
+                                                    }`}
+                                                >
+                                                    {registro.resultado}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* MODAL */}
-            <Modal
-                open={openAdd}
-                onClose={() => setOpenAdd(false)}
-                title="Agregar persona"
-            >
-                <form onSubmit={submit} className="space-y-3">
-                    <div>
-                        <label className="text-sm text-slate-600 dark:text-slate-300">
-                            Nombre
-                        </label>
-                        <input
-                            className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
-                            value={form.data.name}
-                            onChange={(e) =>
-                                form.setData("name", e.target.value)
-                            }
-                        />
-                        {form.errors.name && (
-                            <div className="text-xs text-red-500 mt-1">
-                                {form.errors.name}
-                            </div>
-                        )}
-                    </div>
 
-                    <div>
-                        <label className="text-sm text-slate-600 dark:text-slate-300">
-                            Correo
-                        </label>
-                        <input
-                            type="email"
-                            className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
-                            value={form.data.email}
-                            onChange={(e) =>
-                                form.setData("email", e.target.value)
-                            }
-                        />
-                        {form.errors.email && (
-                            <div className="text-xs text-red-500 mt-1">
-                                {form.errors.email}
-                            </div>
-                        )}
-                    </div>
-
-                    <div>
-                        <label className="text-sm text-slate-600 dark:text-slate-300">
-                            Contraseña
-                        </label>
-                        <input
-                            type="password"
-                            className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10"
-                            value={form.data.password}
-                            onChange={(e) =>
-                                form.setData("password", e.target.value)
-                            }
-                        />
-                        {form.errors.password && (
-                            <div className="text-xs text-red-500 mt-1">
-                                {form.errors.password}
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                        <input
-                            id="role_admin"
-                            type="checkbox"
-                            checked={form.data.role === "admin"}
-                            onChange={(e) =>
-                                form.setData(
-                                    "role",
-                                    e.target.checked ? "admin" : "user",
-                                )
-                            }
-                        />
-                        <label
-                            htmlFor="role_admin"
-                            className="text-sm text-slate-700 dark:text-slate-200"
-                        >
-                            {" "}
-                            ¿Es admin?
-                        </label>
-                    </div>
-
-                    <div className="flex justify-end gap-2 pt-2">
-                        <button
-                            type="button"
-                            onClick={() => setOpenAdd(false)}
-                            className="px-4 py-2 rounded-xl border"
-                        >
-                            Cancelar
-                        </button>
-                        <button
-                            disabled={form.processing}
-                            className="px-4 py-2 rounded-xl bg-[#009688] text-white font-semibold disabled:opacity-60"
-                        >
-                            Guardar
-                        </button>
-                    </div>
-                </form>
-            </Modal>
 
             <Modal
                 open={openNuevoLanzamiento}
@@ -776,11 +694,9 @@ export default function PetIndex() {
                             >
                                 <option>1.75 L</option>
                                 <option>2 L</option>
-                                
                             </select>
                         </div>
 
-                        
                         <div>
                             <label className="text-sm text-slate-600 dark:text-slate-300">
                                 Modelo de botella
@@ -813,21 +729,27 @@ export default function PetIndex() {
                                 <option>7UP</option>
                                 <option>Tehuacán</option>
                             </select>*/}
-
                         </div>
                         <div>
                             <label className="text-sm text-slate-600 dark:text-slate-300">
                                 Uso de botella
                             </label>
-                            <input type="number" className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10 dark:text-slate-400"/>
+                            <input
+                                type="number"
+                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-white/10 dark:text-slate-400"
+                            />
                         </div>
                         <div>
                             <label className="text-sm text-slate-600 dark:text-slate-300">
                                 Parámetro de lanzamiento
                             </label>
-                            <input type="text" className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-transparent dark:text-slate-400" 
-                            readOnly value={condicionesOptimas}/>
-                        </div>  
+                            <input
+                                type="text"
+                                className="mt-1 w-full rounded-xl border p-2 bg-white dark:bg-slate-950 dark:border-transparent dark:text-slate-400"
+                                readOnly
+                                value={condicionesOptimas}
+                            />
+                        </div>
                         <div>
                             <label className="text-sm text-slate-600 dark:text-slate-300">
                                 Altura (m)
@@ -877,7 +799,6 @@ export default function PetIndex() {
                                 <option>Fallo</option>
                             </select>
                         </div>
-                        
                     </div>
 
                     <div>
