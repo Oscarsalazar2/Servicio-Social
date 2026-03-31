@@ -74,9 +74,9 @@ export default function Clima() {
                             
                         </div>
                     </div>
-
                         {/* Gráfica */}
                         <div className="lg:col-span-8 space-y-6">
+                            
                                 <GraficaPresion
                                     data={climaSeries}
                                     colors={COLORS}

@@ -15,13 +15,13 @@ const COLORES = {
 
 function KpiCard({ title, value, unit, subtitle, color }) {
     return (
-        <div className="rounded-2xl shadow-sm border p-4 bg-white dark:bg-slate-900 dark:border-white/10">
-            <div className="text-sm font-medium text-slate-500 dark:text-slate-300">
+        <div className="rounded-2xl shadow-sm border p-4 bg-gray-50 dark:bg-slate-900/40 dark:border-white/10">
+            <div className="text-sm font-medium text-gray-900 dark:text-white/70">
                 {title}
             </div>
             <div className="mt-2 flex items-baseline gap-2">
                 <div
-                    className="text-2xl font-extrabold text-slate-900 dark:text-slate-100"
+                    className="text-2xl font-extrabold text-slate-700 dark:text-slate-100"
                     style={color ? { color } : undefined}
                 >
                     {value}
@@ -45,7 +45,7 @@ function Modal({ open, onClose, title, children, maxWidthClass = "max-w-lg" }) {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/40" onClick={onClose} />
             <div
-                className={`relative w-full ${maxWidthClass} rounded-2xl bg-white dark:bg-slate-900 border dark:border-white/10 p-5 shadow-xl`}
+                className={`relative w-full ${maxWidthClass} rounded-2xl bg-white dark:bg-[#071024] border dark:border-white/10 p-5 shadow-xl`}
             >
                 <div className="flex items-center justify-between">
                     <div className="text-lg font-bold text-slate-900 dark:text-slate-100">
@@ -364,7 +364,7 @@ export default function PetIndex() {
         >
             <Head title="Lanzamiento de cohetes" />
 
-            <div className="max-w-[96rem] mx-auto px-4 py-6 space-y-6">
+            <div className="max-w-[96rem] mx-auto px-4 py-6 space-y-6 dark:bg-[#071024]">
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                     <div className="col-span-2 lg:col-span-2">
                         <KpiCard
@@ -456,7 +456,7 @@ export default function PetIndex() {
                         </div>
                     </div>
 
-                    <div className="xl:col-span-3 rounded-2xl shadow-sm border p-4 bg-white dark:bg-slate-900 dark:border-white/10">
+                    <div className="xl:col-span-3 rounded-2xl shadow-sm border p-4 bg-gray-50 dark:bg-slate-900/40 dark:border-white/10">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                             <div className="font-bold text-slate-900 dark:text-slate-100">
                                 Registros
@@ -474,6 +474,7 @@ export default function PetIndex() {
                                 <thead>
                                     <tr className="text-left border-b border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300">
                                         <th className="py-2 pr-4">Fecha</th>
+
                                         <th className="py-2 pr-4">
                                             Condiciones climáticas
                                         </th>
@@ -481,6 +482,7 @@ export default function PetIndex() {
                                         {/*<th className="py-2 pr-4">Humedad</th>*/}
                                         {/*<th className="py-2 pr-4">Temperatura</th>*/}
                                         {/*<th className="py-2 pr-4">Presión Atm.</th>*/}
+                                        <th className="py-2 pr-4">Parámetro</th>
                                         <th className="py-2 pr-4">Botella</th>
                                         <th className="py-2 pr-4">
                                             Presión (psi)
@@ -496,7 +498,7 @@ export default function PetIndex() {
                                             Altura (m)
                                         </th>
                                         {/*<th className="py-2 pr-4">Distancia (m)</th>*/}
-                                        <th className="py-2 pr-4">Parámetro</th>
+                                        
                                         <th className="py-2 pr-2">Resultado</th>
                                     </tr>
                                 </thead>
@@ -554,6 +556,23 @@ export default function PetIndex() {
                                         <td className="py-2 pr-4">
                                             {registro.presion_atm} hPa
                                         </td>*/}
+                                        <td className="py-2 pr-4 whitespace-nowrap">
+                                                {registro.condicionesOptimas ===
+                                                "Óptimo" ? (
+                                                    <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium dark:bg-green-900/40 dark:text-green-300">
+                                                        Óptimo
+                                                    </span>
+                                                ) : registro.condicionesOptimas ===
+                                                  "Aceptable" ? (
+                                                    <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium dark:bg-yellow-900/40 dark:text-yellow-300">
+                                                        Aceptable
+                                                    </span>
+                                                ) : (
+                                                    <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium dark:bg-red-900/40 dark:text-red-300">
+                                                        No recomendable
+                                                    </span>
+                                                )}
+                                            </td>
                                             <td className="py-2 pr-4">
                                                 {registro.botella}
                                             </td>
@@ -576,23 +595,7 @@ export default function PetIndex() {
                                             {registro.distancia}
                                         </td>*/}
 
-                                            <td className="py-2 pr-4 whitespace-nowrap">
-                                                {registro.condicionesOptimas ===
-                                                "Óptimo" ? (
-                                                    <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium dark:bg-green-900/40 dark:text-green-300">
-                                                        Óptimo
-                                                    </span>
-                                                ) : registro.condicionesOptimas ===
-                                                  "Aceptable" ? (
-                                                    <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium dark:bg-yellow-900/40 dark:text-yellow-300">
-                                                        Aceptable
-                                                    </span>
-                                                ) : (
-                                                    <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium dark:bg-red-900/40 dark:text-red-300">
-                                                        No recomendable
-                                                    </span>
-                                                )}
-                                            </td>
+                                            
 
                                             <td className="py-2 pr-2">
                                                 <span

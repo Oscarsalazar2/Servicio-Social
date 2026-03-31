@@ -106,8 +106,8 @@ export default function Clima() {
                                 color={COLORS.cloudHeight}
                             />
                             <div className="lg:col-span-8">
-                                <div className="h-72 bg-white/5 border border-white dark:bg-slate-900/40 dark:border-white/10 rounded-lg shadow p-6">
-                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                                <div className="h-72 bg-gray-50 border border-gray-200 dark:bg-slate-900/40 dark:border-white/10 rounded-lg shadow p-6">
+                                    <h3 className="text-lg font-semibold text-gray-700 dark:text-white mb-4">
                                         Radiación Solar
                                     </h3>
                                     <RadiacionSolarGauge
@@ -121,16 +121,18 @@ export default function Clima() {
 
                         {/* Gráfica */}
                         <div className="lg:col-span-8">
-                            <div className="bg-white/5 border border-white dark:bg-slate-900/40 dark:border-white/10 rounded-lg shadow p-6">
-                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                                    Gráfica de Nubes
-                                </h3>
-                                <GraficaNubes2
-                                    series={climaSeries}
-                                    colors={COLORS}
-                                    height={240}
-                                />
-                            </div>
+                            <div className="min-h-screen bg-gray-100 dark:bg-[#071024]">
+                                <div className="bg-gray-50 border border-gray-200 dark:bg-slate-900/40 dark:border-white/10 rounded-lg shadow p-6">
+                                    <h3 className="text-lg font-semibold text-gray-700 dark:text-white mb-4">
+                                        Gráfica de Nubes
+                                    </h3>
+                                    <GraficaNubes2
+                                        series={climaSeries}
+                                        colors={COLORS}
+                                        height={240}
+                                    />
+                                </div>
+                            </div> 
                         </div>
                     </div>
                 </div>

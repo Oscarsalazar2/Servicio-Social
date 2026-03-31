@@ -88,7 +88,7 @@ export default function AdminIndex({
             <FlashMessages />
 
             {/* MENÚ HORIZONTAL MÓVIL - Mismo diseño que sidebar */}
-            <div className="lg:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 shadow-sm">
+            <div className="lg:hidden bg-gray-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 shadow-sm">
                 {/* Botón toggle */}
                 <button
                     onClick={toggleMobileMenu}
@@ -161,7 +161,7 @@ export default function AdminIndex({
                                                                 className={[
                                                                     "flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full text-xs font-bold",
                                                                     active
-                                                                        ? "bg-white text-[#009688]"
+                                                                        ? "bg-gray-50 text-[#009688] "
                                                                         : "bg-[#009688] text-white",
                                                                 ].join(" ")}
                                                             >
@@ -179,12 +179,12 @@ export default function AdminIndex({
                 </div>
             </div>
 
-            <div className="p-3 sm:p-4 md:p-6 text-slate-900 dark:text-white">
+            <div className="p-3 sm:p-4 md:p-6 text-slate-900 dark:bg-[#071024] dark:text-white">
                 <div className="mt-4 sm:mt-6 flex flex-col lg:flex-row gap-4 lg:gap-6 justify-center max-w-7xl mx-auto">
                     {/* Sidebar - Solo visible en lg y superior */}
                     <aside
                         className={[
-                            "hidden lg:block relative transition-all duration-300 ease-in-out rounded-xl sm:rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900",
+                            "hidden lg:block relative transition-all duration-300 ease-in-out rounded-xl sm:rounded-2xl border border-slate-200 bg-gray-50 shadow-sm dark:border-slate-700 dark:bg-gray-900/40",
                             sidebarOpen
                                 ? "w-72 p-4 opacity-100"
                                 : "w-16 p-2 opacity-100 overflow-hidden",
@@ -286,7 +286,7 @@ export default function AdminIndex({
                                                                         className={[
                                                                             "flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full text-xs font-bold",
                                                                             active
-                                                                                ? "bg-white text-[#009688]"
+                                                                                ? "bg-gray-50 text-[#009688]"
                                                                                 : "bg-[#009688] text-white",
                                                                         ].join(
                                                                             " ",
@@ -317,7 +317,7 @@ export default function AdminIndex({
                     </aside>
 
                     {/* Contenido */}
-                    <section className="w-full lg:flex-1 rounded-xl sm:rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900 min-h-[500px]">
+                    <section className="w-full lg:flex-1 rounded-xl sm:rounded-2xl border border-slate-200 bg-gray-50 p-4 sm:p-6 shadow-sm dark:border-slate-700 dark:bg-gray-900/40 min-h-[500px]">
                         <SectionComponent
                             pendingUsers={pendingUsers}
                             rejectedUsers={rejectedUsers}

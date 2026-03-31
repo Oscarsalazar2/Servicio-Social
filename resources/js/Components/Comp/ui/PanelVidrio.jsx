@@ -10,7 +10,7 @@ export default function PanelVidrio({
         <div
             className={[
                 "rounded-2xl shadow-sm border p-4",
-                "bg-white/5 backdrop-blur border-white/10",
+                "bg-gray-50 backdrop-blur border-gray-200",
                 "dark:bg-slate-900/40 dark:border-white/10",
                 className,
             ].join(" ")}

@@ -10,11 +10,11 @@ export default function TarjetaKpi({
     icon,
 }) {
     return (
-        <div className="rounded-2xl shadow-sm border p-4 bg-white/5 backdrop-blur border-white/10 dark:bg-slate-900/40 dark:border-white/10">
+        <div className="rounded-2xl shadow-sm border p-4 bg-gray-50 backdrop-blur border-gray-200 dark:bg-slate-900/40 dark:border-white/10">
             <div className="flex items-start justify-between gap-3">
                 <div className="w-full">
                     <div className="flex justify-between items-center gap-2 w-full">
-                        <span className="text-sm font-medium text-gray-700 dark:text-white/70">
+                        <span className="text-sm font-semibold text-gray-900 dark:text-white/70">
                             {title}
                         </span>
                         

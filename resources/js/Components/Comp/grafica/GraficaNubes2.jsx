@@ -63,7 +63,7 @@ const CloudDot = ({ cx, cy }) => {
             y={cy}
             textAnchor="middle"
             dominantBaseline="central"
-            fontSize="16"
+            fontSize="20"
         >
             ☁️
         </text>
@@ -80,7 +80,7 @@ export default function GraficaNubes({ series = [], colors, height = 250 }) {
         : GRID_HORIZONTAL_COLORS_LIGHT;
 
     return (
-        <div className="w-full text-gray-900 dark:text-white">
+        <div className="w-full text-gray-900 dark:text-white ">
             <p className="text-xs md:text-sm text-slate-700/90 dark:text-slate-300/90 mb-2">
                 Seguimiento por hora de la altura base de nubes y su capa
                 atmosférica.

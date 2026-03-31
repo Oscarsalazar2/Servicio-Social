@@ -363,14 +363,14 @@ export default function Dashboard() {
                                 <button
                                     type="button"
                                     onClick={mostrarTodo}
-                                    className="px-3 py-2 rounded-lg text-sm font-semibold bg-white text-gray-800 border border-gray-300 hover:bg-gray-50 dark:bg-[#0f1d3d] dark:text-gray-100 dark:border-slate-700"
+                                    className="px-3 py-2 rounded-lg text-sm font-semibold bg-gray-50 text-gray-800 border border-gray-300 hover:bg-gray-50 dark:bg-slate-900/40 dark:text-gray-100 dark:border-slate-700"
                                 >
                                     Mostrar todo
                                 </button>
                                 <button
                                     type="button"
                                     onClick={ocultarTodo}
-                                    className="px-3 py-2 rounded-lg text-sm font-semibold bg-white text-gray-800 border border-gray-300 hover:bg-gray-50 dark:bg-[#0f1d3d] dark:text-gray-100 dark:border-slate-700"
+                                    className="px-3 py-2 rounded-lg text-sm font-semibold bg-gray-50 text-gray-800 border border-gray-300 hover:bg-gray-50 dark:bg-slate-900/40 dark:text-gray-100 dark:border-slate-700"
                                 >
                                     Quitar todo
                                 </button>
@@ -380,10 +380,10 @@ export default function Dashboard() {
                                     onClick={() =>
                                         setListaCamposAbierta((prev) => !prev)
                                     }
-                                    className="px-3 py-2 rounded-lg text-sm font-semibold bg-white text-gray-800 border border-gray-300 hover:bg-gray-50 dark:bg-[#0f1d3d] dark:text-gray-100 dark:border-slate-700 flex items-center gap-2"
+                                    className="px-3 py-2 rounded-lg text-sm font-semibold bg-gray-50 text-gray-800 border border-gray-300 hover:bg-gray-50 dark:bg-slate-900/40 dark:text-gray-100 dark:border-slate-700 flex items-center gap-2"
                                 >
                                     Lista
-                                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 dark:bg-slate-800 dark:text-gray-200">
+                                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-gray-50 text-gray-700 dark:bg-slate-800  dark:text-gray-200">
                                         {camposVisiblesGrid.length}/
                                         {camposGrid.length}
                                     </span>
@@ -401,7 +401,7 @@ export default function Dashboard() {
 
                                 {listaCamposAbierta ? (
                                     <div
-                                        className="absolute right-0 top-full mt-2 w-80 max-h-96 overflow-y-auto rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-[#0f1d3d] shadow-lg z-30 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+                                        className="absolute right-0 top-full mt-2 w-80 max-h-96 overflow-y-auto rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-950 shadow-lg z-30 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
                                         style={{
                                             scrollbarWidth: "none",
                                             msOverflowStyle: "none",
@@ -417,7 +417,7 @@ export default function Dashboard() {
                                                 return (
                                                     <li
                                                         key={campo.id}
-                                                        className="flex items-center justify-between rounded-lg px-2 py-2 border border-gray-200/80 dark:border-slate-700/80 bg-white dark:bg-[#12224a]/80"
+                                                        className="flex items-center justify-between rounded-lg px-2 py-2 border border-gray-200/80 dark:border-slate-700/80 bg-gray-50 dark:bg-slate-900/40"
                                                     >
                                                         <label
                                                             htmlFor={`field-${campo.id}`}
@@ -476,7 +476,7 @@ export default function Dashboard() {
                                 {camposVisiblesGrid.map((campo, indice) => (
                                     <div
                                         key={campo.id}
-                                        className={`h-full rounded-2xl shadow-md border border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-[#0b1735] ${presetTamano.cardPadding} ${layoutsAdaptativos[indice]}`}
+                                        className={`h-full rounded-2xl shadow-md border border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-slate-900/40 ${presetTamano.cardPadding} ${layoutsAdaptativos[indice]}`}
                                     >
                                         <div
                                             className={`${presetTamano.title} font-semibold tracking-wide text-gray-900 dark:text-gray-100`}
