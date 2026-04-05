@@ -1,7 +1,8 @@
 import { useState, useMemo, useEffect } from "react";
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 
 export default function Usuarios({ allUsers = [] }) {
+    const currentUserId = usePage().props.auth?.user?.id;
     const ITEMS_PER_PAGE = 5;
     const [searchTerm, setSearchTerm] = useState("");
     const [roleFilter, setRoleFilter] = useState("all");
@@ -103,6 +104,10 @@ export default function Usuarios({ allUsers = [] }) {
     const handleEdit = (userId) => {
         const user = users.find((item) => item.id === userId);
         if (!user) return;
+        if (user.id === currentUserId) {
+            window.alert("No puedes modificar tu propio usuario.");
+            return;
+        }
 
         setSelectedUser(user);
         setEditForm({
@@ -118,6 +123,10 @@ export default function Usuarios({ allUsers = [] }) {
     const handleDelete = (userId) => {
         const user = users.find((item) => item.id === userId);
         if (!user) return;
+        if (user.id === currentUserId) {
+            window.alert("No puedes eliminar tu propio usuario.");
+            return;
+        }
 
         const confirmed = window.confirm("¿Eliminar este usuario?");
         if (!confirmed) return;
@@ -146,6 +155,10 @@ export default function Usuarios({ allUsers = [] }) {
 
     const handleSaveEdit = () => {
         if (!selectedUser) return;
+        if (selectedUser.id === currentUserId) {
+            window.alert("No puedes modificar tu propio usuario.");
+            return;
+        }
         setProcessingAction(true);
 
         const payload = {
@@ -170,6 +183,10 @@ export default function Usuarios({ allUsers = [] }) {
 
     const handleConfirmDelete = () => {
         if (!selectedUser) return;
+        if (selectedUser.id === currentUserId) {
+            window.alert("No puedes eliminar tu propio usuario.");
+            return;
+        }
         setProcessingAction(true);
 
         router.delete(route("admin.users.delete", selectedUser.id), {
@@ -351,8 +368,17 @@ export default function Usuarios({ allUsers = [] }) {
                                                                     user.id,
                                                                 )
                                                             }
-                                                            className="p-2 text-[#009688] dark:text-[#4DB6AC] hover:bg-teal-50 dark:hover:bg-teal-900/30 rounded-lg transition-colors"
-                                                            title="Editar"
+                                                            disabled={
+                                                                user.id ===
+                                                                currentUserId
+                                                            }
+                                                            className="p-2 text-[#009688] dark:text-[#4DB6AC] hover:bg-teal-50 dark:hover:bg-teal-900/30 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                                                            title={
+                                                                user.id ===
+                                                                currentUserId
+                                                                    ? "No puedes editarte"
+                                                                    : "Editar"
+                                                            }
                                                             type="button"
                                                         >
                                                             <i className="fa-solid fa-pen-to-square text-sm"></i>
@@ -363,8 +389,17 @@ export default function Usuarios({ allUsers = [] }) {
                                                                     user.id,
                                                                 )
                                                             }
-                                                            className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
-                                                            title="Eliminar"
+                                                            disabled={
+                                                                user.id ===
+                                                                currentUserId
+                                                            }
+                                                            className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                                                            title={
+                                                                user.id ===
+                                                                currentUserId
+                                                                    ? "No puedes eliminarte"
+                                                                    : "Eliminar"
+                                                            }
                                                             type="button"
                                                         >
                                                             <i className="fa-solid fa-trash text-sm"></i>

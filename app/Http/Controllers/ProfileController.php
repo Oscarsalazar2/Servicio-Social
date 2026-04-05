@@ -44,7 +44,7 @@ class ProfileController extends Controller
         if ($notificationsSettingsChanged && $request->user()->enable_notifications && filled($request->user()->telegram_username)) {
             $telegram->sendToUser(
                 $request->user(),
-                "🔔 <b>Notificaciones activadas</b>\nHola {$request->user()->name}, tu configuración de Telegram se guardó correctamente."
+                " <b>Notificaciones activadas</b>\nHola {$request->user()->name}, tu configuración de Telegram se guardó correctamente."
             );
         }
 

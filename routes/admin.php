@@ -163,6 +163,12 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
 
     // Edita datos del usuario (nombre, correo, rol y estado) con validación.
     Route::patch('/admin/users/{user}', function (User $user, Request $request) {
+        abort_if(
+            $request->user()?->id === $user->id,
+            403,
+            'No puedes modificar tu propio usuario.'
+        );
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email:rfc,dns', 'max:255', 'unique:users,email,' . $user->id],
@@ -221,6 +227,12 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
 
     // Elimina usuario, notifica por Telegram y guarda auditoría.
     Route::delete('/admin/users/{user}', function (User $user, TelegramService $telegram, Request $request) {
+        abort_if(
+            $request->user()?->id === $user->id,
+            403,
+            'No puedes eliminar tu propio usuario.'
+        );
+
         $telegram->sendToUser(
             $user,
             "<b>Cuenta eliminada</b>\nHola {$user->name}, tu cuenta fue eliminada por un administrador."
