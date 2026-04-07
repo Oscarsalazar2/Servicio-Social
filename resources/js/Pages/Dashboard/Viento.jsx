@@ -12,6 +12,8 @@ const COLORS = {
     windDir: "#FA812F",
     vibrationOn: "#F44336",
     vibrationOff: "#4CAF50",
+    soundOn: "#F44336",
+    soundOff: "#4CAF50",
 };
 
 export default function Viento() {
@@ -21,14 +23,14 @@ export default function Viento() {
             vel: Math.max(
                 0,
                 Math.round(
-                    (Math.sin(i / 3) * 8 + 12 + Math.random() * 3) * 10
-                ) / 10
+                    (Math.sin(i / 3) * 8 + 12 + Math.random() * 3) * 10,
+                ) / 10,
             ),
             gust: Math.max(
                 0,
                 Math.round(
-                    (Math.sin(i / 3) * 10 + 18 + Math.random() * 4) * 10
-                ) / 10
+                    (Math.sin(i / 3) * 10 + 18 + Math.random() * 4) * 10,
+                ) / 10,
             ),
             dir: Math.round((i * 15 + 210 + Math.random() * 20) % 360),
         }));
@@ -45,17 +47,21 @@ export default function Viento() {
             { dir: "W", r0_10: 3, r10_20: 0, r20_30: 0, r30_40: 0 },
             { dir: "NW", r0_10: 2, r10_20: 0, r20_30: 0, r30_40: 0 },
         ],
-        []
+        [],
     );
 
     const last = windSeries[windSeries.length - 1];
 
+    const soundDetected = useMemo(() => Math.random() >= 0.5, []);
+
+    const soundStatus = useMemo(() => {
+        return soundDetected ? "Con sonido" : "Sin sonido";
+    }, [soundDetected]);
+
     const vibrationDetected = useMemo(() => Math.random() >= 0.5, []);
 
     const vibrationStatus = useMemo(() => {
-        return vibrationDetected
-            ? "Con vibración"
-            : "Sin vibración";
+        return vibrationDetected ? "Con vibración" : "Sin vibración";
     }, [vibrationDetected]);
 
     const kpi = {
@@ -65,8 +71,6 @@ export default function Viento() {
         vibration: vibrationStatus,
         updated: "15/12/2025 20:00",
     };
-
-    
 
     return (
         <AuthenticatedLayout>
@@ -99,6 +103,18 @@ export default function Viento() {
                                     vibrationDetected
                                         ? COLORS.vibrationOn
                                         : COLORS.vibrationOff
+                                }
+                                subtitle={`Actualizado: ${kpi.updated}`}
+                            />
+
+                            <TarjetaKpi
+                                title="Sonido"
+                                value={soundStatus}
+                                unit=""
+                                color={
+                                    soundDetected
+                                        ? COLORS.soundOn
+                                        : COLORS.soundOff
                                 }
                                 subtitle={`Actualizado: ${kpi.updated}`}
                             />
