@@ -1,9 +1,10 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
 import TarjetaKpi from "@/Components/Comp/kpi/TarjetaKpi";
 import GraficaTemperatura from "@/Components/Comp/grafica/GraficaTemperatura";
+import { fetchLecturas } from "@/lib/lecturasApi";
 
 const COLORS = {
     temp: "#6E8CFB",
@@ -22,33 +23,54 @@ const calcDewPoint = (tempC, rh) => {
 };
 
 export default function Temperatura() {
-    const thSeries = useMemo(() => {
-        return Array.from({ length: 24 }).map((_, i) => {
-            const temp =
-                Math.round((Math.sin(i / 4) * 4 + 2 + Math.random() * 0.7) * 10) /
-                10;
-            const hum =
-                Math.round((Math.cos(i / 5) * 18 + 65 + Math.random() * 3) * 10) /
-                10;
-            const rain =
-                Math.round(
-                    Math.max(0, Math.sin(i / 3) * 1.8 + Math.random() * 1.2) * 10
-                ) / 10;
-            return {
-                t: `${String(i).padStart(2, "0")}:00`,
-                temp,
-                hum,
-                rain,
-                dewPoint: calcDewPoint(temp, hum),
-            };
-        });
+    const [lecturas, setLecturas] = useState([]);
+
+    useEffect(() => {
+        let active = true;
+
+        const loadLecturas = async () => {
+            try {
+                const { series } = await fetchLecturas(24);
+                if (active) {
+                    setLecturas(series);
+                }
+            } catch {
+                if (active) {
+                    setLecturas([]);
+                }
+            }
+        };
+
+        loadLecturas();
+        const timer = window.setInterval(loadLecturas, 5000);
+
+        return () => {
+            active = false;
+            window.clearInterval(timer);
+        };
     }, []);
 
-    const last = thSeries[thSeries.length - 1];
+    const thSeries = useMemo(() => {
+        return lecturas.map((item) => ({
+            t: item.t,
+            temp: item.temp,
+            hum: item.hum,
+            rain: 0,
+            dewPoint: calcDewPoint(item.temp, item.hum),
+        }));
+    }, [lecturas]);
+
+    const last = thSeries[thSeries.length - 1] ?? {
+        temp: 0,
+        hum: 0,
+        dewPoint: 0,
+        received_at: null,
+    };
     const temps = thSeries.map((s) => s.temp);
     //const totalRain =Math.round(thSeries.reduce((acc, s) => acc + s.rain, 0) * 10) / 10;
-    const minTemp = Math.round(Math.min(...temps) * 10) / 10;
-    const maxTemp = Math.round(Math.max(...temps) * 10) / 10;
+    const minTemp = temps.length ? Math.round(Math.min(...temps) * 10) / 10 : 0;
+    const maxTemp = temps.length ? Math.round(Math.max(...temps) * 10) / 10 : 0;
+    const ultimaLectura = lecturas[lecturas.length - 1] ?? null;
     const kpi = {
         temp: last.temp,
         hum: last.hum,
@@ -58,7 +80,16 @@ export default function Temperatura() {
         feels: Math.round((last.temp - (100 - last.hum) / 8) * 10) / 10,
         minTemp,
         maxTemp,
-        updated: "15/12/2025 20:00",
+        updated: new Date(
+            ultimaLectura?.received_at ?? Date.now(),
+        ).toLocaleString("es-MX", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+        }),
     };
 
     return (
@@ -134,5 +165,4 @@ export default function Temperatura() {
         </AuthenticatedLayout>
     );
 }
-
 

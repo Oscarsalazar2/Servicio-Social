@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
@@ -6,6 +6,7 @@ import TarjetaKpi from "@/Components/Comp/kpi/TarjetaKpi";
 import GraficaVelocidadViento from "@/Components/Comp/grafica/GraficaVelocidadViento";
 import RosaVientos from "@/Components/Comp/grafica/RosaVientos";
 import KpiDireccionViento from "@/Components/Comp/kpi/KpiDireccionViento";
+import { fetchLecturas } from "@/lib/lecturasApi";
 
 const COLORS = {
     wind: "#FAB12F",
@@ -17,24 +18,43 @@ const COLORS = {
 };
 
 export default function Viento() {
-    const windSeries = useMemo(() => {
-        return Array.from({ length: 24 }).map((_, i) => ({
-            t: `${String(i).padStart(2, "0")}:00`,
-            vel: Math.max(
-                0,
-                Math.round(
-                    (Math.sin(i / 3) * 8 + 12 + Math.random() * 3) * 10,
-                ) / 10,
-            ),
-            gust: Math.max(
-                0,
-                Math.round(
-                    (Math.sin(i / 3) * 10 + 18 + Math.random() * 4) * 10,
-                ) / 10,
-            ),
-            dir: Math.round((i * 15 + 210 + Math.random() * 20) % 360),
-        }));
+    const [lecturas, setLecturas] = useState([]);
+
+    useEffect(() => {
+        let active = true;
+
+        const loadLecturas = async () => {
+            try {
+                const { series } = await fetchLecturas(24);
+                if (active) {
+                    setLecturas(series);
+                }
+            } catch {
+                if (active) {
+                    setLecturas([]);
+                }
+            }
+        };
+
+        loadLecturas();
+        const timer = window.setInterval(loadLecturas, 5000);
+
+        return () => {
+            active = false;
+            window.clearInterval(timer);
+        };
     }, []);
+
+    const windSeries = useMemo(
+        () =>
+            lecturas.map((item) => ({
+                t: item.t,
+                vel: item.viento,
+                gust: item.viento,
+                dir: item.dir,
+            })),
+        [lecturas],
+    );
 
     const windRoseData = useMemo(
         () => [
@@ -50,15 +70,20 @@ export default function Viento() {
         [],
     );
 
-    const last = windSeries[windSeries.length - 1];
+    const last = windSeries[windSeries.length - 1] ?? {
+        vel: 0,
+        gust: 0,
+        dir: 0,
+    };
+    const ultimaLectura = lecturas[lecturas.length - 1] ?? null;
 
-    const soundDetected = useMemo(() => Math.random() >= 0.5, []);
+    const soundDetected = (ultimaLectura?.sonido ?? 0) === 1;
 
     const soundStatus = useMemo(() => {
         return soundDetected ? "Con sonido" : "Sin sonido";
     }, [soundDetected]);
 
-    const vibrationDetected = useMemo(() => Math.random() >= 0.5, []);
+    const vibrationDetected = (ultimaLectura?.vibracion ?? 0) === 1;
 
     const vibrationStatus = useMemo(() => {
         return vibrationDetected ? "Con vibración" : "Sin vibración";
@@ -69,7 +94,16 @@ export default function Viento() {
         windGust: last.gust,
         windDir: last.dir,
         vibration: vibrationStatus,
-        updated: "15/12/2025 20:00",
+        updated: new Date(
+            ultimaLectura?.received_at ?? Date.now(),
+        ).toLocaleString("es-MX", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+        }),
     };
 
     return (
