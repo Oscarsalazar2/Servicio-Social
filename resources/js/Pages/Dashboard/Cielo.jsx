@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
@@ -6,6 +6,7 @@ import TarjetaKpi from "@/Components/Comp/kpi/TarjetaKpi";
 import RadiacionSolarGauge from "@/Components/Comp/grafica/RadiacionSolarGauge";
 import GraficaNubes from "@/Components/Comp/grafica/GraficaNubes";
 import GraficaNubes2 from "@/Components/Comp/grafica/GraficaNubes2";
+import { fetchLecturas } from "@/lib/lecturasApi";
 
 
 const COLORS = {
@@ -45,19 +46,40 @@ const calcularAlturaDeNubes = (temp, humedad) => {
 };
 
 export default function Clima() {
+    const [lecturas, setLecturas] = useState([]);
+
+    useEffect(() => {
+        let active = true;
+
+        const loadLecturas = async () => {
+            try {
+                const { series } = await fetchLecturas(24);
+                if (active) {
+                    setLecturas(series);
+                }
+            } catch {
+                if (active) {
+                    setLecturas([]);
+                }
+            }
+        };
+
+        loadLecturas();
+        const timer = window.setInterval(loadLecturas, 5000);
+
+        return () => {
+            active = false;
+            window.clearInterval(timer);
+        };
+    }, []);
+
     const climaSeries = useMemo(() => {
-        return Array.from({ length: 24 }).map((_, i) => {
-            const solar = calcularRadiacionSolar();
-            const temp =
-                Math.round(
-                    (Math.sin(i / 4) * 4 + 2 + Math.random() * 0.7) * 10,
-                ) / 10;
-            const hum =
-                Math.round(
-                    (Math.cos(i / 5) * 18 + 65 + Math.random() * 3) * 10,
-                ) / 10;
+        return lecturas.map((item) => {
+            const solar = item.rs;
+            const temp = item.temp;
+            const hum = item.hum;
             return {
-                t: `${String(i).padStart(2, "0")}:00`,
+                t: item.t,
                 temp: temp,
                 hum: hum,
                 solar: solar,
@@ -65,9 +87,16 @@ export default function Clima() {
                 cloudHeight: calcularAlturaDeNubes(temp, hum),
             };
         });
-    }, []);
+    }, [lecturas]);
 
-    const last = climaSeries[climaSeries.length - 1];
+    const last = climaSeries[climaSeries.length - 1] ?? {
+        temp: 0,
+        hum: 0,
+        solar: 0,
+        uv: 0,
+        cloudHeight: 0,
+    };
+    const ultimaLectura = lecturas[lecturas.length - 1] ?? null;
 
     const kpi = {
         temp: last.temp,
@@ -75,7 +104,16 @@ export default function Clima() {
         solar: last.solar,
         uv: last.uv,
         cloudHeight: last.cloudHeight,
-        updated: "15/12/2025 20:00",
+        updated: new Date(
+            ultimaLectura?.received_at ?? Date.now(),
+        ).toLocaleString("es-MX", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+        }),
     };
 
     return (

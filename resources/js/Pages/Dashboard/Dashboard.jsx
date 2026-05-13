@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
+import { fetchLecturas } from "@/lib/lecturasApi";
 
 const CLAVE_STORAGE_PREFS_GRID = "dashboard:grid:visibleFields";
 
@@ -74,36 +75,62 @@ const LAYOUTS_ADAPTATIVOS = {
 };
 
 export default function Dashboard() {
-    const serieViento = useMemo(() => {
-        return Array.from({ length: 24 }).map((_, i) => ({
-            t: `${String(i).padStart(2, "0")}:00`,
-            vel: Math.max(
-                0,
-                Math.round(
-                    (Math.sin(i / 3) * 8 + 12 + Math.random() * 3) * 10,
-                ) / 10,
-            ),
-            dir: Math.round((i * 15 + 210 + Math.random() * 20) % 360),
-        }));
+    const [lecturas, setLecturas] = useState([]);
+
+    useEffect(() => {
+        let active = true;
+
+        const loadLecturas = async () => {
+            try {
+                const { series } = await fetchLecturas(24);
+                if (active) {
+                    setLecturas(series);
+                }
+            } catch {
+                if (active) {
+                    setLecturas([]);
+                }
+            }
+        };
+
+        loadLecturas();
+        const timer = window.setInterval(loadLecturas, 5000);
+
+        return () => {
+            active = false;
+            window.clearInterval(timer);
+        };
     }, []);
 
-    const serieTempHum = useMemo(() => {
-        return Array.from({ length: 24 }).map((_, i) => ({
-            t: `${String(i).padStart(2, "0")}:00`,
-            temp:
-                Math.round(
-                    (Math.sin(i / 4) * 4 + 2 + Math.random() * 0.7) * 10,
-                ) / 10,
-            hum:
-                Math.round(
-                    (Math.cos(i / 5) * 18 + 65 + Math.random() * 3) * 10,
-                ) / 10,
-        }));
-    }, []);
+    const serieViento = useMemo(
+        () =>
+            lecturas.map((item) => ({
+                t: item.t,
+                vel: item.viento,
+                dir: item.dir,
+            })),
+        [lecturas],
+    );
+
+    const serieTempHum = useMemo(
+        () =>
+            lecturas.map((item) => ({
+                t: item.t,
+                temp: item.temp,
+                hum: item.hum,
+            })),
+        [lecturas],
+    );
 
     // KPIs
-    const ultimoViento = serieViento[serieViento.length - 1];
-    const ultimaTempHum = serieTempHum[serieTempHum.length - 1];
+    const ultimoViento = serieViento[serieViento.length - 1] ?? {
+        vel: 0,
+        dir: 0,
+    };
+    const ultimaTempHum = serieTempHum[serieTempHum.length - 1] ?? {
+        temp: 0,
+        hum: 0,
+    };
 
     const kpiViento = {
         speed: ultimoViento.vel,
@@ -119,19 +146,23 @@ export default function Dashboard() {
             ) / 10,
     };
 
-    const valorRadiacion = 428;
+    const ultimaLectura = lecturas[lecturas.length - 1] ?? null;
+    const valorRadiacion = ultimaLectura ? ultimaLectura.rs : 0;
     const indiceUv = Number((valorRadiacion / 100).toFixed(1));
     const ultimaActualizacion = useMemo(
         () =>
-            new Date().toLocaleString("es-MX", {
+            new Date(ultimaLectura?.received_at ?? Date.now()).toLocaleString(
+                "es-MX",
+                {
                 day: "2-digit",
                 month: "2-digit",
                 year: "numeric",
                 hour: "2-digit",
                 minute: "2-digit",
                 hour12: false,
-            }),
-        [],
+                },
+            ),
+        [ultimaLectura?.received_at],
     );
 
     const camposGrid = useMemo(
@@ -202,7 +233,7 @@ export default function Dashboard() {
             {
                 id: "pressure",
                 label: "Presión atmosférica",
-                value: 1009,
+                value: ultimaLectura ? ultimaLectura.pres : 0,
                 unit: "hPa",
                 layout: "md:col-span-3 md:row-span-2",
                 color: "#f97316",
@@ -227,6 +258,7 @@ export default function Dashboard() {
             kpiTemp.feels,
             valorRadiacion,
             indiceUv,
+            ultimaLectura?.pres,
         ],
     );
 

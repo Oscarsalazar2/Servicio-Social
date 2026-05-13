@@ -1,9 +1,10 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
 import TarjetaKpi from "@/Components/Comp/kpi/TarjetaKpi";
 import GraficaPresion from "@/Components/Comp/grafica/GraficaPresion";
+import { fetchLecturas } from "@/lib/lecturasApi";
 
 const COLORS = {
     presion: "#FF6B6B",
@@ -11,21 +12,42 @@ const COLORS = {
 };
 
 export default function Clima() {
+    const [lecturas, setLecturas] = useState([]);
+
+    useEffect(() => {
+        let active = true;
+
+        const loadLecturas = async () => {
+            try {
+                const { series } = await fetchLecturas(24);
+                if (active) {
+                    setLecturas(series);
+                }
+            } catch {
+                if (active) {
+                    setLecturas([]);
+                }
+            }
+        };
+
+        loadLecturas();
+        const timer = window.setInterval(loadLecturas, 5000);
+
+        return () => {
+            active = false;
+            window.clearInterval(timer);
+        };
+    }, []);
+
     const { climaSeries, tendenciaBarometrica, estadoBarometrico } = useMemo(() => {
-        const series = Array.from({ length: 24 }).map((_, i) => ({
-            t: `${String(i).padStart(2, "0")}:00`,
-            presion:
-                Math.round(
-                    (Math.cos(i / 6) * 8 + Math.sin(i / 4) * 6 + 1013 + Math.random() * 4) * 10
-                ) / 10,
-            presionBarometrica:
-                Math.round(
-                    (Math.sin(i / 4) * 12 + Math.cos(i / 5) * 8 + 760 + Math.random() * 3.5) * 100
-                ) / 100,
+        const series = lecturas.map((item) => ({
+            t: item.t,
+            presion: item.pres,
+            presionBarometrica: Math.round((item.pres * 0.750062) * 100) / 100,
         }));
 
-        const actual = series[series.length - 1].presion;
-        const anterior = series[Math.max(series.length - 4, 0)].presion;
+        const actual = series[series.length - 1]?.presion ?? 0;
+        const anterior = series[Math.max(series.length - 4, 0)]?.presion ?? actual;
         const tendencia = Math.round((actual - anterior) * 10) / 10;
 
         let estado = "Estable";
@@ -37,16 +59,29 @@ export default function Clima() {
             tendenciaBarometrica: tendencia,
             estadoBarometrico: estado,
         };
-    }, []);
+    }, [lecturas]);
 
-    const last = climaSeries[climaSeries.length - 1];
+    const last = climaSeries[climaSeries.length - 1] ?? {
+        presion: 0,
+        presionBarometrica: 0,
+    };
+    const ultimaLectura = lecturas[lecturas.length - 1] ?? null;
 
     const kpi = {
         presion: last.presion,
         presionBarometrica: last.presionBarometrica,
         tendenciaBarometrica,
         estadoBarometrico,
-        updated: "15/12/2025 20:00",
+        updated: new Date(
+            ultimaLectura?.received_at ?? Date.now(),
+        ).toLocaleString("es-MX", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+        }),
     };
 
     return (
