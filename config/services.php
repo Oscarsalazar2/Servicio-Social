@@ -42,4 +42,14 @@ return [
         'parse_mode' => env('TELEGRAM_PARSE_MODE', 'HTML'),
     ],
 
+    'influxdb' => [
+        'url' => env('INFLUXDB_URL'),
+        'org' => env('INFLUXDB_ORG'),
+        'bucket' => env('INFLUXDB_BUCKET'),
+        'token' => env('INFLUXDB_TOKEN'),
+        'measurement' => env('INFLUXDB_MEASUREMENT', 'lecturas'),
+        'precision' => env('INFLUXDB_PRECISION', 'ms'),
+        'timeout' => env('INFLUXDB_TIMEOUT', 10),
+    ],
+
 ];

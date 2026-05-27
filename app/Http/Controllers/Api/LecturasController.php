@@ -3,27 +3,23 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Lectura;
+use App\Services\InfluxDbService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
 class LecturasController extends Controller
 {
+    public function __construct(private readonly InfluxDbService $influxDb)
+    {
+    }
+
     public function index(Request $request): JsonResponse
     {
         $limit = max(1, min((int) $request->query('limit', 24), 200));
 
-        $rows = Lectura::query()
-            ->latest('received_at')
-            ->latest('id')
-            ->limit($limit)
-            ->get()
-            ->reverse()
-            ->values();
-
-        $series = $rows->map(fn (Lectura $row) => $this->toApiReading($row))->values();
-        $last = $series->last();
+        $series = $this->influxDb->fetchReadings($limit);
+        $last = $series === [] ? null : $series[array_key_last($series)];
 
         return response()->json([
             'latest' => $last,
@@ -58,26 +54,13 @@ class LecturasController extends Controller
             ], 422);
         }
 
-        $last = end($normalized);
+        if (!$this->influxDb->writeReadings($normalized)) {
+            return response()->json([
+                'message' => 'No se pudo guardar la lectura',
+            ], 502);
+        }
 
-        Lectura::query()->insert(
-            array_map(function (array $row): array {
-                return [
-                    'sensor_id' => $row['id'],
-                    'temp' => $row['temp'],
-                    'hum' => $row['hum'],
-                    'pres' => $row['pres'],
-                    'rs' => $row['rs'],
-                    'viento' => $row['viento'],
-                    'dir' => $row['dir'],
-                    'vibracion' => $row['vibracion'],
-                    'sonido' => $row['sonido'],
-                    'received_at' => $row['received_at'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }, $normalized),
-        );
+        $last = end($normalized);
 
         return response()->json([
             'message' => 'Lecturas recibidas',
@@ -115,22 +98,6 @@ class LecturasController extends Controller
             'vibracion' => $this->toInt($item['Vibracion'] ?? $item['vibracion'] ?? null),
             'sonido' => $this->toInt($item['Sonido'] ?? $item['sonido'] ?? null),
             'received_at' => $timestamp,
-        ];
-    }
-
-    private function toApiReading(Lectura $row): array
-    {
-        return [
-            'id' => (string) $row->sensor_id,
-            'temp' => $row->temp,
-            'hum' => $row->hum,
-            'pres' => $row->pres,
-            'rs' => $row->rs,
-            'viento' => $row->viento,
-            'dir' => $row->dir,
-            'vibracion' => $row->vibracion,
-            'sonido' => $row->sonido,
-            'received_at' => optional($row->received_at)->toIso8601String(),
         ];
     }
 
