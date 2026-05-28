@@ -4,6 +4,7 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
@@ -28,6 +29,24 @@ class AuthenticationTest extends TestCase
 
         $this->assertAuthenticated();
         $response->assertRedirect(route('dashboard', absolute: false));
+    }
+
+    public function test_users_with_legacy_plaintext_passwords_can_authenticate_and_are_rehashed(): void
+    {
+        $user = User::factory()->create([
+            'password' => 'password',
+        ]);
+
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertAuthenticated();
+        $response->assertRedirect(route('dashboard', absolute: false));
+
+        $this->assertNotSame('password', $user->fresh()->password);
+        $this->assertTrue(Hash::check('password', $user->fresh()->password));
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void

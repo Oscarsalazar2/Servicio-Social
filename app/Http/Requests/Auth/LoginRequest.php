@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -41,7 +43,9 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $user = User::where('email', $this->input('email'))->first();
+
+        if (! $user || ! $this->passwordMatches($user->password, (string) $this->string('password'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -49,7 +53,14 @@ class LoginRequest extends FormRequest
             ]);
         }
 
-        $user = Auth::user();
+        if ($this->passwordNeedsRehash($user->password)) {
+            $user->forceFill([
+                'password' => Hash::make((string) $this->string('password')),
+            ])->save();
+        }
+
+        Auth::login($user, $this->boolean('remember'));
+
         if ($user && $user->role === 'rejected') {
             Auth::logout();
             RateLimiter::hit($this->throttleKey());
@@ -69,6 +80,20 @@ class LoginRequest extends FormRequest
         }
 
         RateLimiter::clear($this->throttleKey());
+    }
+
+    private function passwordMatches(string $storedPassword, string $plainPassword): bool
+    {
+        if ($this->passwordNeedsRehash($storedPassword)) {
+            return hash_equals($storedPassword, $plainPassword);
+        }
+
+        return password_verify($plainPassword, $storedPassword);
+    }
+
+    private function passwordNeedsRehash(string $password): bool
+    {
+        return password_get_info($password)['algo'] === 0;
     }
 
     /**
