@@ -1,15 +1,15 @@
 import { Head, Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
-import logo from "../../Images/logo.png";
-import fondo_principal from "../../Images/fondo_principal.jpg";
+import logo from "../../images/logo.png";
+import fondo_principal from "../../images/fondo_principal.jpg";
 
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
 
-import foto1 from "../../Images/slider/1.jpeg";
-import foto2 from "../../Images/slider/2.jpeg";
-import foto3 from "../../Images/slider/3.jpeg";
+import foto1 from "../../images/slider/1.jpeg";
+import foto2 from "../../images/slider/2.jpeg";
+import foto3 from "../../images/slider/3.jpeg";
 
 const images = [
     {

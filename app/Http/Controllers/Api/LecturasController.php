@@ -10,9 +10,7 @@ use Illuminate\Support\Carbon;
 
 class LecturasController extends Controller
 {
-    public function __construct(private readonly InfluxDbService $influxDb)
-    {
-    }
+    public function __construct(private readonly InfluxDbService $influxDb) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -88,15 +86,15 @@ class LecturasController extends Controller
         $timestamp = Carbon::now()->toDateTimeString();
 
         return [
-            'id' => (string) ($item['id'] ?? 'ESP32'),
-            'temp' => $this->toFloat($item['temp'] ?? null),
-            'hum' => $this->toFloat($item['hum'] ?? null),
-            'pres' => $this->toFloat($item['pres'] ?? null),
-            'rs' => $this->toFloat($item['rs'] ?? null),
-            'viento' => $this->toFloat($item['viento'] ?? null),
+            'id' => (string) ($item['id'] ?? $item['code'] ?? 'ESP32'),
+            'temp' => $this->toFloat($item['temp'] ?? $item['t'] ?? null),
+            'hum' => $this->toFloat($item['hum'] ?? $item['h'] ?? null),
+            'pres' => $this->toFloat($item['pres'] ?? $item['p'] ?? null),
+            'rs' => $this->toFloat($item['rs'] ?? $item['rad'] ?? null),
+            'viento' => $this->toFloat($item['viento'] ?? $item['vel'] ?? null),
             'dir' => $this->toFloat($item['dir'] ?? null),
-            'vibracion' => $this->toInt($item['Vibracion'] ?? $item['vibracion'] ?? null),
-            'sonido' => $this->toInt($item['Sonido'] ?? $item['sonido'] ?? null),
+            'vibracion' => $this->toBinaryState($item['Vibracion'] ?? $item['vibracion'] ?? $item['v'] ?? null),
+            'sonido' => $this->toBinaryState($item['Sonido'] ?? $item['sonido'] ?? $item['s'] ?? null),
             'received_at' => $timestamp,
         ];
     }
@@ -125,5 +123,34 @@ class LecturasController extends Controller
         }
 
         return (int) $value;
+    }
+
+    private function toBinaryState(mixed $value): ?int
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        if (is_bool($value)) {
+            return $value ? 1 : 0;
+        }
+
+        if (is_numeric($value)) {
+            return (int) $value > 0 ? 1 : 0;
+        }
+
+        if (is_string($value)) {
+            $normalized = strtoupper(trim($value));
+
+            if (in_array($normalized, ['ON', 'TRUE', 'HIGH'], true)) {
+                return 1;
+            }
+
+            if (in_array($normalized, ['OFF', 'FALSE', 'LOW'], true)) {
+                return 0;
+            }
+        }
+
+        return null;
     }
 }
