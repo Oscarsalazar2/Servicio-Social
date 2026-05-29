@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Head, useForm, usePage } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { fetchLecturas } from "@/lib/lecturasApi";
 
 const COLORES = {
     temp: "#6E8CFB",
@@ -90,55 +91,52 @@ export default function PetIndex() {
     const [openNuevoLanzamiento, setOpenNuevoLanzamiento] = useState(false);
     const [openDetalle, setOpenDetalle] = useState(false);
     const [registroSeleccionado, setRegistroSeleccionado] = useState(null);
+    const [lecturas, setLecturas] = useState([]);
 
-    const serieViento = useMemo(() => {
-        return Array.from({ length: 24 }).map((_, i) => ({
-            t: `${String(i).padStart(2, "0")}:00`,
-            vel: Math.max(
-                0,
-                Math.round(
-                    (Math.sin(i / 3) * 8 + 12 + Math.random() * 3) * 10,
-                ) / 10,
-            ),
-        }));
+    useEffect(() => {
+        let active = true;
+
+        const loadLecturas = async () => {
+            try {
+                const { series } = await fetchLecturas(24);
+
+                if (active) {
+                    setLecturas(series);
+                }
+            } catch {
+                if (active) {
+                    setLecturas([]);
+                }
+            }
+        };
+
+        loadLecturas();
+        const timer = window.setInterval(loadLecturas, 5000);
+
+        return () => {
+            active = false;
+            window.clearInterval(timer);
+        };
     }, []);
 
-    const serieTempHum = useMemo(() => {
-        return Array.from({ length: 24 }).map((_, i) => ({
-            t: `${String(i).padStart(2, "0")}:00`,
-            temp:
-                Math.round((Math.sin(i / 4) * 4 + 2 + Math.random() * 6) * 10) /
-                10,
-            hum:
-                Math.round(
-                    (Math.cos(i / 5) * 18 + 65 + Math.random() * 3) * 10,
-                ) / 10,
-        }));
-    }, []);
-
-    const ultimoViento = serieViento[serieViento.length - 1];
-    const ultimaTempHum = serieTempHum[serieTempHum.length - 1];
+    const ultimaLectura = lecturas[lecturas.length - 1] ?? null;
 
     const kpiViento = {
-        speed: ultimoViento.vel,
+        speed: Number(ultimaLectura?.viento ?? 0),
     };
 
     const kpiTemp = {
-        temp: ultimaTempHum.temp,
-        hum: ultimaTempHum.hum,
+        temp: Number(ultimaLectura?.temp ?? 0),
+        hum: Number(ultimaLectura?.hum ?? 0),
         feels:
             Math.round(
-                (ultimaTempHum.temp - (100 - ultimaTempHum.hum) / 5) * 10,
+                (Number(ultimaLectura?.temp ?? 0) -
+                    (100 - Number(ultimaLectura?.hum ?? 0)) / 5) *
+                    10,
             ) / 10,
     };
 
-    const kpiPresion =
-        Math.round(
-            (1013 +
-                Math.cos(serieTempHum.length / 4) * 4 +
-                Math.random() * 1.5) *
-                10,
-        ) / 10;
+    const kpiPresion = Number(ultimaLectura?.pres ?? 0);
 
     const condicionesOptimas = useMemo(() => {
         const vientoIdeal = kpiViento.speed;
