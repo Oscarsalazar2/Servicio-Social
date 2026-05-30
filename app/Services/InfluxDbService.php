@@ -37,7 +37,7 @@ class InfluxDbService
                 continue;
             }
 
-            $line = $this->toLineProtocol($reading);
+            $line = $this->toLineProtocol($this->normalizeIncomingReading($reading));
 
             if ($line !== null) {
                 $lines[] = $line;
@@ -75,9 +75,9 @@ class InfluxDbService
         $response = $this->client()
             ->withHeaders([
                 'Accept' => 'application/csv',
-                'Content-Type' => 'application/json',
+                'Content-Type' => 'application/vnd.flux',
             ])
-            ->withBody($this->buildQuery($limit), 'application/json')
+            ->withBody($this->buildQuery($limit), 'application/vnd.flux')
             ->post($this->queryUrl());
 
         if (!$response->successful()) {
@@ -123,8 +123,9 @@ class InfluxDbService
 from(bucket: "{$bucket}")
   |> range(start: -30d)
   |> filter(fn: (r) => r._measurement == "{$measurement}")
-  |> filter(fn: (r) => contains(value: r._field, set: ["temp", "hum", "pres", "rs", "viento", "dir", "vibracion", "sonido"]))
-  |> pivot(rowKey: ["_time", "sensor_id"], columnKey: ["_field"], valueColumn: "_value")
+    |> filter(fn: (r) => contains(value: r._field, set: ["dir", "vel", "rad", "t", "h", "p", "temp", "hum", "pres", "rs", "viento"]))
+    |> group()
+    |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
   |> sort(columns: ["_time"], desc: true)
   |> limit(n: {$limit})
 FLUX;
@@ -145,6 +146,13 @@ FLUX;
 
             $columns = str_getcsv($line);
 
+            // Flux CSV repite encabezado por cada tabla; lo detectamos y actualizamos header.
+            if (in_array('_time', $columns, true) && in_array('table', $columns, true)) {
+                $header = $columns;
+
+                continue;
+            }
+
             if ($header === null) {
                 $header = $columns;
 
@@ -161,6 +169,10 @@ FLUX;
                 continue;
             }
 
+            if (($record['_time'] ?? null) === null || ($record['_time'] ?? '') === '_time') {
+                continue;
+            }
+
             $rows[] = $this->normalizeInfluxRecord($record);
         }
 
@@ -170,12 +182,12 @@ FLUX;
     private function normalizeInfluxRecord(array $record): array
     {
         return [
-            'id' => (string) ($record['sensor_id'] ?? 'ESP32'),
-            'temp' => $this->toFloat($record['temp'] ?? null),
-            'hum' => $this->toFloat($record['hum'] ?? null),
-            'pres' => $this->toFloat($record['pres'] ?? null),
-            'rs' => $this->toFloat($record['rs'] ?? null),
-            'viento' => $this->toFloat($record['viento'] ?? null),
+            'id' => (string) ($record['code'] ?? $record['sensor_id'] ?? 'ESP32'),
+            'temp' => $this->toFloat($record['temp'] ?? $record['t'] ?? null),
+            'hum' => $this->toFloat($record['hum'] ?? $record['h'] ?? null),
+            'pres' => $this->toFloat($record['pres'] ?? $record['p'] ?? null),
+            'rs' => $this->toFloat($record['rs'] ?? $record['rad'] ?? null),
+            'viento' => $this->toFloat($record['viento'] ?? $record['vel'] ?? null),
             'dir' => $this->toFloat($record['dir'] ?? null),
             'vibracion' => $this->toInt($record['vibracion'] ?? null),
             'sonido' => $this->toInt($record['sonido'] ?? null),
@@ -187,21 +199,16 @@ FLUX;
 
     private function toLineProtocol(array $reading): ?string
     {
+        $code = $this->escapeTagValue((string) ($reading['code'] ?? 'ESP32'));
+        $v = $this->escapeTagValue((string) $reading['v']);
+        $s = $this->escapeTagValue((string) $reading['s']);
         $fields = [];
 
-        foreach (['temp', 'hum', 'pres', 'rs', 'viento', 'dir'] as $field) {
+        foreach (['dir', 'vel', 'rad', 't', 'h', 'p'] as $field) {
             $value = $this->toFloat($reading[$field] ?? null);
 
             if ($value !== null) {
                 $fields[] = $field . '=' . $value;
-            }
-        }
-
-        foreach (['vibracion', 'sonido'] as $field) {
-            $value = $this->toInt($reading[$field] ?? null);
-
-            if ($value !== null) {
-                $fields[] = $field . '=' . $value . 'i';
             }
         }
 
@@ -210,13 +217,22 @@ FLUX;
         }
 
         $measurement = $this->escapeLineProtocol((string) config('services.influxdb.measurement', self::DEFAULT_MEASUREMENT));
-        $sensorId = $this->escapeTagValue((string) ($reading['id'] ?? 'ESP32'));
         $timestamp = Carbon::parse((string) ($reading['received_at'] ?? now()))->valueOf();
 
+        $tags = ['code=' . $code];
+
+        if ($v !== '') {
+            $tags[] = 'v=' . $v;
+        }
+
+        if ($s !== '') {
+            $tags[] = 's=' . $s;
+        }
+
         return sprintf(
-            '%s,sensor_id=%s %s %s',
+            '%s,%s %s %s',
             $measurement,
-            $sensorId,
+            implode(',', $tags),
             implode(',', $fields),
             $timestamp,
         );
@@ -231,7 +247,7 @@ FLUX;
             ->get()
             ->reverse()
             ->values()
-            ->map(fn (Lectura $row): array => [
+            ->map(fn(Lectura $row): array => [
                 'id' => (string) $row->sensor_id,
                 'temp' => $row->temp,
                 'hum' => $row->hum,
@@ -255,17 +271,19 @@ FLUX;
                 continue;
             }
 
+            $normalized = $this->normalizeIncomingReading($reading);
+
             $rows[] = [
-                'sensor_id' => (string) ($reading['id'] ?? 'ESP32'),
-                'temp' => $this->toFloat($reading['temp'] ?? null),
-                'hum' => $this->toFloat($reading['hum'] ?? null),
-                'pres' => $this->toFloat($reading['pres'] ?? null),
-                'rs' => $this->toFloat($reading['rs'] ?? null),
-                'viento' => $this->toFloat($reading['viento'] ?? null),
-                'dir' => $this->toFloat($reading['dir'] ?? null),
-                'vibracion' => $this->toInt($reading['vibracion'] ?? null),
-                'sonido' => $this->toInt($reading['sonido'] ?? null),
-                'received_at' => $reading['received_at'] ?? now(),
+                'sensor_id' => (string) $normalized['code'],
+                'temp' => $normalized['t'],
+                'hum' => $normalized['h'],
+                'pres' => $normalized['p'],
+                'rs' => $normalized['rad'],
+                'viento' => $normalized['vel'],
+                'dir' => $normalized['dir'],
+                'vibracion' => $this->toBinaryInt($normalized['v']),
+                'sonido' => $this->toBinaryInt($normalized['s']),
+                'received_at' => $normalized['received_at'],
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -291,6 +309,60 @@ FLUX;
     private function escapeFluxString(string $value): string
     {
         return str_replace(['\\', '"'], ['\\\\', '\\"'], $value);
+    }
+
+    private function normalizeIncomingReading(array $reading): array
+    {
+        return [
+            'code' => (string) ($reading['code'] ?? $reading['id'] ?? 'ESP32'),
+            'dir' => $this->toFloat($reading['dir'] ?? null),
+            'vel' => $this->toFloat($reading['vel'] ?? $reading['viento'] ?? null),
+            'rad' => $this->toFloat($reading['rad'] ?? $reading['rs'] ?? null),
+            't' => $this->toFloat($reading['t'] ?? $reading['temp'] ?? null),
+            'h' => $this->toFloat($reading['h'] ?? $reading['hum'] ?? null),
+            'p' => $this->toFloat($reading['p'] ?? $reading['pres'] ?? null),
+            'v' => $this->toTagState($reading['v'] ?? $reading['vibracion'] ?? $reading['Vibracion'] ?? null),
+            's' => $this->toTagState($reading['s'] ?? $reading['sonido'] ?? $reading['Sonido'] ?? null),
+            'received_at' => $reading['received_at'] ?? now(),
+        ];
+    }
+
+    private function toTagState(mixed $value): ?string
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        if (is_bool($value)) {
+            return $value ? 'ON' : 'OFF';
+        }
+
+        if (is_numeric($value)) {
+            return (float) $value > 0 ? 'ON' : 'OFF';
+        }
+
+        if (is_string($value)) {
+            $normalized = strtoupper(trim($value));
+
+            return match ($normalized) {
+                'ON', 'TRUE', 'HIGH', '1' => 'ON',
+                'OFF', 'FALSE', 'LOW', '0' => 'OFF',
+                default => $normalized,
+            };
+        }
+
+        return null;
+    }
+
+    private function toBinaryInt(mixed $value): ?int
+    {
+        $state = $this->toTagState($value);
+
+        return match ($state) {
+            'ON' => 1,
+            'OFF' => 0,
+            default => null,
+        };
     }
 
     private function toFloat(mixed $value): ?float

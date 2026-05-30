@@ -17,6 +17,21 @@ const COLORS = {
     soundOff: "#4CAF50",
 };
 
+const WIND_DIRECTIONS = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+
+const getDirectionLabel = (degrees) => {
+    const deg = Number(degrees);
+
+    if (!Number.isFinite(deg)) {
+        return "N";
+    }
+
+    const normalized = ((deg % 360) + 360) % 360;
+    const index = Math.round(normalized / 45) % 8;
+
+    return WIND_DIRECTIONS[index];
+};
+
 export default function Viento() {
     const [lecturas, setLecturas] = useState([]);
 
@@ -56,19 +71,45 @@ export default function Viento() {
         [lecturas],
     );
 
-    const windRoseData = useMemo(
-        () => [
-            { dir: "N", r0_10: 20, r10_20: 2, r20_30: 0, r30_40: 0 },
-            { dir: "NE", r0_10: 6, r10_20: 2, r20_30: 0, r30_40: 0 },
-            { dir: "E", r0_10: 10, r10_20: 16, r20_30: 0, r30_40: 0 },
-            { dir: "SE", r0_10: 12, r10_20: 8, r20_30: 0, r30_40: 0 },
-            { dir: "S", r0_10: 25, r10_20: 6, r20_30: 2, r30_40: 4 },
-            { dir: "SW", r0_10: 18, r10_20: 0, r20_30: 5, r30_40: 0 },
-            { dir: "W", r0_10: 3, r10_20: 0, r20_30: 0, r30_40: 0 },
-            { dir: "NW", r0_10: 2, r10_20: 0, r20_30: 0, r30_40: 0 },
-        ],
-        [],
-    );
+    const windRoseData = useMemo(() => {
+        const base = Object.fromEntries(
+            WIND_DIRECTIONS.map((dir) => [
+                dir,
+                { dir, r0_10: 0, r10_20: 0, r20_30: 0, r30_40: 0 },
+            ]),
+        );
+
+        windSeries.forEach((point) => {
+            const label = getDirectionLabel(point.dir);
+            const speed = Number(point.vel);
+
+            if (!Number.isFinite(speed) || speed < 0) {
+                return;
+            }
+
+            if (speed < 10) {
+                base[label].r0_10 += 1;
+
+                return;
+            }
+
+            if (speed < 20) {
+                base[label].r10_20 += 1;
+
+                return;
+            }
+
+            if (speed < 30) {
+                base[label].r20_30 += 1;
+
+                return;
+            }
+
+            base[label].r30_40 += 1;
+        });
+
+        return WIND_DIRECTIONS.map((dir) => base[dir]);
+    }, [windSeries]);
 
     const last = windSeries[windSeries.length - 1] ?? {
         vel: 0,

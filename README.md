@@ -182,21 +182,39 @@ El controlador conserva la misma respuesta JSON para no romper el frontend. El s
 
 ```json
 {
-	"id": "ESP32",
-	"temp": 24.5,
-	"hum": 61.2,
-	"pres": 1011.4,
-	"rs": 345.2,
-	"viento": 8.4,
-	"dir": 180,
-	"Vibracion": 0,
-	"Sonido": 1
+    "id": "ESP32",
+    "temp": 24.5,
+    "hum": 61.2,
+    "pres": 1011.4,
+    "rs": 345.2,
+    "viento": 8.4,
+    "dir": 180,
+    "Vibracion": 0,
+    "Sonido": 1
 }
 ```
 
 ### Ejemplo de uso
 
 `POST /api/lecturas` guarda una lectura o un arreglo de lecturas. `GET /api/lecturas?limit=24` devuelve la serie más reciente con el formato que ya consume el dashboard.
+
+### Generar lecturas aleatorias para pruebas
+
+Si quieres validar que InfluxDB está guardando datos y que el dashboard cambia solo, puedes usar el comando Artisan `lecturas:fake`:
+
+```bash
+php artisan lecturas:fake --count=10 --delay=2
+```
+
+Opciones útiles:
+
+- `--count=10` envía 10 lecturas seguidas.
+- `--delay=2` espera 2 segundos entre cada envío.
+- `--sensor=ESP32-A` cambia el identificador del sensor.
+
+El comando escribe directo en InfluxDB usando el mismo servicio que usa la aplicación. Si `INFLUXDB_URL`, `INFLUXDB_ORG`, `INFLUXDB_BUCKET` o `INFLUXDB_TOKEN` están vacíos, primero complétalos y ejecuta `php artisan optimize:clear`.
+
+El dashboard consulta las lecturas cada 5 segundos, así que al enviar datos nuevos deberías ver cambios en la página en la siguiente actualización automática.
 
 ### Paso a paso resumido
 
